@@ -1,0 +1,68 @@
+# require:
+#   - rubocop-rspec
+#   - ./rubocop/rubocop
+
+# # inherit_from: .rubocop_todo.yml
+# AllCops:
+#   Exclude:
+#     - db/schema.rb
+#     - db/schema*.rb
+#   TargetRubyVersion: 2.4
+
+#################### Custom Cops ###########################
+
+# Cop/ApiChannelTypo:
+#   Severity: error
+#   Enabled: true
+
+# Cop/PhonyDangerousCalls:
+#   Severity: error
+#   Enabled: true
+
+# Cop/UniqOnActiveRecord:
+#   Severity: error
+#   Enabled: true
+
+# Cop/BooleanUtilityApplication:
+#   Severity: error
+#   Enabled: true
+
+#################### Layout ###########################
+
+Layout/Tab:
+  Severity: error
+  Enabled: true
+
+#################### Style ###########################
+
+# allow define class with nested module like this:
+#   module A
+#     module B
+# to avoid message that alert needed to define like this:
+#   module A::B
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+# allow using `lambda` or `->` for multiple line lambda
+Style/Lambda:
+  Enabled: false
+
+# Roku and Leonardo think ` > 0 ` is better then `.postive?`
+Style/NumericPredicate:
+  EnforcedStyle: comparison
+
+# allow extra return, to make code more readable.
+#   return a, b
+Style/RedundantReturn:
+  AllowMultipleReturnValues: true
+
+# Disable enforce single or double quotes.
+# 'string'
+# "string"
+Style/StringLiterals:
+  Enabled: false
+
+#################### Metrics ###############################
+
+Metrics/LineLength:
+  Max: 100

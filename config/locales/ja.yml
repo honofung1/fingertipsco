@@ -29,10 +29,10 @@
 # To learn more, please read the Rails Internationalization guide
 # available at http://guides.rubyonrails.org/i18n.html.
 
-en:
+ja:
   hello: "Hello world"
-  # Todo rename
+  # Todo translate
   defaults:
     email: "Username"
     password: "Password"
-    login: "Login"
+    login: "ログイン"
