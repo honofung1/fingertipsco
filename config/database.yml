@@ -4,22 +4,64 @@
 #   Ensure the SQLite 3 gem is defined in your Gemfile
 #   gem 'sqlite3'
 #
-default: &default
-  adapter: sqlite3
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+# default: &default
+#   adapter: sqlite3
+#   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+#   timeout: 5000
+
+# development:
+#   <<: *default
+#   database: db/development.sqlite3
+
+# # Warning: The database defined as "test" will be erased and
+# # re-generated from your development database when you run "rake".
+# # Do not set this db to the same as development or production.
+# test:
+#   <<: *default
+#   database: db/test.sqlite3
+
+# production:
+#   <<: *default
+#   database: db/production.sqlite3
+
+#########################################
+# Not Using Rails Default Database SQLite
+# We will use the Mysql Version 5.x
+# According to the SiteGround
+
+# Mysql version 5.x
+#   gem install mysql2
+
+# Ensure the mysql2 gem is denfined in your Gemfile
+# gem 'mysql2'
+
+# Todo: Update production database statement
+production:
+  pool: <%= ENV['DB_POOL'] || ENV['PUMA_MAX_THREADS'] || 5 %>
   timeout: 5000
+  adapter: mysql2
+  encoding: utf8
+  database: <%= ENV['DB_DATABASE'] %>
+  host: <%= ENV['DB_HOST'] %>
+  username: <%= ENV['DB_USERNAME'] %>
+  password: <%= ENV['DB_PASSWORD'] %>
+  prepared_statements: false
+  port: <%= ENV['DB_PORT'] || 5432 %>
 
 development:
-  <<: *default
-  database: db/development.sqlite3
+  adapter: mysql2
+  encoding: utf8
+  database: <%= ENV['DEV_DB_DATABASE'] || 'fingertipsco_dev' %>
+  host: <%= ENV['DEV_DB_HOST'] || 'localhost' %>
+  port: <%= ENV['DEV_DB_PORT'] || 3306 %>
+  username: <%= ENV['DEV_DB_USERNAME'] || 'mysql' %>
+  password: <%= ENV['DEV_DB_PASSWORD'] || 'password' %>
 
-# Warning: The database defined as "test" will be erased and
-# re-generated from your development database when you run "rake".
-# Do not set this db to the same as development or production.
 test:
-  <<: *default
-  database: db/test.sqlite3
+  adapter: mysql2
+  encoding: utf8
+  database: <%= ENV['TEST_DB_DATABASE'] || 'fingertipsco_test' %>
+  host: <%= ENV['TEST_DB_HOST'] || 'localhost' %>
+  port: <%= ENV['TEST_DB_PORT'] || 3306 %>
 
-production:
-  <<: *default
-  database: db/production.sqlite3
+

@@ -14,3 +14,15 @@
 //= require activestorage
 //= require turbolinks
 //= require_tree .
+//= require jquery3
+//= require popper
+//= require bootstrap-sprockets
+//= require rails-ujs
+//= require activestorage
+
+// Todo: Skip it temp
+// require edit_comment.js
+// require preview.js
+// require cable.js
+// require edit_comment 
+// require preview
