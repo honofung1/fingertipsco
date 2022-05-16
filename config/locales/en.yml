@@ -31,7 +31,7 @@
 
 en:
   hello: "Hello world"
-  # Todo rename
+  # TODO rename
   defaults:
     email: "Username"
     password: "Password"

@@ -31,7 +31,7 @@
 
 ja:
   hello: "Hello world"
-  # Todo translate
+  # TODO translate
   defaults:
     email: "Username"
     password: "Password"

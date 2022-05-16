@@ -20,7 +20,7 @@
 //= require rails-ujs
 //= require activestorage
 
-// Todo: Skip it temp
+// TODO: Skip it temp
 // require edit_comment.js
 // require preview.js
 // require cable.js
