@@ -1,18 +1,21 @@
 class Admin::UserSessionsController < Admin::BaseController
-  # Todo : add check admin function
+  # TODO : add check admin function
   # skip_before_action :check_admin, only: %i[new create]
   skip_before_action :require_login, only: %i[new create], raise: false
 
   layout 'admin/layouts/admin_login'
 
   def new
-    # Todo
+    # TODO
   end
 
   def create
+    ap "-----"
+    ap params[:username]
+    ap params[:password]
     @admin = login(params[:username], params[:password])
     if @admin
-      redirect_to
+      redirect_to admin_root_path, success: 'ログインしました'
     else
       flash.now[:danger] = "ログインに失敗しました"
       render :new
@@ -20,7 +23,7 @@ class Admin::UserSessionsController < Admin::BaseController
   end
 
   def edit
-    # Todo
+    # TODO
   end
 
   def destroy
