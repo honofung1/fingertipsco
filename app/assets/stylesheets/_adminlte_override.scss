@@ -1,0 +1,20 @@
+tr:last-child {
+  //TODO: remove sorting icon
+}
+
+tr td:last-child {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.content-header {
+  small a {
+    font-weight: 400;
+  }
+}
+
+.content-header {
+  small {
+    font-size: 15px;
+  }
+}

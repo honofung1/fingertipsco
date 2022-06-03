@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_05_15_052135) do
+ActiveRecord::Schema.define(version: 2022_05_17_094028) do
 
   create_table "admin_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "username", null: false
@@ -156,6 +156,79 @@ ActiveRecord::Schema.define(version: 2022_05_15_052135) do
     t.text "ShoesSize", limit: 16777215, null: false
     t.text "ShoesRemarkEN", limit: 16777215, null: false
     t.text "ShoesRemarkJP", limit: 16777215, null: false
+  end
+
+  create_table "order_costs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "order_id", null: false
+    t.integer "product_id", null: false
+    t.integer "product_cost"
+    t.integer "shipment_cost"
+    t.integer "discount"
+    t.integer "total_cost"
+    t.datetime "receipt_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_id"], name: "index_order_costs_on_order_id"
+  end
+
+  create_table "order_owners", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "order_code_prefix", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "order_payments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "order_id", null: false
+    t.string "payment_method"
+    t.integer "paid_amount"
+    t.datetime "paid_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_id"], name: "index_order_payments_on_order_id"
+  end
+
+  create_table "order_product_shipments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "order_id"
+    t.string "receive_number"
+    t.string "hk_tracking_number"
+    t.string "tracking_number"
+    t.string "status"
+    t.datetime "ship_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_id"], name: "index_order_product_shipments_on_order_id"
+  end
+
+  create_table "order_products", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "order_id", null: false
+    t.string "shop_from"
+    t.string "product_name"
+    t.string "product_remark"
+    t.integer "prodcut_amount"
+    t.integer "product_price"
+    t.integer "order_shipment_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_id"], name: "index_order_products_on_order_id"
+    t.index ["order_shipment_id"], name: "index_order_products_on_order_shipment_id"
+  end
+
+  create_table "orders", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "order_id"
+    t.integer "order_owner_id", null: false
+    t.string "customer_name"
+    t.string "customer_contact"
+    t.string "customer_address"
+    t.string "status"
+    t.datetime "order_created_at"
+    t.datetime "order_finished_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_created_at", "order_finished_at"], name: "index_orders_on_created_finished"
+    t.index ["order_id"], name: "index_orders_on_order_id", unique: true
+    t.index ["order_owner_id"], name: "index_orders_on_order_owner_id"
+    t.index ["status"], name: "index_orders_on_status"
   end
 
   create_table "userdata", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|

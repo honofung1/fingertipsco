@@ -1,4 +1,5 @@
-Rails.application.config.sorcery.submodules = []
+# Rails.application.config.sorcery.submodules = []
+Rails.application.config.sorcery.submodules = [:session_timeout]
 
 # Here you can configure each submodule's features.
 Rails.application.config.sorcery.configure do |config|
@@ -11,6 +12,10 @@ Rails.application.config.sorcery.configure do |config|
     # Change sorcery default email column to username column
     user.username_attribute_names = [:username]
   end
+
+  # Set timeout
+  config.session_timeout = 1800
+  config.session_timeout_from_last_action = true
 
   config.user_class = 'Admin'
 end

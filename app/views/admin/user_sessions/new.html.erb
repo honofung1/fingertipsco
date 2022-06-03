@@ -1,7 +1,7 @@
 <% content_for(:title, 'ログイン') %>
  <div class="login-box">
    <div class="login-logo">
-     <h1>ログイン</h1>
+     <h1>LOGIN</h1>
    </div>
    <!-- /.login-logo -->
    <div class="card">
@@ -13,12 +13,12 @@
            <%= f.text_field :username, class: 'form-control', placeholder: t('defaults.email') %>
            <div class="input-group-append">
              <div class="input-group-text">
-               <span class="fas fa-envelope"></span>
+               <span class="fas fa-id-card"></span>
              </div>
            </div>
          </div>
  
-         <%= f.label :password, Admin.human_attribute_name(:password) %>
+         <%= f.label :password, t('defaults.password') %>
          <div class="input-group mb-3">
            <%= f.password_field :password, class: 'form-control', placeholder: :password %>
            <div class="input-group-append">

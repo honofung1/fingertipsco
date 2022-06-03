@@ -1,0 +1,20 @@
+<%
+# `app/views/admins/system_settings/_row.html.erb` does not use render partial for performance, instead, pre-rendered html was added.
+# Please update the above file if any changes were made.
+%>
+<% if buttons.present? %>
+  <div class="btn-group pull-right split-btn">
+    <%= link_with_icon buttons.shift, true %>
+    <% if buttons.present? %>
+      <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+        <span class="caret"></span>
+        <span class="sr-only">Toggle Dropdown</span>
+      </button>
+      <ul class="dropdown-menu" role="menu">
+        <% buttons.each do |button| %>
+          <li><%= link_with_icon button %></li>
+        <% end %>
+      </ul>
+    <% end %>
+  </div>
+<% end %>

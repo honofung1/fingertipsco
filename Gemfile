@@ -6,6 +6,9 @@ ruby '2.6.6'
 # Using ap
 gem 'awesome_print'
 
+# Cancan
+gem 'cancancan'
+
 # Calling decorate method
 gem 'draper'
 
@@ -64,10 +67,22 @@ gem 'dotenv-rails'
 gem 'sorcery'
 
 # Frontend related
+gem "bootstrap-sass", "~>3.3.6"
+gem "bootstrap_form", "~> 5.0"
+gem 'font-awesome-sass', '~> 5.4.1'
 gem 'jquery-rails'
 gem "jquery-ui-rails"
 gem 'popper_js', '~> 2.9.3'
-gem "bootstrap-sass", "~>3.3.6"
+gem 'kaminari'
+# gem 'jquery-datatables-rails', '~> 3.4.0'
+gem 'jquery-datatables'
+gem 'ajax-datatables-rails'
+
+# Object-based searching
+gem 'ransack'
+
+# Form
+gem 'simple_form'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

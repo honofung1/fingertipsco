@@ -1,0 +1,6 @@
+<section class="content">
+  <%= simple_form_for(@order_owner, :url => admin_order_owners_path, role: 'form', html: { class: 'order_owner_form' } ) do |f| %>
+    <%= render 'form' , f: f %>
+  <% end %>
+  <%= link_to t(:'admin.button.back'), admin_order_owners_path, class: 'btn btn-default' %>
+</section>

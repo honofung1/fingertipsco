@@ -1,0 +1,25 @@
+<p id="notice"><%= notice %></p>
+<section class="content">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-body">
+
+          <dl class="dl-horizontal">
+
+            <dt><%= OrderOwner.human_attribute_name(:name) %>:</dt>
+            <dd><%= @order_owner.name %></dd>
+
+            <dt><%= OrderOwner.human_attribute_name(:order_code_prefix) %>:</dt>
+            <dd><%= @order_owner.order_code_prefix %></dd>
+
+          </dl>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%= link_to t(:'button.edit'), edit_admin_order_owner_path(@order_owner), class: 'btn btn-default' %>
+  <%= link_to t(:'button.back'), admin_order_owners_path, class: 'btn btn-default' %>
+</section>

@@ -1,0 +1,11 @@
+<% if buttons.present? %>
+  <div class="btn-group pull-right split-btn">
+    <%= link_with_icon buttons.shift, true %>
+    <% if buttons.present? %>
+        <% buttons.each do |button| %>
+          
+        <% end %>
+      </ul>
+    <% end %>
+  </div>
+<% end %>

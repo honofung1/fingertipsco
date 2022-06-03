@@ -30,9 +30,40 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 ja:
+  # rails standard
+  activerecord:
+    models:
+      order_owner: 
+        one: "Order Owner"
+        other: "Order Owners"
+
+        
   hello: "Hello world"
-  # TODO translate
+  button:
+    add_new: "ADD NEW"
+    new: "NEW"
+    edit: "EDIT"
+    back: "BACK"
+    show: "SHOW"
+    destroy: "DESTORY"
+    delete: "DELETE"
+  # TODO: translate
   defaults:
     email: "Username"
     password: "Password"
     login: "ログイン"
+  sidebar:
+    # Breadcrumb
+    dashboard: "Dashboard"
+    home: "Home"
+    # Sidebar
+    bidrecord: "落札記録"
+    order: "注文記録"
+    export_report: "レポート書き出し"
+    order_owner: "Order Owner"
+    admin_user: "ユーザー管理"
+  order_owner:
+    header_name: "Order owner"
+    title: "Order Owners"
+    name: "Name"
+    prefix_code: "Order Prefix Code"
