@@ -1,4 +1,5 @@
 class Admin < ApplicationRecord
+  # Point this model to admin_users table
   self.table_name = "admin_users"
 
   #############################################################################
@@ -31,12 +32,19 @@ class Admin < ApplicationRecord
     "avatar2.png"
   end
 
+  def admin_ability
+    @admin_ability ||= AdminAbility.new(self)
+  end
+
+  delegate :can?, :cannot?, to: :admin_ability
+
   # From https://github.com/Sorcery/sorcery/blob/master/lib/sorcery/model/submodules/reset_password.rb
   # def change_password(new_password, raise_on_failure: false)
   #   send("password=", new_password)
   #   # send(:"#{sorcery_config.password_attribute_name}=", new_password)
   #   sorcery_adapter.save raise_on_failure: raise_on_failure
   # end
+
   #############################################################################
   # Private Method
   #############################################################################

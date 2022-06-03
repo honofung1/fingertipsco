@@ -30,9 +30,48 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
+  # rails standard
+  activerecord:
+    models:
+      order_owner: 
+        one: "Order Owner"
+        other: "Order Owners"
+
+  # self declare
   hello: "Hello world"
-  # TODO rename
+  button:
+    add_new: "ADD NEW"
+    new: "NEW"
+    edit: "EDIT"
+    back: "BACK"
+    show: "SHOW"
+    destroy: "DESTORY"
+    delete: "DELETE"
+  message:
+    flash_error: 'Error'
+    flash_success: 'Success'
+    flash_warning: 'Warning'
+    create_success: '%{header_name} was successfully created.'
+    update_success: '%{header_name} was successfully updated.'
+    destroy_success: '%{header_name} was successfully destroyed.'
+    update_failed: '%{header_name} was failing updated. Error: %{error}'
+  # TODO: rename
   defaults:
     email: "Username"
     password: "Password"
     login: "Login"
+  sidebar:
+    # Breadcrumb
+    dashboard: "Dashboard"
+    home: "Home"
+    # Sidebar
+    bidrecord: "BID Record"
+    order: "Order"
+    export_report: "Export Report"
+    order_owner: "Order Owner"
+    admin_user: "ADMIN"
+  order_owner:
+    header_name: "Order owner"
+    title: "Order Owners"
+    name: "Name"
+    prefix_code: "Order Prefix Code"

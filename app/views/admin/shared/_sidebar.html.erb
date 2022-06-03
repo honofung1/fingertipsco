@@ -1,10 +1,10 @@
 <!-- Main Sidebar Container -->
  <aside class="main-sidebar sidebar-dark-primary elevation-4">
    <!-- Brand Logo -->
-   <a href="index3.html" class="brand-link">
+   <%= link_to admin_root_path, class:"brand-link" do %>
      <%= image_tag 'AdminLTELogo.png', class: 'brand-image img-circle elevation-3' %>
      <span class="brand-text font-weight-light">Fingertips Co</span> <!-- TODO: change to ENV -->
-   </a>
+   <% end %>
  
    <!-- Sidebar -->
    <div class="sidebar">
@@ -21,22 +21,48 @@
      <!-- Sidebar Menu -->
      <nav class="mt-2">
        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+
+         <!-- Bid record -->
          <li class="nav-item">
            <%= link_to '#', class: "nav-link" do %>
              <i class="nav-icon far fa-file"></i>
-             <p>
-               掲示板
-             </p>
+             <%= content_tag :p, t("sidebar.bidrecord") %>
            <% end %>
          </li>
+
+         <!-- Order -->
+         <li class="nav-item">
+           <%= link_to '#', class: "nav-link" do %>
+             <i class="nav-icon fa fa-inbox fa-fw"></i>
+             <%= content_tag :p, t("sidebar.order") %>
+           <% end %>
+         </li>
+
+         <!-- Export report -->
+         <li class="nav-item">
+           <%= link_to '#', class: "nav-link" do %>
+             <i class="nav-icon far fa-file-excel"></i>
+             <%= content_tag :p, t("sidebar.export_report") %>
+           <% end %>
+         </li>
+
+         <!-- Order OWnder -->
+         <li class="nav-item">
+           <%= link_to admin_order_owners_path, class: "nav-link" do %>
+             <i class="nav-icon far fa fa-users"></i>
+             <%= content_tag :p, t("sidebar.order_owner") %>
+           <% end %>
+         </li>
+
+
+         <!-- Admin user -->
          <li class="nav-item">
            <%= link_to '#', class: "nav-link" do %>
              <i class="nav-icon far fa-user"></i>
-             <p>
-               ユーザー
-             </p>
+             <%= content_tag :p, t("sidebar.admin_user") %>
            <% end %>
          </li>
+
        </ul>
      </nav>
      <!-- /.sidebar-menu -->
