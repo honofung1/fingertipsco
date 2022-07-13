@@ -1,0 +1,120 @@
+<% if criteria.present? %>
+<% criteria.each do |criterion| %>
+  <% case criterion.type %>
+  <% when :date_range %>
+    <div class="form-group">
+      <%= f.label criterion.code, criterion.display_name %>
+      <br>
+      <% hidden_field_id = "#{criterion.code}-value" %>
+      <%= f.button criterion.code, type: 'button', class: 'btn btn-default date-range-picker',
+        id: "#{criterion.code}-btn", data: { hidden_field_id: "##{hidden_field_id}" } do %>
+        <i class="fa fa-caret-down"></i>
+        <span><%= f.object.send(criterion.code) %></span>
+      <% end %>
+      <%= f.hidden_field criterion.code, id: hidden_field_id %>
+    </div>
+  <% when :date_range_default_blank, :datetime_range_default_blank %>
+    <div class="form-group">
+      <%= f.label criterion.code, criterion.display_name %>
+      <br>
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+        </div>
+        <%= f.search_field criterion.code,
+                           placeholder: criterion.display_name,
+                           data: daterangepicker_data('down',
+                                                      *criterion.get_date_range(' ~ ', criterion.type == :datetime_range_default_blank),
+                                                      timepicker: criterion.type == :datetime_range_default_blank
+                           ),
+                           class: 'form-control daterange-picker'
+        %>
+      </div>
+    </div>
+  <% when :month %>
+    <div class="form-group">
+      <%= f.label criterion.code, criterion.display_name %>
+      <br>
+      <%= f.select criterion.code, criterion.get_month_list, { include_blank: true }, {class: "form-control"} %>
+    </div>
+  <% when :enum %>
+    <div class="form-group">
+      <%= f.label criterion.code, criterion.display_name %>
+      <br>
+      <%= f.select criterion.code, criterion.get_select_list, {}, {class: "form-control"} %>
+    </div>
+  <% when :enum_default_blank %>
+    <div class="form-group">
+      <%= f.label criterion.code, criterion.display_name %>
+      <br>
+      <%= f.select criterion.code, criterion.get_select_list, { include_blank: true }, { class: "form-control select2", multiple: true } %>
+    </div>
+  <% when :number %>
+    <div class="from-group">
+      <%= f.label criterion.code, criterion.display_name %>
+      <br>
+      <%= f.number_field criterion.code, class: "form-control", step: :any %>
+      <br>
+    </div>
+  <% when :text %>
+    <div class="from-group">
+      <%= f.label criterion.code, criterion.display_name %>
+      <br>
+      <%= f.search_field criterion.code, class: "form-control" %>
+      <br>
+    </div>
+  <% when :boolean %>
+    <div class="checkbox">
+      <label>
+        <%= f.check_box criterion.code %>
+        <%= criterion.display_name %>
+      </label>
+    </div>
+  <% when :product_multi %>
+    <div class="form-group">
+      <%= f.label criterion.code, criterion.display_name %>
+      <%= f.hidden_field criterion.code, class: 'select2-pcs', data: { 'select2-pcs-multiple':'true', placeholder: ' ' } %>
+    </div>
+  <% end %>
+<% end %>
+
+<% content_for(:inline_javascript) do %>
+  <script>
+    function fill_date(dateRangePicker, start, end) {
+      $('span', dateRangePicker.element).html(start.format('YYYY-MM-DD') + ' ~ ' + end.format('YYYY-MM-DD'));
+      $($(dateRangePicker.element).data('hidden-field-id')).val(start.format('YYYY-MM-DD') + ' ~ ' + end.format('YYYY-MM-DD'));
+    };
+
+    $(function () {
+      // [TODO] set locale in daterangepicker
+      //Date range as a button
+      $('.date-range-picker').each(function() {
+        var current_date_range = $($(this).data('hidden-field-id')).val().split('~');
+        var start_date = moment(current_date_range[0]);
+        var end_date = moment(current_date_range[1]);
+
+        $(this).daterangepicker(
+        {
+          ranges: {
+            'WTD': [moment().startOf('week'), moment().endOf('day')],
+            'LW': [moment().subtract(1, 'week').startOf('week'), moment().subtract(1, 'week').endOf('week')],
+            'L2W': [moment().subtract(2, 'week').startOf('week'), moment().subtract(1, 'week').endOf('week')],
+            'MTD': [moment().startOf('month'), moment().endOf('day')],
+            'LM': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+            'L2M': [moment().subtract(2, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+            'YTD': [moment().startOf('year'), moment().endOf('day')],
+            'LY': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')]
+          },
+          startDate: start_date,
+          endDate: end_date,
+          maxDate: moment().endOf('day')
+        },
+        function(start, end) {
+          fill_date(this, start, end);
+        }
+      );
+      })
+    });
+  </script>
+<% end %>
+<% end %>

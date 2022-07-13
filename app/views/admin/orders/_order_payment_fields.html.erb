@@ -1,0 +1,40 @@
+<div class="card nested-fields">
+  <div class="card-header">
+    <h4 class="card-title">
+      <%= f.object.id.present? ? "#{t(:'order_payment.exist')}: <b>#{h(f.object.payment_method)}</b>".html_safe : t(:'order_payment.new') %>
+    </h4>
+    <div class="card-tools pull-right">
+      <button type="button" class="btn btn-tool" data-card-widget="collapse">
+        <i class="fas fa-minus"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div class="clearfix row">
+      <div class="field form-group col-md-6">
+        <%= f.input :payment_method %>
+      </div>
+
+      <div class="field form-group col-md-6">
+        <%= f.input :paid_amount %>
+      </div>
+
+      <div class="field form-group col-md-6">
+        <%= f.label :paid_date %>
+        <div class="input-group date" data-target-input="nearest">
+            <%= f.text_field :paid_date, id: "paid_date", type: "text", class: "flatpickr", placeholder: "Paid Date" %>
+        </div>
+      </div>
+
+       <!-- <%= f.text_field :paid_date, id: "paid_date", class: "form-control datepicker", data: { target: '#paid_date'} %> --> 
+      
+      <div class="form-group col-md-12">
+        <hr>
+        <%= link_to_remove_association t(:'button.remove'), f, class: 'btn btn-danger btn-md' %>
+      </div>
+
+    </div>
+  </div>
+
+</div>

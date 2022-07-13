@@ -1,0 +1,159 @@
+<p id="notice"><%= notice %></p>
+<section class="content">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card">
+
+        <div class="card-header">
+          <h3 class="card-title"><%= Order.model_name.human %></h3>
+          <div class="card-tools"></div>
+        </div>
+
+        <div class="card-body">
+          <table class="table table-striped">
+            <tr>
+              <th class="col-md-6"><%= Order.human_attribute_name(:state) %>:</th>
+              <td><%= @order.state %></td>
+            </tr>
+
+            <tr>
+              <th class="col-md-6"><%= Order.human_attribute_name(:order_owner_id) %>:</th>
+              <td><%= @order.order_owner.name %></td>
+            </tr>
+
+            <tr>
+              <th class="col-md-6"><%= Order.human_attribute_name(:order_id) %>:</th>
+              <td><%= @order.order_id %></td>
+            </tr>
+
+            <tr>
+              <th class="col-md-6"><%= Order.human_attribute_name(:customer_name) %>:</th>
+              <td><%= @order.customer_name %></td>
+            </tr>
+
+            <tr>
+              <th class="col-md-6"><%= Order.human_attribute_name(:customer_contact) %>:</th>
+              <td><%= @order.customer_contact %></td>
+            </tr>
+
+            <tr>
+              <th class="col-md-6"><%= Order.human_attribute_name(:customer_address) %>:</th>
+              <td><%= @order.customer_address %></td>
+            </tr>
+
+            <tr>
+              <th class="col-md-6"><%= Order.human_attribute_name(:total_price) %>:</th>
+              <td><%= @order.total_price %></td>
+            </tr>
+
+            <tr>
+              <th class="col-md-6"><%= Order.human_attribute_name(:order_created_at) %>:</th>
+              <td><%= format_date(@order.order_created_at) %></td>
+            </tr>
+
+            <tr>
+              <th class="col-md-6"><%= Order.human_attribute_name(:order_finished_at) %>:</th>
+              <td><%= format_date(@order.order_finished_at) %></td>
+            </tr>
+
+            <tr>
+              <th class="col-md-6"><%= Order.human_attribute_name(:emergency_call) %>:</th>
+              <td><%= format_boolean(@order.emergency_call) %></td>
+            </tr>
+
+            <tr>
+              <th class="col-md-6"><%= Order.human_attribute_name(:remark) %>:</th>
+              <td><%= @order.remark %></td>
+            </tr>
+
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title"><%= Order.human_attribute_name(:order_products) %></h3>
+        <div class="card-tools"></div>
+      </div>
+
+      <div class="card-body">
+        <table class="table table-striped col-md-12">
+          <tr>
+            <th ><%= OrderProduct.human_attribute_name(:shop_from) %></th>
+            <th ><%= OrderProduct.human_attribute_name(:product_name) %></th>
+            <th ><%= OrderProduct.human_attribute_name(:product_remark) %></th>
+            <th ><%= OrderProduct.human_attribute_name(:product_quantity) %></th>
+            <th ><%= OrderProduct.human_attribute_name(:product_price) %></th>
+            <th ><%= OrderProduct.human_attribute_name(:receive_number) %></th>
+            <th ><%= OrderProduct.human_attribute_name(:hk_tracking_number) %></th>
+            <th ><%= OrderProduct.human_attribute_name(:tracking_number) %></th>
+            <th ><%= OrderProduct.human_attribute_name(:state) %></th>
+            <th ><%= OrderProduct.human_attribute_name(:ship_date) %></th>
+            <th ><%= OrderProduct.human_attribute_name(:product_cost) %></th>
+            <th ><%= OrderProduct.human_attribute_name(:shipment_cost) %></th>
+            <th ><%= OrderProduct.human_attribute_name(:discount) %></th>
+            <th ><%= OrderProduct.human_attribute_name(:total_cost) %></th>
+            <th ><%= OrderProduct.human_attribute_name(:receipt_date) %></th>
+          </tr>
+        <% @order.order_products.each do |order_product| %>
+          <tr>
+            <td><%= order_product.shop_from %></td>
+            <td><%= order_product.product_name %></td>
+            <td><%= order_product.product_remark %></td>
+            <td><%= order_product.prodcut_quantity %></td>
+            <td><%= order_product.product_price %></td>
+            <td><%= order_product.receive_number %></td>
+            <td><%= order_product.hk_tracking_number %></td>
+            <td><%= order_product.tracking_number %></td>
+            <td><%= order_product.state %></td>
+            <td><%= format_date(order_product.ship_date) %></td>
+            <td><%= order_product.product_cost %></td>
+            <td><%= order_product.shipment_cost %></td>
+            <td><%= order_product.discount %></td>
+            <td><%= order_product.total_cost %></td>
+            <td><%= format_date(order_product.receipt_date) %></td>
+          </tr>
+        <% end %>
+        </table>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-8">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title"><%= Order.human_attribute_name(:order_payments) %></h3>
+        <div class="card-tools"></div>
+      </div>
+
+      <div class="card-body">
+        <table class="table table-striped col-md-12">
+          <tr>
+            <th ><%= OrderPayment.human_attribute_name(:payment_method) %></th>
+            <th ><%= OrderPayment.human_attribute_name(:paid_amount) %></th>
+            <th ><%= OrderPayment.human_attribute_name(:paid_date) %></th>
+          </tr>
+        <% @order.order_payments.each do |order_payment| %>
+          <tr>
+            <td><%= order_payment.payment_method %></td>
+            <td><%= order_payment.paid_amount %></td>
+            <td><%= format_date(order_payment.paid_date) %></td>
+          </tr>
+        <% end %>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+  <%= link_to t(:'button.edit'), edit_admin_order_path(@order), class: 'btn btn-default' %>
+  <%= link_to t(:'button.back'), admin_orders_path, class: 'btn btn-default' %>
+</section>

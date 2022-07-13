@@ -1,4 +1,5 @@
 class Admin::BaseController < ApplicationController
+  rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
   before_action :require_login
   before_action :set_layout_view_variables
   before_action :set_content_header
@@ -15,6 +16,10 @@ class Admin::BaseController < ApplicationController
   end
 
   private
+
+  def record_not_found
+    render 'admin/404', status: 404
+  end
 
   # TODO: remove it cause seem not in use
   def not_authenticated

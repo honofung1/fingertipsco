@@ -36,8 +36,47 @@ en:
       order_owner: 
         one: "Order Owner"
         other: "Order Owners"
+      order:
+        one: "Order"
+        other: "Orders"
+      order_product:
+        one: "Order Product"
+        other: "Order Products"
+    attributes:
+      order:
+        customer_name: "Customer Name"
+        customer_contact: "Customer Contact"
+        customer_address: "Customer Address"
+        emergency_call: "Mark As Emergency"
+        order_created_at: "Order Created Date"
+        order_finsish_at: "Order Finished Date"
+        order_details: "Order Detail Information"
+        order_products: "Order Products"
+        order_payments: "Order Payments"
+        order_costs: "Order Costs"
+      order_product:
+        shop_from: "Shop From"
+        product_name: "Product Name"
+        product_price: "Product Price"
+        product_quantity: "Product Quantity"
+        product_remark: "Product Remark"
+        receive_number: "Receive Number"
+        hk_tracking_number: "HK Tracking Number"
+        tracking_number: "Tracking Number"
+        state: "State"
+        ship_date: "Ship Date"
+        product_cost: "Product Cost"
+        shipment_cost: "Shipment Cost"
+        Discount: "Discount"
+        total_cost: "Total Cost"
+        receipt_date: "Receipt Date"
+      order_payment:
+        payment_method: "Payment Method"
+        paid_amount: "Paid Amount"
+        paid_date: "Paid Date"
+  # End of rails standard
 
-  # self declare
+  # custom declare
   hello: "Hello world"
   button:
     add_new: "ADD NEW"
@@ -55,6 +94,10 @@ en:
     update_success: '%{header_name} was successfully updated.'
     destroy_success: '%{header_name} was successfully destroyed.'
     update_failed: '%{header_name} was failing updated. Error: %{error}'
+  no_record:
+    header: 'No records.'
+    content: 'Looks like there are no %{header_name} records.'
+    btn: 'Add new %{header_name} to get started'
   # TODO: rename
   defaults:
     email: "Username"
@@ -74,4 +117,29 @@ en:
     header_name: "Order owner"
     title: "Order Owners"
     name: "Name"
-    prefix_code: "Order Prefix Code"
+    prefix_code: "Order Channel"
+  order:
+    header_name: "Order"
+    title: "Orders"
+    order_owner_name: "Order Channel"
+    order_id: "Order Number"
+    customer_name: "Customer Name"
+    customer_contact: "Customer Contact"
+    customer_address: "Customer Address"
+    state: "Order State"
+    order_balance: "Order Balance"
+    emergency_call: "Emergency Order"
+    order_created_at: "Order Created At"
+  order_product:
+    new: "New Product"
+    exist: "Order Product"
+  order_payment:
+    new: "New Order Payment"
+    exist: "Order Payment"
+  views:
+    pagination:
+      first: "&laquo; First"
+      last: "Last &raquo;"
+      previous: "&lsaquo; Prev"
+      next: "Next &rsaquo;"
+      truncate: "&hellip;"

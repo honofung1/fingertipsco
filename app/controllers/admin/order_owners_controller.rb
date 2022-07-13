@@ -1,6 +1,7 @@
 class Admin::OrderOwnersController < Admin::BaseController
 
   before_action :set_order_owner, only: [:show, :edit, :update, :destroy]
+  before_action :set_content_header
 
   def index
     @order_owners = OrderOwner.all
@@ -38,7 +39,7 @@ class Admin::OrderOwnersController < Admin::BaseController
     if @order_owner.destroy
       redirect_to admin_order_owners_path, success: t(:'message.destroy_success', header_name: OrderOwner.model_name.human)
     else
-      redirect_to admin_order_ownera_path, danger: @order_owner.errors.full_messages.join('')
+      redirect_to admin_order_owners_path, danger: @order_owner.errors.full_messages.join('')
     end
   end
 
@@ -64,7 +65,7 @@ class Admin::OrderOwnersController < Admin::BaseController
         subheader: can?(:create, OrderOwner) && params[:action] == "index" ? {title: t(:'button.add_new'), url: new_admin_order_owner_path} : {},
         labels: [],
         breadcrumbs: [
-          {title: title, url: admin_order_owners_path}
+          { title: title, url: admin_order_owners_path }
         ]
       }
     when "show", "edit", "update"
@@ -74,7 +75,7 @@ class Admin::OrderOwnersController < Admin::BaseController
         subheader: {},
         labels: [],
         breadcrumbs: [
-          {title: OrderOwner.model_name.human(count: 2), url: admin_order_owners_path},
+          { title: OrderOwner.model_name.human(count: 2), url: admin_order_owners_path },
           @order_owner
         ]
       }

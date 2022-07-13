@@ -1,0 +1,18 @@
+# frozen_string_literal: true
+
+wb = xlsx_package.workbook
+default_column_width = 5
+
+wb.add_worksheet do |sheet|
+  sheet.add_row(@result.headers)
+
+  @result.data.each do |row|
+    sheet.add_row(@result.get_csv_row_array_from_row(row), types: @result.cols_data_type)
+  end
+
+  @result.headers.count.times do |index| # prevent auto hide in open xlsx file in Excel
+    if sheet.column_info[index].present?
+      sheet.column_info[index].width = default_column_width if sheet.column_info[index].width.nil?
+    end
+  end
+end

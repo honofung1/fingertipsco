@@ -2,21 +2,21 @@
 <section class="content">
   <div class="row">
     <div class="col-md-12">
-      <div class="box">
-        <div class="box-header">
-          <h3 class="box-title">&nbsp;</h3>
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">&nbsp;</h3>
         </div>
-        <!-- box header -->
+        <!-- card header -->
 
         <% if @order_owners.present? %>
-          <div class="box-body table-responsive no-padding table-index-page" >
+          <div class="card-body table-responsive no-padding table-index-page" >
             <!-- rednering -->
-            <table class="table table-hover table-bordered" role='datatable' >
+            <table class="table table-hover table-striped text-sm" role='datatable' >
               <thead>
                 <tr>
                   <th><%= t('order_owner.name') %></th>
                   <th><%= t('order-owner.order_code_prefix') %></th>
-                  <th></th>
+                  <th data-orderable="false"></th>
                 </tr>
               </thead>
 
@@ -39,10 +39,10 @@
           </div>
         <% end %>
       </div>
-        <!-- /.box-body -->
+        <!-- /.card-body -->
 
     </div>
     <!-- /.col-md-12 -->
   </div>
-  <!-- rendering -->
+  <%= render partial: "admin/shared/no_record_table" unless @order_owners.present? %>
 </section>

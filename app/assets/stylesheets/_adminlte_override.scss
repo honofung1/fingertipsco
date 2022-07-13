@@ -1,5 +1,5 @@
-tr:last-child {
-  //TODO: remove sorting icon
+body {
+  font-size: 14px;
 }
 
 tr td:last-child {
@@ -17,4 +17,45 @@ tr td:last-child {
   small {
     font-size: 15px;
   }
+}
+
+.filter_margin {
+  text-align: left;
+  position: relative;
+  margin-top: 5px;
+  margin-right: 2px;
+}
+
+.select2-container {
+  width: 100% !important;
+}
+
+@media (max-width: 767px) {
+  .card-header > .card-tools {
+    position: static;
+  }
+}
+
+.table > thead > tr > th {
+  border-top: none;
+}
+.table > thead > .group-header > th {
+  border-bottom: none;
+  border-top: none;
+}
+
+.table-items th.color , .table-items td.color {
+  width: 150px;
+}
+
+.box-fields-for {
+  margin-left: 20px;
+
+  .nested-fields {
+    margin-left: 20px;
+  }
+}
+
+.form-control.flatpickr {
+  background-color: #FFFFFF;
 }

@@ -1,13 +1,25 @@
 @import 'admin-lte/plugins/fontawesome-free/css/all.min.css'; 
 @import 'admin-lte/dist/css/adminlte.min.css';
 @import 'admin-lte/plugins/icheck-bootstrap/icheck-bootstrap.min.css';
+@import "admin-lte/plugins/daterangepicker/daterangepicker";
 
 @import "https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css";
 @import "https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700";
 
-//@import "rails_bootstrap_forms";
-//@import "bootstrap-sprockets";
 
 // Datatable CSSing
 @import "datatables";
 @import "_adminlte_override";
+
+@import "select2";
+
+@import "tempusdominus-bootstrap-4.css";
+
+@import "flatpickr";
+//@import "flatpickr/themes/airbnb.css";
+
+//deprecated
+//@import "jquery-ui/datepicker";
+//@import 'bootstrap-datetimepicker';
+//@import "rails_bootstrap_forms";
+//@import "bootstrap-sprockets";

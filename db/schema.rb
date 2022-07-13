@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_05_17_094028) do
+ActiveRecord::Schema.define(version: 2022_07_08_094211) do
 
   create_table "admin_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "username", null: false
@@ -158,19 +158,6 @@ ActiveRecord::Schema.define(version: 2022_05_17_094028) do
     t.text "ShoesRemarkJP", limit: 16777215, null: false
   end
 
-  create_table "order_costs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.integer "order_id", null: false
-    t.integer "product_id", null: false
-    t.integer "product_cost"
-    t.integer "shipment_cost"
-    t.integer "discount"
-    t.integer "total_cost"
-    t.datetime "receipt_date"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["order_id"], name: "index_order_costs_on_order_id"
-  end
-
   create_table "order_owners", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name", null: false
     t.string "order_code_prefix", null: false
@@ -188,47 +175,55 @@ ActiveRecord::Schema.define(version: 2022_05_17_094028) do
     t.index ["order_id"], name: "index_order_payments_on_order_id"
   end
 
-  create_table "order_product_shipments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.integer "order_id"
-    t.string "receive_number"
-    t.string "hk_tracking_number"
-    t.string "tracking_number"
-    t.string "status"
-    t.datetime "ship_date"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["order_id"], name: "index_order_product_shipments_on_order_id"
-  end
-
   create_table "order_products", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "order_id", null: false
     t.string "shop_from"
     t.string "product_name"
-    t.string "product_remark"
-    t.integer "prodcut_amount"
+    t.text "product_remark"
+    t.integer "product_quantity"
     t.integer "product_price"
-    t.integer "order_shipment_id"
+    t.string "receive_number"
+    t.string "hk_tracking_number"
+    t.string "tracking_number"
+    t.integer "state", default: 0
+    t.datetime "ship_date"
+    t.integer "product_cost"
+    t.integer "shipment_cost"
+    t.integer "discount"
+    t.integer "total_cost"
+    t.datetime "receipt_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["hk_tracking_number"], name: "index_order_products_on_hk_tracking_number"
     t.index ["order_id"], name: "index_order_products_on_order_id"
-    t.index ["order_shipment_id"], name: "index_order_products_on_order_shipment_id"
+    t.index ["ship_date"], name: "index_order_products_on_ship_date"
   end
 
   create_table "orders", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.integer "order_id"
+    t.string "order_id"
     t.integer "order_owner_id", null: false
     t.string "customer_name"
     t.string "customer_contact"
     t.string "customer_address"
-    t.string "status"
+    t.integer "state", default: 0
+    t.integer "total_price"
     t.datetime "order_created_at"
     t.datetime "order_finished_at"
+    t.boolean "emergency_call", default: false
+    t.string "pickup_way"
+    t.text "remark"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["order_created_at", "order_finished_at"], name: "index_orders_on_created_finished"
     t.index ["order_id"], name: "index_orders_on_order_id", unique: true
     t.index ["order_owner_id"], name: "index_orders_on_order_owner_id"
-    t.index ["status"], name: "index_orders_on_status"
+    t.index ["state"], name: "index_orders_on_state"
+  end
+
+  create_table "report_export_tasks", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "report_code"
+    t.string "to_email"
+    t.integer "created_by_id"
   end
 
   create_table "userdata", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
