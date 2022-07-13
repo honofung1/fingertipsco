@@ -2,7 +2,6 @@ class AdminAbility
   include CanCan::Ability
 
   def initialize(admin)
-
     if admin.present?
       can :read, Dashboard
       can :manage, :all

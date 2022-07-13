@@ -1,0 +1,26 @@
+<%-
+  route_name = I18n.t(:"#{controller_name.singularize}.header_name", default: controller_name.singularize.titleize)
+
+  begin
+    # model = (defined?(model_name) ? model_name : route_name).gsub(' ','').constantize
+    # header_name = model.model_name.human
+    # TODO: fix bug
+    # temp for use
+    header_name = I18n.t(:"#{controller_name.singularize}.header_name", default: controller_name.singularize.titleize)
+  rescue NameError => e
+
+  end
+
+  btn ||= link_to t(:'no_record.btn', header_name: header_name), new_polymorphic_path([:admin, controller_name.classify.constantize]), class: 'btn btn-primary' rescue ''
+  header ||= t(:'no_record.header')
+  content ||= t(:'no_record.content', header_name: header_name)
+-%>
+
+<div class="error-page">
+  <h2 class="headline "> <span class="info-box-icon bg-light-blue"><i class="ion ion-egg"></i></span></h2>
+  <div class="error-content">
+    <h3><%= header %></h3>
+    <p><%= content %></p>
+    <%= btn %>
+  </div>
+</div>

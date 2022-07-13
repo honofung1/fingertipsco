@@ -1,0 +1,99 @@
+<% content_for(:title, t('order.title')) %>
+<section class="content">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">&nbsp;</h3>
+          <div class="card-tools">
+
+            <%= search_form_for(@q, url: admin_orders_path, class: 'form-inline') do |f| %>
+              <%= hidden_field_tag :locale, params[:locale] %>
+              <div class="form-group filter_margin">
+                <%= f.select :state_eq, Order.states.map{ |s| [s.first, s.last] }, { include_blank: true }, { style: 'min-width: 125px;', placeholder: Order.human_attribute_name(:state), class: 'form-control form-control-sm select2 select2-hidden-accessible' } %>
+              </div>
+
+              <div class="form-group filter_margin">
+                <%= f.select :order_owner_id_eq, OrderOwner.all.map{ |o| [o.order_code_prefix, o.id] }, { include_blank: true }, { style: 'min-width: 125px;', placeholder: Order.human_attribute_name(:order_owner_id), class: 'form-control form-control-sm select2 select2-hidden-accessible' } %>
+              </div>
+
+              <div class="form-group filter_margin input-sm">
+                <%= f.search_field :order_id_cont, placeholder: Order.human_attribute_name(:order_id), class: 'form-control form-control-sm' %>
+              </div>
+
+              <div class="form-group filter_margin input-sm">
+                <%= f.search_field :customer_contact_cont, placeholder: Order.human_attribute_name(:customer_contact), class: 'form-control form-control-sm' %>
+              </div>
+
+              <div class="form-group filter_margin input-sm">
+                <%= f.search_field :created_at_gteq, type: "text", class: "flatpickr form-control form-control-sm", placeholder: Order.human_attribute_name(:order_created_at) %>
+                <span>~</span>
+                <%= f.search_field :created_at_lteq_end_of_day, type: "text", class: "flatpickr form-control form-control-sm", placeholder: Order.human_attribute_name(:order_created_at) %>
+              </div>
+
+              <div class="form-group filter_margin">
+                <%= button_tag(type: 'submit', name: nil, class: 'btn btn-default btn-sm') do %>
+                  <i class="fa fa-search"></i><span class="sr-only">Search</span>
+                <% end %>
+              </div>
+            <% end %>
+
+          </div>
+        </div>
+        <!-- card header -->
+
+        <% if @orders.present? %>
+          <div class="card-body table-responsive no-padding table-index-page" >
+            <!-- rendering -->
+            <table class="table table-hover table-striped text-sm" role='datatable' >
+              <thead>
+                <tr>
+                  <th><%= t('order.order_channel') %></th>
+                  <th><%= t('order.order_id') %></th>
+                  <th><%= t('order.order_created_at')%></th>
+                  <th><%= t('order.customer_name') %></th>
+                  <th><%= t('order.customer_contact') %></th>
+                  <th><%= t('order.order_products') %></th>
+                  <th><%= t('order.order_receive_number') %></th>
+                  <th><%= t('order.state') %></th>
+                  <th><%= t('order.order_balance') %></th>
+                  <th><%= t('order.order_finished_at')%></th>
+                  <th data-orderable="false"></th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <% @orders.each do |o| %>
+                  <tr>
+                    <td><%= o.order_owner.order_code_prefix %></td>
+                    <td><%= o.order_id %></td>
+                    <td><%= format_date(o.order_created_at) %></td>
+                    <td><%= o.customer_name %></td>
+                    <td><%= o.customer_contact %></td>
+                    <td><%= o.get_order_products_attr("product_name") %></td>
+                    <td><%= o.get_order_products_attr("receive_number") %></td>
+                    <td><%= o.state %></td>
+                    <td><%= o.order_balance_with_hkd %></td>
+                    <td><%= format_date_time(o.order_finished_at) %></td>
+                    <td>
+                      <div class = "button-group" > <!-- not using class btn-group to split the button-->
+                        <%= link_to_btn admin_order_path(o), 'show' %>
+                        <%= link_to_btn edit_admin_order_path(o), 'edit' %>
+                        <%= link_to_btn admin_order_path(o), 'delete', method: :delete, data: { confirm: 'Are you sure?' }, title: "Delete" %>
+                      </div>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+          <%= paginate @orders %>
+        <% end %>
+      </div>
+      <!-- /.card-body -->
+
+    </div>
+    <!-- /.col-md-12 -->
+  </div>
+  <%= render partial: "admin/shared/no_record_table" unless @orders.present? %>
+</section>

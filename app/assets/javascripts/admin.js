@@ -15,18 +15,20 @@
 //= require jquery_ujs
 //= require datatables
 
-//no need this
-//require admin-lte/plugins/jquery/jquery.min
-
 //= require admin-lte/plugins/bootstrap/js/bootstrap.bundle.min
 //= require admin-lte/dist/js/adminlte.min
 //= require bootstrap-sprockets
 
-//applying datatable
-$(document).ready(function(){
-  $("table[role='datatable']").each(function(){
-    $(this).DataTable({
-      processing: true      
-    });
-  });  
-})
+//= require cocoon
+//= require select2
+//= require moment
+//= require tempusdominus-bootstrap-4
+//= require flatpickr
+//= require daterangepicker
+//= require admin-lte/plugins/daterangepicker/daterangepicker
+//= require app
+
+
+//deprecated
+//require bootstrap-datetimepicker
+//require admin-lte/plugins/jquery/jquery.min

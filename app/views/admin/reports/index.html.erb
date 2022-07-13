@@ -1,0 +1,48 @@
+<% content_for(:title, t('report.title')) %>
+<section class="content">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">&nbsp;</h3>
+        </div>
+        <!-- card header -->
+
+        <% if @reports.present? %>
+          <div class="card-body table-responsive no-padding table-index-page" >
+            <!-- rednering -->
+            <table class="table table-hover table-striped text-sm col-sm-12" >
+              <thead>
+                <tr>
+                  <th><%= t('report.title') %></th>
+                  <th><%= t('report.description') %></th>
+                  <th data-orderable="false"></th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <% @reports.each do |report| %>
+                  <tr>
+                    <td>
+                      <%= report.title %>
+                    </td>
+                    <td><%= report.description %></td>
+                    <td>
+                      <div class = "button-group" > <!-- not using class btn-group to split the button-->
+                        <%= link_to_btn admin_reports_path(report.code).sub(".", "/"), 'show' %>
+                      </div>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% end %>
+      </div>
+        <!-- /.card-body -->
+
+    </div>
+    <!-- /.col-md-12 -->
+  </div>
+  <%= render partial: "admin/shared/no_record_table" unless @reports.present? %>
+</section>

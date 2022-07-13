@@ -97,6 +97,8 @@ else
                   breadcrumb_title = item.name
                 elsif item.respond_to?(:to_label)
                   breadcrumb_title = item.to_label
+                elsif item.respond_to?(:order_id)
+                  breadcrumb_title = item.order_id
                 else
                   if Rails.env.production?
                     ExceptionNotifier.notify("Unknown object name for breadcrumb title.......#{item.to_json}")

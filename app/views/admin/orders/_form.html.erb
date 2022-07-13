@@ -1,0 +1,82 @@
+<div class="row">
+  <div class="col-md-8">
+    <div class="card card-outline card-primary">
+      <div class="card-header">
+          <h3 class="card-title"><%= f.label :order_details %></h3>
+      </div>
+      <div class="card-body">
+
+        <div class="form-group">
+          <%= f.label :order_owner, OrderOwner.model_name.human %>
+          <%= f.select :order_owner_id, OrderOwner.all.collect{ |o| [o.order_code_prefix, o.id] }, {}, class: 'form-control select2 select2-hidden-accessible' %>
+        </div>
+        
+        <%= f.input :customer_name, placeholder: t(:'order.customer_name') %>
+        <%= f.input :customer_contact, placeholder: t(:'order.customer_contact') %>
+        <%= f.input :customer_address, placeholder: t(:'order.customer_address') %>
+
+        <%= f.label :emergency_call %>
+        <%= f.check_box :emergency_call %>
+      </div>
+      <div class="card-footer">
+        <div class="actions">
+          <%= f.submit class: "btn btn-md btn-success" %>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="card card-outline card-info">
+      <div class="card-header">
+        <h3 class="card-title"><%= f.label :order_products %></h3>
+        <div class="card-tools pull-right">
+          <button type="button" class="btn btn-tool" data-card-widget="collapse">
+            <i class="fas fa-minus"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="form-group">
+          <div class="form-group container-group">
+            <%= f.simple_fields_for :order_products do |order_product_form| %>
+              <%= render 'order_product_fields', f: order_product_form %>
+            <% end %>
+            <div id="order_products_container" class='links'>
+              <%= link_to_add_association t(:'button.new'), f, :order_products, class: 'btn btn-primary' %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="col-md-4">
+    <div class="card card-outline card-info">
+      <div class="card-header">
+        <h3 class="card-title"><%= f.label :order_payments %></h3>
+        <div class="card-tools pull-right">
+          <button type="button" class="btn btn-tool" data-card-widget="collapse">
+            <i class="fas fa-minus"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="form-group">
+          <div class="form-group container-group">
+            <%= f.simple_fields_for :order_payments do |order_payment_form| %>
+              <%= render 'order_payment_fields', f: order_payment_form %>
+            <% end %>
+            <div id="order_payments_container" class='links'>
+              <%= link_to_add_association t(:'button.new'), f, :order_payments, class: 'btn btn-primary', id: "payment_new" %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

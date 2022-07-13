@@ -34,36 +34,151 @@ zh-HK:
   activerecord:
     models:
       order_owner: 
-        one: "Order Owner"
-        other: "Order Owners"
+        one: "注文擁有者"
+        other: "注文擁有者"
+      order:
+        one: "注文"
+        other: "注文"
+      order_product:
+        one: "注文商品"
+        other: "注文商品"
+    attributes:
+      order:
+        order_id: "注文番号"
+        order_owner_id: "注文擁有者"
+        customer_name: "客人名稱"
+        customer_contact: "客人聯絡方式"
+        customer_address: "客人地址"
+        emergency_call: "標記為緊急"
+        order_created_at: "注文建立日期"
+        order_finished_at: "注文完成日期"
+        order_details: "注文詳細資料"
+        order_products: "注文商品"
+        order_payments: "注文付款"
+        order_costs: "注文成本"
+        state: "注文狀態"
+        total_price: "総金額"
+        remark: "備註"
+      order_product:
+        shop_from: "店"
+        product_name: "商品名稱"
+        product_price: "商品単価"
+        product_quantity: "商品數量"
+        product_remark: "商品備註"
+        receive_number: "受け取り番号"
+        hk_tracking_number: "香港配送追跡番号"
+        tracking_number: "国際追跡番号"
+        state: "注文状況"
+        ship_date: "輸出日"
+        product_cost: "商品単価(税込)"
+        shipment_cost: "送料"
+        discount: "割引"
+        total_cost: "合計"
+        receipt_date: "領收書日期"
+      order_payment:
+        payment_method: "支払方法"
+        paid_amount: "預金金額"
+        paid_date: "取引日"
+  # End of rails standard
 
-        
+  # custom declare
   hello: "Hello world"
   button:
-    add_new: "ADD NEW"
-    new: "NEW"
-    edit: "EDIT"
-    back: "BACK"
-    show: "SHOW"
-    destroy: "DESTORY"
-    delete: "DELETE"
-  # TODO: translate
+    add_new: "建立新"
+    new: "新しい"
+    edit: "編輯"
+    back: "返回"
+    show: "詳細"
+    destroy: "刪除"
+    delete: "刪除"
+  message:
+    flash_error: '錯誤'
+    flash_success: '成功'
+    flash_warning: '警告'
+    create_success: '%{header_name} 已成功建立。'
+    update_success: '%{header_name} 已成功更新。'
+    destroy_success: '%{header_name} 已成功刪除 destroyed.'
+    update_failed: '%{header_name} 更新失敗。 錯誤: %{error}'
+  no_record:
+    header: '沒有記錄。'
+    content: '這裹沒有 %{header_name} 的記錄'
+    btn: '建立新 %{header_name}'
+  # TODO: rename
   defaults:
-    email: "Username"
-    password: "Password"
-    login: "ログイン"
+    email: "帳號"
+    password: "密碼"
+    login: "登入"
   sidebar:
     # Breadcrumb
-    dashboard: "Dashboard"
-    home: "Home"
+    dashboard: "導航板"
+    home: "首頁"
     # Sidebar
-    bidrecord: "落札記録"
-    order: "注文記録"
-    export_report: "レポート書き出し"
-    order_owner: "Order Owner"
-    admin_user: "ユーザー管理"
+    bidrecord: "BID Record"
+    order: "注文"
+    report: "報告"
+    export_report: "導出報告"
+    order_owner: "注文擁有者"
+    admin_user: "管理人"
   order_owner:
-    header_name: "Order owner"
-    title: "Order Owners"
-    name: "Name"
-    prefix_code: "Order Prefix Code"
+    header_name: "注文擁有者"
+    title: "注文擁有者"
+    name: "姓名"
+    prefix_code: "Order Channel"
+  order:
+    header_name: "注文"
+    title: "注文"
+    order_owner_name: "Order Channel"
+    order_id: "注文番号"
+    customer_name: "客人名稱"
+    customer_contact: "客人聯絡方式"
+    customer_address: "客人地址"
+    state: "注文狀態"
+    order_balance: "残高"
+    emergency_call: "緊急注文"
+    order_created_at: "注文建立日期"
+    order_finished_at: "注文完成日期"
+    order_receive_number: "受け取り番号"
+    order_products: "注文商品"
+    order_channel: "注文Channel"
+  order_product:
+    new: "新商品"
+    exist: "注文商品"
+  order_payment:
+    new: "新注文付款"
+    exist: "注文付款"
+  views:
+    pagination:
+      first: "&laquo; 首頁"
+      last: "尾頁 &raquo;"
+      previous: "&lsaquo; 上頁"
+      next: "下頁 &rsaquo;"
+      truncate: "&hellip;"
+  admin:
+    daterangepicker:
+      from: '由'
+      to: '到'
+      apply: '確定'
+      cancel: '取消'
+  # Report related
+  report:
+    title: "報告"
+    description: "簡介"
+  reports:
+    _common:
+      format: "格式"
+      generate_report: '匯出報告'
+      enums:
+        format:
+          csv: 'CSV檔'
+          tsv: 'TSV檔'
+          html: '網頁'
+          xlsx: 'Excel檔'
+    order_cost_export:
+      title: "仕入れ高報告"
+      description: "Order Cost"
+    order_export:
+      title: "注文報告"
+      description: "Order"
+    order_sales_export:
+      title: "売上高報告"
+      description: "Order Sales"

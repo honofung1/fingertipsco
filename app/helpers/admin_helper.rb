@@ -83,4 +83,48 @@ module AdminHelper
 
     link_to icon_text, link, options
   end
+
+  def format_date(date)
+    date.present? ? date.strftime("%Y-%m-%d") : nil
+  end
+
+  def format_date_time(date)
+    date.present? ? date.strftime("%Y-%m-%d %H:%M") : nil
+  end
+
+  def format_boolean(flag)
+    flag ? "YES" : "NO" # TODO: I18n
+  end
+
+  def daterangepicker_data(
+    direction = 'up',
+    start_date = 3.months.ago,
+    end_date = Time.current,
+    separator = ' - ',
+    timepicker: false,
+    format: system_date_format
+  )
+    # resume to use %F as this is specific to the daterangepicker component data format requirement
+    # replace ... data-drops="down" data-start="<%= 1.year.ago.strftime('%F') %>" data-end="<%= Time.current.strftime('%F') %>" ... in daterange-picker
+    # also add i18n translation to daterange-picker buttons
+    # add date format from system setting to 'format' in daterangepicker
+    drp_data_hash = {
+      drops: direction,
+      start: start_date.kind_of?(String) ? start_date : start_date&.strftime('%F'),
+      end: end_date.kind_of?(String) ? end_date : end_date&.strftime('%F'),
+      separator: separator,
+      format: timepicker ? "#{format} HH:mm" : format, # add time format if timepicker is included
+      timepicker: timepicker,
+      from: t(:'admin.daterangepicker.from'),
+      to: t(:'admin.daterangepicker.to'),
+      apply: t(:'admin.daterangepicker.apply'),
+      cancel: t(:'admin.daterangepicker.cancel')
+    }
+    drp_data_hash
+  end
+
+  def system_date_format
+    'YYYY-MM-DD'
+  end
+
 end

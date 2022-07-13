@@ -14,6 +14,7 @@ gem 'draper'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.2.7', '>= 5.2.7.1'
+gem 'rails-i18n', '~> 5.1'
 
 # Use Puma as the app server
 gem 'puma', '~> 3.11'
@@ -67,6 +68,7 @@ gem 'dotenv-rails'
 gem 'sorcery'
 
 # Frontend related
+gem 'ajax-datatables-rails'
 gem "bootstrap-sass", "~>3.3.6"
 gem "bootstrap_form", "~> 5.0"
 gem 'font-awesome-sass', '~> 5.4.1'
@@ -76,13 +78,30 @@ gem 'popper_js', '~> 2.9.3'
 gem 'kaminari'
 # gem 'jquery-datatables-rails', '~> 3.4.0'
 gem 'jquery-datatables'
-gem 'ajax-datatables-rails'
+# moment.js
+gem 'momentjs-rails'
+
+# Tempus Dominus
+gem 'bootstrap4-datetime-picker-rails'
+gem 'bootstrap-datepicker-rails'
+gem 'bootstrap-daterangepicker-rails'
+gem 'flatpickr'
 
 # Object-based searching
 gem 'ransack'
 
 # Form
+gem "cocoon"
 gem 'simple_form'
+
+# Model state
+gem 'state_machines'
+gem 'state_machines-activerecord'
+
+# Export eport related gem
+gem 'rubyzip', '>= 1.2.1'
+gem 'axlsx', git: 'https://github.com/randym/axlsx.git', ref: 'c8ac844'
+gem 'axlsx_rails'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

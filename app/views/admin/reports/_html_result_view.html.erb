@@ -1,0 +1,22 @@
+<div class="box" style="overflow-x: auto">
+  <div class="box-header">
+    <h3 class="box-title" id="report-title"> <%= @report.title %> </h3>
+    <div class="box-body">
+      <table class="table table-bordered table-hover">
+        <tr>
+          <% @report_result.headers.each do |element| %>
+            <th> <%= element %> </th>
+          <% end %>
+        </tr>
+
+        <% @report_result.data.each do |row| %>
+          <tr>
+            <% row.each do |element| %>
+              <td> <%= element %> </td>
+            <% end %>
+          </tr>
+        <% end %>
+      </table>
+    </div>
+  </div>
+</div>

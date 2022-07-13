@@ -36,6 +36,9 @@ ja:
       order_owner: 
         one: "Order Owner"
         other: "Order Owners"
+      order:
+        one: "Order"
+        other: "Orders"
 
         
   hello: "Hello world"
@@ -47,6 +50,18 @@ ja:
     show: "SHOW"
     destroy: "DESTORY"
     delete: "DELETE"
+  message:
+    flash_error: 'Error'
+    flash_success: 'Success'
+    flash_warning: 'Warning'
+    create_success: '%{header_name} was successfully created.'
+    update_success: '%{header_name} was successfully updated.'
+    destroy_success: '%{header_name} was successfully destroyed.'
+    update_failed: '%{header_name} was failing updated. Error: %{error}'
+  no_record:
+    header: 'No records.'
+    content: 'Looks like there are no %{header_name} records.'
+    btn: 'Add new %{header_name} to get started'
   # TODO: translate
   defaults:
     email: "Username"
@@ -67,3 +82,6 @@ ja:
     title: "Order Owners"
     name: "Name"
     prefix_code: "Order Prefix Code"
+  order:
+    header_name: "Order"
+    title: "Orders"
