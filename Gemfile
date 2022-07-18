@@ -125,7 +125,7 @@ group :test do
 end
 
 # Production setting
- group :production do
+group :production do
   gem 'pg'
   gem 'rails_12factor'
- end
+end
