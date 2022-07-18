@@ -27,8 +27,11 @@ class Admin::ReportsController < Admin::BaseController
     respond_to do |format|
       format.html
       format.xlsx do
-        file_name = "#{@report.title}#{Time.now.strftime('%Y%m%d%H%M')}.xlsx"
-        response.headers['Content-Disposition'] = "attachment; filename= #{file_name}"
+        @file_name = "#{@report.title}#{Time.now.strftime('%Y%m%d%H%M')}.xlsx"
+        response.headers['Content-Disposition'] = "attachment; filename= #{@file_name}"
+        # TODO: Move to corn job
+        # tmp_file = Rails.root.join(@file_name)
+        # File.delete(@file_name) if File.exist?(@file_name)
       end
     end
   end

@@ -210,6 +210,20 @@ class ReportBase
     raise NotImplementedError.new('Missing on_run implementation')
   end
 
+  # Define the report styling
+  def style
+    styles = {}
+    raise NotImplementedError.new('Missing setting up report styling') if styles.blank?
+  end
+
+  # Should be overridding if the report have the title before headers
+  # data_format should be
+  # title_name: { option_here }
+  # option should have merge cell length, display name
+  def report_title
+    {}
+  end
+
   def with_header
     true
   end
@@ -260,19 +274,27 @@ class ReportBase
   end
 end
 
+# Layout for the result of thee report
 class ReportResult
-  attr_reader :data, :meta, :format, :headers, :header_labels, :cols_data_type
-  def initialize(data:, headers: [], meta: {}, cols_data_type: [], format:, report:)
+  # TODO: Temp to remove meta in the initialize
+  attr_reader :data, :format, :headers, :header_labels, :cols_data_type, :cols_style
+  def initialize(data:, headers: [], cols_data_type: [], cols_style:[], format:, report:)
     @data = data
     @headers = headers
-    @meta = meta
     @format = format
     @report = report
+
     @cols_data_type = if cols_data_type.present?
                         cols_data_type
                       else
                         headers.collect { |_| ReportResult.default_excel_col_data_type }
                       end
+
+    @cols_style = if cols_style.present?
+                    cols_style
+                  else
+                    headers.collect { |_| ReportResult.default_col_style }
+                  end
   end
 
   # col_data_types SUPPORT values:  [:date, :time, :float, :integer, :string, :boolean]
@@ -282,7 +304,17 @@ class ReportResult
     :string
   end
 
-  #Overwriting
+  # Must be having the default :text style hash for each report
+  # In the col_style use case, the header and the data style should be same
+  # Example
+  # def style(worksheet)
+  #   style = { text: worksheet.styles.add_style() }
+  # end
+  def self.default_col_style
+    :text
+  end
+
+  # Overriding
   def header_labels
     @headers.collect { |header| I18n.t(:"reports.#{@report.code}.columns.#{header}", default: header) }
   end
@@ -291,24 +323,16 @@ class ReportResult
     @report.code
   end
 
+  def report_style(worksheet)
+    @report.style(worksheet)
+  end
+
+  def report_title
+    @report.report_title
+  end
+
   def get_csv_row_array_from_row(row)
     row_data = row.with_indifferent_access
     @headers.collect { |header| row_data[header] }
-  end
-
-  def current_page
-    meta[:current_page]
-  end
-
-  def next_page
-    meta[:next_page]
-  end
-
-  def total_pages
-    meta[:total_pages]
-  end
-
-  def limit_value
-    meta[:page_size]
   end
 end

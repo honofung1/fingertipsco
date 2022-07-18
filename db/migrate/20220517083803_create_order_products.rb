@@ -12,7 +12,8 @@ class CreateOrderProducts < ActiveRecord::Migration[5.2]
       t.string :receive_number      # 受け取り番号
       t.string :hk_tracking_number  # 香港配送追跡番号
       t.string :tracking_number     # 国際追跡番号
-      t.integer :state, default: 0  # using enum to define the state
+      # TODO: temp to remove its cause doesn't have use case to use it
+      # t.integer :state, default: 0  # using enum to define the state
       t.datetime :ship_date
 
       # Order Cost

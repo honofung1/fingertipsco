@@ -43,6 +43,8 @@ zh-HK:
         one: "注文商品"
         other: "注文商品"
     attributes:
+      order_owner:
+        order_code_prefix: "注文Channel"
       order:
         order_id: "注文番号"
         order_owner_id: "注文擁有者"
@@ -57,7 +59,8 @@ zh-HK:
         order_payments: "注文付款"
         order_costs: "注文成本"
         state: "注文狀態"
-        total_price: "総金額"
+        total_price: "注文合計金額"
+        pickup_way: "取貨方式"
         remark: "備註"
       order_product:
         shop_from: "店"
@@ -140,6 +143,7 @@ zh-HK:
     order_receive_number: "受け取り番号"
     order_products: "注文商品"
     order_channel: "注文Channel"
+    order_pickup_way: "取貨方式"
   order_product:
     new: "新商品"
     exist: "注文商品"
@@ -175,10 +179,23 @@ zh-HK:
           xlsx: 'Excel檔'
     order_cost_export:
       title: "仕入れ高報告"
-      description: "Order Cost"
+      description: "Using orders and order porducts data"
+      order_cost_report_title: "仕入高"
     order_export:
       title: "注文報告"
-      description: "Order"
+      description: "Using all orders, order products and order paymenys data"
+      order_customer_report_title: "売上先"
+      order_product_report_title: "商品"
+      order_product_price_report_title: "価格(HKD)"
+      order_shipment_report_title: "配送"
     order_sales_export:
       title: "売上高報告"
-      description: "Order Sales"
+      description: "Using orders and order payments data"
+      order_sales_report_title: "売上高"
+  enums:
+    order:
+      notpaid: "未付款"
+      paidpartly: "尾數"
+      fullpaid: "已付全數"
+      cancelled: "已取消"
+      finished: "已完成"

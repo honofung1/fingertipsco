@@ -13,12 +13,17 @@
           <table class="table table-striped">
             <tr>
               <th class="col-md-6"><%= Order.human_attribute_name(:state) %>:</th>
-              <td><%= @order.state %></td>
+              <td><%= I18n.t(:"enums.order.#{@order.state}") %></td>
             </tr>
 
             <tr>
               <th class="col-md-6"><%= Order.human_attribute_name(:order_owner_id) %>:</th>
               <td><%= @order.order_owner.name %></td>
+            </tr>
+
+            <tr>
+              <th class="col-md-6"><%= Order.human_attribute_name(:pickup_way) %>:</th>
+              <td><%= @order.pickup_way %></td>
             </tr>
 
             <tr>
@@ -104,7 +109,7 @@
             <td><%= order_product.shop_from %></td>
             <td><%= order_product.product_name %></td>
             <td><%= order_product.product_remark %></td>
-            <td><%= order_product.prodcut_quantity %></td>
+            <td><%= order_product.product_quantity %></td>
             <td><%= order_product.product_price %></td>
             <td><%= order_product.receive_number %></td>
             <td><%= order_product.hk_tracking_number %></td>

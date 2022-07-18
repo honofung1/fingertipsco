@@ -5,6 +5,7 @@ class Admin::OrdersController < Admin::BaseController
   def index
     # TODO: sorting
     @q = Order.ransack(params[:q])
+    @q.sorts = ['emergency_call desc', 'state asc', 'order_created_at desc', 'updated_at desc'] if @q.sorts.empty?
     @orders = @q.result(distinct: true).includes(:order_owner, :order_payments, :order_products).page(params[:page])
     logger.debug("Testing For Loogger")
   end
@@ -56,12 +57,12 @@ class Admin::OrdersController < Admin::BaseController
       [
         :order_owner_id, :order_id,
         :customer_name, :customer_contact, :customer_address,
-        :emergency_call,
+        :emergency_call, :pickup_way, :state,
         order_products_attributes:
           [
             :id,
             :shop_from,
-            :product_name, :product_remark, :prodcut_quantity, :product_price,
+            :product_name, :product_remark, :product_quantity, :product_price,
             :receive_number, :hk_tracking_number, :tracking_number,
             :state, :ship_date,
             :product_cost, :shipment_cost, :discount, :total_cost,

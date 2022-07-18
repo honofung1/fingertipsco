@@ -60,6 +60,7 @@ $('[name="daterange"], .daterange-picker').each(function() {
           buttonClasses: ['btn', 'btn-sm'],
           applyClass: 'btn-primary',
           cancelClass: 'btn-default',
+          autoUpdateInput: false,
           locale: {
               separator: separator,
               format: format,
@@ -69,7 +70,9 @@ $('[name="daterange"], .daterange-picker').each(function() {
               toLabel: toLabel
           }
       }
-  );
+  ).on("apply.daterangepicker", function (e, picker) {
+    picker.element.val(picker.startDate.format(picker.locale.format)+ " ~ " + picker.endDate.format(picker.locale.format));
+  });
 
 
 });

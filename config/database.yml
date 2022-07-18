@@ -39,8 +39,8 @@
 production:
   pool: <%= ENV['DB_POOL'] || ENV['PUMA_MAX_THREADS'] || 5 %>
   timeout: 5000
-  adapter: mysql2
-  encoding: utf8
+  adapter: postgresql
+  encoding: unicode
   database: <%= ENV['DB_DATABASE'] %>
   host: <%= ENV['DB_HOST'] %>
   username: <%= ENV['DB_USERNAME'] %>
