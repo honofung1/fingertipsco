@@ -28,8 +28,10 @@
 #   Enabled: true
 
 #################### Layout ###########################
+AllCops:
+  NewCops: enable
 
-Layout/Tab:
+Layout/IndentationStyle:
   Severity: error
   Enabled: true
 
@@ -64,5 +66,5 @@ Style/StringLiterals:
 
 #################### Metrics ###############################
 
-Metrics/LineLength:
+Layout/LineLength:
   Max: 100

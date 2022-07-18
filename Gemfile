@@ -56,7 +56,7 @@ gem 'bootsnap', '>= 1.1.0', require: false
 # gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 # Syntax checking
-gem 'rubocop', '~> 0.64.0'
+gem 'rubocop', '~> 1.31', require: false
 
 # Environment variables setting
 gem 'dotenv-rails'

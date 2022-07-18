@@ -10,9 +10,9 @@ class OrderExport::Report < ReportBase
 
     start_date = if @criteria_value_hash.dig(:order_created_at, :from)
                    @criteria_value_hash[:order_created_at][:from].to_date
-                  else
-                    nil
-                  end
+                 else
+                   nil
+                 end
 
     end_date = if @criteria_value_hash.dig(:order_created_at, :to)
                  @criteria_value_hash[:order_created_at][:to].to_date
