@@ -185,7 +185,6 @@ ActiveRecord::Schema.define(version: 2022_07_08_094211) do
     t.string "receive_number"
     t.string "hk_tracking_number"
     t.string "tracking_number"
-    t.integer "state", default: 0
     t.datetime "ship_date"
     t.integer "product_cost"
     t.integer "shipment_cost"
@@ -221,8 +220,7 @@ ActiveRecord::Schema.define(version: 2022_07_08_094211) do
   end
 
   create_table "report_export_tasks", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.string "report_code"
-    t.string "to_email"
+    t.string "report_name"
     t.integer "created_by_id"
   end
 

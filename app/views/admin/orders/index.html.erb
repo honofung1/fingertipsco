@@ -10,7 +10,7 @@
             <%= search_form_for(@q, url: admin_orders_path, class: 'form-inline') do |f| %>
               <%= hidden_field_tag :locale, params[:locale] %>
               <div class="form-group filter_margin">
-                <%= f.select :state_eq, Order.states.map{ |s| [s.first, s.last] }, { include_blank: true }, { style: 'min-width: 125px;', placeholder: Order.human_attribute_name(:state), class: 'form-control form-control-sm select2 select2-hidden-accessible' } %>
+                <%= f.select :state_eq, Order.states.map{ |s| [I18n.t(:"enums.order.#{s.first}"), s.last] }, { include_blank: true }, { style: 'min-width: 125px;', placeholder: Order.human_attribute_name(:state), class: 'form-control form-control-sm select2 select2-hidden-accessible' } %>
               </div>
 
               <div class="form-group filter_margin">
@@ -54,6 +54,7 @@
                   <th><%= t('order.customer_name') %></th>
                   <th><%= t('order.customer_contact') %></th>
                   <th><%= t('order.order_products') %></th>
+                  <th><%= t('order.order_pickup_way') %></th>
                   <th><%= t('order.order_receive_number') %></th>
                   <th><%= t('order.state') %></th>
                   <th><%= t('order.order_balance') %></th>
@@ -65,16 +66,22 @@
               <tbody>
                 <% @orders.each do |o| %>
                   <tr>
-                    <td><%= o.order_owner.order_code_prefix %></td>
+                    <td>
+                      <% if o.emergency_call? %>
+                        <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                      <% end %>
+                      <%= o.order_owner.order_code_prefix %>
+                    </td>
                     <td><%= o.order_id %></td>
                     <td><%= format_date(o.order_created_at) %></td>
                     <td><%= o.customer_name %></td>
                     <td><%= o.customer_contact %></td>
                     <td><%= o.get_order_products_attr("product_name") %></td>
+                    <td><%= o.pickup_way %></td>
                     <td><%= o.get_order_products_attr("receive_number") %></td>
-                    <td><%= o.state %></td>
+                    <td><%= I18n.t(:"enums.order.#{o.state}") %></td>
                     <td><%= o.order_balance_with_hkd %></td>
-                    <td><%= format_date_time(o.order_finished_at) %></td>
+                    <td><%= format_date(o.order_finished_at) %></td>
                     <td>
                       <div class = "button-group" > <!-- not using class btn-group to split the button-->
                         <%= link_to_btn admin_order_path(o), 'show' %>

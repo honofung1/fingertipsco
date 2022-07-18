@@ -51,8 +51,9 @@ class OrderCostExport::Report < ReportBase
         result << hash
       end
       cols_data_type = OrderCostExport.cols_data_type
-      # return result
-      return ReportResult.new(data: result, headers: header, cols_data_type: cols_data_type, format: format, report: self)
+      cols_style = OrderCostExport.cols_style
+      # return ReportResult.new(data: result, headers: header, cols_data_type: cols_data_type, format: format, report: self)
+      return ReportResult.new(data: result, headers: header, cols_data_type: cols_data_type, cols_style: cols_style, format: format, report: self)
     end
   end
 
@@ -65,6 +66,51 @@ class OrderCostExport::Report < ReportBase
     if params.dig(:criteria, :created_at).present?
       validate_date_range(Order.human_attribute_name(:created_at), params[:criteria][:created_at])
     end
+  end
+
+  # https://github.com/caxlsx/caxlsx/tree/master/examples
+  # There is so many styling can do in the axlsx
+  # Please refer the example to styling the xlsx
+  # TODO: refactor the styles for DRY
+  def style(worksheet)
+    styles = {
+      # title
+      title: worksheet.styles.add_style(font_name: '游ゴシック',
+                                        bg_color: 'FCE4D6',
+                                        sz: 12,
+                                        border: Axlsx::STYLE_THIN_BORDER,
+                                        alignment: { horizontal: :center, vertical: :center, wrap_text: true }),
+
+      # header
+      header: worksheet.styles.add_style(font_name: '游ゴシック',
+                                         bg_color: 'FCE4D6',
+                                         sz: 12,
+                                         border: Axlsx::STYLE_THIN_BORDER,
+                                         alignment: { horizontal: :center, vertical: :center, wrap_text: true }),
+
+      # text
+      text: worksheet.styles.add_style(font_name: '游ゴシック',
+                                       bg_color: 'FCE4D6',
+                                       sz: 12,
+                                       border: Axlsx::STYLE_THIN_BORDER,
+                                       alignment: { horizontal: :center, vertical: :center}),
+      # hyperlink
+      hyperlink: worksheet.styles.add_style(font_name: 'Arial', u: true, fg_color: '000000FF')
+    }
+    styles
+  end
+
+  def report_title
+    report_title = {
+      layer1: {
+        # order_cost: { merge_cell_size: "A1:F2", display_name: I18n.t(:'reports.order_cost_export.order_cost_report_title') }
+        order_cost: {
+          merge_cell_size: "A1:F2",
+          merge_cell_data: [I18n.t(:'reports.order_cost_export.order_cost_report_title'), "", "", "", "", ""]
+        }
+      }
+    }
+    report_title
   end
 
   #############################################################################
@@ -86,10 +132,10 @@ class OrderCostExport::Report < ReportBase
     FIELDS = %i[order_id product_cost shipment_cost discount total_cost receipt_date]
     FIELD_MAPS = {
       order_id: { type: :field, display: Order.human_attribute_name(:order_id) },
-      product_cost: { type: :field, display: OrderProduct.human_attribute_name(:product_cost) },
-      shipment_cost: { type: :field, display: OrderProduct.human_attribute_name(:shipment_cost) },
-      discount: { type: :field, display: OrderProduct.human_attribute_name(:discount) },
-      total_cost: { type: :field, display: OrderProduct.human_attribute_name(:total_cost) },
+      product_cost: { type: :field, display: OrderProduct.human_attribute_name(:product_cost), col_data_type: :integer },
+      shipment_cost: { type: :field, display: OrderProduct.human_attribute_name(:shipment_cost), col_data_type: :integer },
+      discount: { type: :field, display: OrderProduct.human_attribute_name(:discount), col_data_type: :integer },
+      total_cost: { type: :field, display: OrderProduct.human_attribute_name(:total_cost), col_data_type: :integer },
       receipt_date: { type: :date, display: OrderProduct.human_attribute_name(:receipt_date) }
     }
 
@@ -111,6 +157,12 @@ class OrderCostExport::Report < ReportBase
       end
     end
 
+    def self.cols_style
+      FIELDS.collect do |field|
+        FIELD_MAPS[field][:style] || ReportResult.default_col_style
+      end
+    end
+
     def self.export(order_cost)
       result = []
 
@@ -121,7 +173,7 @@ class OrderCostExport::Report < ReportBase
           # order_cost[field]
         when :date
           # TODO: change the time format to '%Y-%m-%d %H:%M' ?
-          result << (order_cost[field].present? ? order_cost[field].in_time_zone('Japan').strftime('%Y-%m-%d') : nil)
+          result << (order_cost[field].present? ? order_cost[field].in_time_zone('Japan').strftime('%Y/%m/%d') : nil)
         end
       end
       result

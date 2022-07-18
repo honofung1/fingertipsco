@@ -10,6 +10,17 @@
           <%= f.label :order_owner, OrderOwner.model_name.human %>
           <%= f.select :order_owner_id, OrderOwner.all.collect{ |o| [o.order_code_prefix, o.id] }, {}, class: 'form-control select2 select2-hidden-accessible' %>
         </div>
+
+        <div class="form-group">
+          <%= f.label :order_owner, Order.human_attribute_name(:pickup_way) %>
+          <%= f.select :pickup_way, Order::PICKUP_WAYS.map { |p| p }, {}, class: 'form-control select2 select2-hidden-accessible' %>
+        </div>
+
+        <div class="field form-group">
+          <%# https://stackoverflow.com/questions/32026202/select-box-by-simple-form-in-rails-save-id-not-title %>
+          <%= f.label :state, Order.human_attribute_name(:state) %>
+          <%= f.select :state, Order.states.keys.map{ |s| I18n.t(:"enums.order.#{s}") }.zip(Order.states.keys), {}, class: 'form-control select2 select2-hidden-accessible' %>
+        </div>
         
         <%= f.input :customer_name, placeholder: t(:'order.customer_name') %>
         <%= f.input :customer_contact, placeholder: t(:'order.customer_contact') %>

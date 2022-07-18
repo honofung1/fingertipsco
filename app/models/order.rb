@@ -17,20 +17,21 @@ class Order < ApplicationRecord
   # notpaid    --> 0
   # paidpartly --> 1
   # fullpaid   --> 2
-  # finished   --> 3
-  # cancelled  --> 4
+  # cancelled  --> 3
+  # finished   --> 4
   #
   # State defination
   #  |State|            |Defination|
   #  notpaid            order is not have any payment yet, this is the default state of order
   #  paidpartly         order have payment, but not a full paid
   #  fullpaid           order have fullpaided, order balance should be 0 in this state
-  #  finished           order finished
   #  cancelled          order cancelled
-  enum state: [:notpaid, :paidpartly, :fullpaid, :finished, :cancelled]
+  #  finished           order finished
+  enum state: [:notpaid, :paidpartly, :fullpaid, :cancelled, :finished]
 
   # set the default order code if the order doesn't have the order owner
   DEFAULT_ORDER_CODE_PREFIX = "FT".freeze
+  PICKUP_WAYS = %w[TP S].freeze
 
   #############################################################################
   # Association
@@ -63,8 +64,9 @@ class Order < ApplicationRecord
 
   before_create :ensure_order_created_at
 
-  before_save :ensure_order_owner
+  before_save :ensure_order_finished_at
 
+  before_save :ensure_order_owner
   before_save :ensure_order_id
 
   #############################################################################
@@ -92,6 +94,12 @@ class Order < ApplicationRecord
 
   def ensure_order_created_at
     self.order_created_at = Time.now
+  end
+
+  def ensure_order_finished_at
+    return unless finished?
+
+    self.order_finished_at = Time.now
   end
 
   def order_owner_code
@@ -130,10 +138,12 @@ class Order < ApplicationRecord
     # remove empty strings
     order_products_attrs = order_products_attrs.reject(&:empty?)
 
+    # TODO: i18n or translate
     if order_products_attrs.empty?
-      "N/A" # TODO: i18n or translate
+      "-"
     else
-      order_products_attrs.join('/')
+      # order_products_attrs.join('/')
+      order_products_attrs.count == 1 ? "#{order_products_attrs.first}": "#{order_products_attrs.first}以及其他#{order_products_attrs.count - 1}樣資料"
     end
   end
 
@@ -145,6 +155,16 @@ class Order < ApplicationRecord
     end
 
     total_paid_amount
+  end
+
+  def calculate_order_total_price
+    total_price = 0
+
+    order_products.each do |p|
+      total_price += p.product_quantity * p.product_price
+    end
+
+    self.update_columns(total_price: total_price)
   end
 
   #############################################################################

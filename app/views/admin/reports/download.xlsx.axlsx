@@ -1,13 +1,60 @@
 # frozen_string_literal: true
 
 wb = xlsx_package.workbook
-default_column_width = 5
+# Need to discuss
+# xlsx_package.use_autowidth = false
+default_column_width = 20
 
 wb.add_worksheet do |sheet|
-  sheet.add_row(@result.headers)
+  style = @result.report_style(sheet)
 
-  @result.data.each do |row|
-    sheet.add_row(@result.get_csv_row_array_from_row(row), types: @result.cols_data_type)
+  # Its optional
+  if @result.report_title.present?
+    logger.debug("REPORT TITLE: #{@result.report_title}")
+    @result.report_title.map do |_, titles|
+      logger.debug("TITLE: #{titles}")
+      sheet.add_row do |row|
+        titles.each do |_, ele|
+          merge_cell_size = ele[:merge_cell_size]
+          merge_cell_data = ele[:merge_cell_data].to_a
+
+          ele[:offset].times { row.add_cell } if ele[:offset].present?
+
+          sheet.merge_cells(merge_cell_size)
+
+          # IF not setting the title tyle, fallback to the default style
+          title_style = style[ele[:title_style]] || style[:title]
+
+          merge_cell_data.each do |data|
+            # TODO: FIX the border only exist in the first cell problem
+            # https://github.com/randym/axlsx/issues/261
+            row.add_cell(data, style: title_style)
+          end
+        end
+      end
+    end
+    sheet.add_row
+  end
+  # End of optional report title
+
+  # TEMP refactor for the styling
+  # sheet.add_row(@result.headers, style: style[:header])
+  sheet.add_row do |row|
+    @result.headers.each_with_index do |header, index|
+      row.add_cell(header, style: style[@result.cols_style[index]])
+    end
+  end
+
+  # TEMP refactor for the styling
+  # @result.data.each do |row|
+  #   sheet.add_row(@result.get_csv_row_array_from_row(row), types: @result.cols_data_type, style: style[:text])
+  # end
+  @result.data.each do |row_data|
+    sheet.add_row do |row|
+      @result.get_csv_row_array_from_row(row_data).each_with_index do |data, index|
+        row.add_cell(data, types: @result.cols_data_type[index], style: style[@result.cols_style[index]])
+      end
+    end
   end
 
   @result.headers.count.times do |index| # prevent auto hide in open xlsx file in Excel
@@ -16,3 +63,5 @@ wb.add_worksheet do |sheet|
     end
   end
 end
+
+xlsx_package.serialize(@file_name)
