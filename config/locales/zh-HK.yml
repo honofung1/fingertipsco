@@ -61,6 +61,7 @@ zh-HK:
         state: "注文狀態"
         total_price: "注文合計金額"
         pickup_way: "取貨方式"
+        currency: "注文使用貨幣"
         remark: "備註"
       order_product:
         shop_from: "店"
@@ -87,11 +88,12 @@ zh-HK:
   # custom declare
   hello: "Hello world"
   button:
-    add_new: "建立新"
+    add_new: "建立新的"
     new: "新しい"
     edit: "編輯"
     back: "返回"
     show: "詳細"
+    clone: "複製"
     destroy: "刪除"
     delete: "刪除"
   message:
@@ -142,11 +144,14 @@ zh-HK:
     order_finished_at: "注文完成日期"
     order_receive_number: "受け取り番号"
     order_products: "注文商品"
-    order_channel: "注文Channel"
+    order_channel: "注文CHANNEL"
     order_pickup_way: "取貨方式"
   order_product:
     new: "新商品"
     exist: "注文商品"
+    product_header: "商品資料"
+    shipment_header: "配送"
+    cost_header: "仕入れ"
   order_payment:
     new: "新注文付款"
     exist: "注文付款"

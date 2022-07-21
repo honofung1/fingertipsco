@@ -96,9 +96,12 @@ gem 'state_machines'
 gem 'state_machines-activerecord'
 
 # Export eport related gem
-gem 'rubyzip', '>= 1.2.1'
 gem 'axlsx', git: 'https://github.com/randym/axlsx.git', ref: 'c8ac844'
 gem 'axlsx_rails'
+gem 'rubyzip', '>= 1.2.1'
+
+# Clone order related gem
+gem 'deep_cloneable', '~> 3.2.0'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

@@ -16,6 +16,11 @@
           <%= f.select :pickup_way, Order::PICKUP_WAYS.map { |p| p }, {}, class: 'form-control select2 select2-hidden-accessible' %>
         </div>
 
+        <div class="form-group">
+          <%= f.label :order_owner, Order.human_attribute_name(:currency) %>
+          <%= f.select :currency, Order::CURRENCYS.map { |c| c }, {}, class: 'form-control select2 select2-hidden-accessible' %>
+        </div>
+
         <div class="field form-group">
           <%# https://stackoverflow.com/questions/32026202/select-box-by-simple-form-in-rails-save-id-not-title %>
           <%= f.label :state, Order.human_attribute_name(:state) %>

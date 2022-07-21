@@ -17,6 +17,11 @@
             </tr>
 
             <tr>
+              <th class="col-md-6"><%= Order.human_attribute_name(:currency) %>:</th>
+              <td><%= @order.currency %></td>
+            </tr>
+
+            <tr>
               <th class="col-md-6"><%= Order.human_attribute_name(:order_owner_id) %>:</th>
               <td><%= @order.order_owner.name %></td>
             </tr>
@@ -78,7 +83,7 @@
   </div>
 
 <div class="row">
-  <div class="col-md-12">
+  <div class="col-md-11">
     <div class="card">
       <div class="card-header">
         <h3 class="card-title"><%= Order.human_attribute_name(:order_products) %></h3>
@@ -88,21 +93,20 @@
       <div class="card-body">
         <table class="table table-striped col-md-12">
           <tr>
-            <th ><%= OrderProduct.human_attribute_name(:shop_from) %></th>
-            <th ><%= OrderProduct.human_attribute_name(:product_name) %></th>
-            <th ><%= OrderProduct.human_attribute_name(:product_remark) %></th>
-            <th ><%= OrderProduct.human_attribute_name(:product_quantity) %></th>
-            <th ><%= OrderProduct.human_attribute_name(:product_price) %></th>
-            <th ><%= OrderProduct.human_attribute_name(:receive_number) %></th>
-            <th ><%= OrderProduct.human_attribute_name(:hk_tracking_number) %></th>
-            <th ><%= OrderProduct.human_attribute_name(:tracking_number) %></th>
-            <th ><%= OrderProduct.human_attribute_name(:state) %></th>
-            <th ><%= OrderProduct.human_attribute_name(:ship_date) %></th>
-            <th ><%= OrderProduct.human_attribute_name(:product_cost) %></th>
-            <th ><%= OrderProduct.human_attribute_name(:shipment_cost) %></th>
-            <th ><%= OrderProduct.human_attribute_name(:discount) %></th>
-            <th ><%= OrderProduct.human_attribute_name(:total_cost) %></th>
-            <th ><%= OrderProduct.human_attribute_name(:receipt_date) %></th>
+            <th><%= OrderProduct.human_attribute_name(:shop_from) %></th>
+            <th><%= OrderProduct.human_attribute_name(:product_name) %></th>
+            <th><%= OrderProduct.human_attribute_name(:product_remark) %></th>
+            <th><%= OrderProduct.human_attribute_name(:product_quantity) %></th>
+            <th><%= OrderProduct.human_attribute_name(:product_price) %></th>
+            <th><%= OrderProduct.human_attribute_name(:receive_number) %></th>
+            <th><%= OrderProduct.human_attribute_name(:hk_tracking_number) %></th>
+            <th><%= OrderProduct.human_attribute_name(:tracking_number) %></th>
+            <th><%= OrderProduct.human_attribute_name(:ship_date) %></th>
+            <th><%= OrderProduct.human_attribute_name(:product_cost) %></th>
+            <th><%= OrderProduct.human_attribute_name(:shipment_cost) %></th>
+            <th><%= OrderProduct.human_attribute_name(:discount) %></th>
+            <th><%= OrderProduct.human_attribute_name(:total_cost) %></th>
+            <th><%= OrderProduct.human_attribute_name(:receipt_date) %></th>
           </tr>
         <% @order.order_products.each do |order_product| %>
           <tr>
@@ -114,7 +118,6 @@
             <td><%= order_product.receive_number %></td>
             <td><%= order_product.hk_tracking_number %></td>
             <td><%= order_product.tracking_number %></td>
-            <td><%= order_product.state %></td>
             <td><%= format_date(order_product.ship_date) %></td>
             <td><%= order_product.product_cost %></td>
             <td><%= order_product.shipment_cost %></td>

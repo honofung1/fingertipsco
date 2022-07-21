@@ -30,8 +30,14 @@ class Order < ApplicationRecord
   enum state: [:notpaid, :paidpartly, :fullpaid, :cancelled, :finished]
 
   # set the default order code if the order doesn't have the order owner
-  DEFAULT_ORDER_CODE_PREFIX = "FT".freeze
+  DEFAULT_ORDER_CODE_PREFIX = "DEF".freeze
+
+  # This is the order product pickup ways
+  # Now we have two types of pickup ways TP AND S
   PICKUP_WAYS = %w[TP S].freeze
+
+  # Order cuurency HKD AND JPY
+  CURRENCYS = %w[HKD JPY].freeze
 
   #############################################################################
   # Association
@@ -56,6 +62,8 @@ class Order < ApplicationRecord
   #############################################################################
 
   validates :order_owner_id, presence: true
+  validates :currency, inclusion: { in: CURRENCYS }
+
   validate :order_owner_id_cannot_changed
 
   #############################################################################
@@ -63,9 +71,9 @@ class Order < ApplicationRecord
   #############################################################################
 
   before_create :ensure_order_created_at
+  after_create :order_owner_count_increment
 
   before_save :ensure_order_finished_at
-
   before_save :ensure_order_owner
   before_save :ensure_order_id
 
@@ -84,12 +92,24 @@ class Order < ApplicationRecord
   #   end
   # end
 
-  def order_balance_with_hkd
-    # total price => when order product updated his cost, auto update the field
-    # so do this here
+  def calculate_order_total_price
+    total_price = 0
 
-    self.total_price ||= 0
-    "HKD$ #{self.total_price - order_total_paid_amount}"
+    order_products.each do |p|
+      total_price += p.product_quantity * p.product_price
+    end
+
+    self.update_columns(total_price: total_price)
+  end
+
+  # HKD and JPY have different dollar sign
+  def curreny_with_sign
+    dollar_sign = currency == "HKD" ? "$" : "¥"
+    "#{currency}#{dollar_sign}"
+  end
+
+  def clone_order
+    self.deep_clone include: [ :order_products ]
   end
 
   def ensure_order_created_at
@@ -116,12 +136,13 @@ class Order < ApplicationRecord
     end
   end
 
-  # auto gen order_id
+  # auto generate order_id
   def reset_order_id
     order_id_code = order_owner_code
 
-    order_id_ordering = order_owner.present? ? order_owner.orders.count : Random.rand(1...100)
-    "#{order_id_code}#{Time.now.month}#{order_id_ordering.to_s.rjust(3, '0')}"
+    order_id_ordering = order_owner.present? ? order_owner.order_total_count + 1 : Random.rand(1...1000)
+    # Using Time.now.strftime('%y') instead of Time.now.year % 100 to get the year without ceuntry
+    "#{order_id_code}#{Time.now.strftime('%y%m')}#{order_id_ordering.to_s.rjust(4, '0')}"
   end
 
   # get order_products attributes
@@ -157,14 +178,19 @@ class Order < ApplicationRecord
     total_paid_amount
   end
 
-  def calculate_order_total_price
-    total_price = 0
+  def order_balance_with_hkd
+    # total price => when order product updated his product price, auto update the field
+    # so do this here
 
-    order_products.each do |p|
-      total_price += p.product_quantity * p.product_price
-    end
+    # Set the total_price to 0 when the order not have products yet
+    self.total_price ||= 0
+    "#{curreny_with_sign}#{order_total_paid_amount - self.total_price}"
+  end
 
-    self.update_columns(total_price: total_price)
+  # After create the order, call the order owner method to count the order totals which is the order
+  # numbers he owns
+  def order_owner_count_increment
+    order_owner.add_order_count
   end
 
   #############################################################################
