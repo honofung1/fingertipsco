@@ -59,3 +59,9 @@ tr td:last-child {
 .form-control.flatpickr {
   background-color: #FFFFFF;
 }
+
+// Fix the problem for show page table last <th> wraping the text 
+tr th:last-child {
+  width: 1%;
+  white-space: nowrap;
+}

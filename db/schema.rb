@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_07_08_094211) do
+ActiveRecord::Schema.define(version: 2022_07_21_070059) do
 
   create_table "admin_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "username", null: false
@@ -163,6 +163,7 @@ ActiveRecord::Schema.define(version: 2022_07_08_094211) do
     t.string "order_code_prefix", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "order_total_count", default: 0
   end
 
   create_table "order_payments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -213,6 +214,8 @@ ActiveRecord::Schema.define(version: 2022_07_08_094211) do
     t.text "remark"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "currency"
+    t.index ["currency"], name: "index_orders_on_currency"
     t.index ["order_created_at", "order_finished_at"], name: "index_orders_on_created_finished"
     t.index ["order_id"], name: "index_orders_on_order_id", unique: true
     t.index ["order_owner_id"], name: "index_orders_on_order_owner_id"

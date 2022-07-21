@@ -5,7 +5,7 @@ class Admin::OrdersController < Admin::BaseController
   def index
     # TODO: sorting
     @q = Order.ransack(params[:q])
-    @q.sorts = ['emergency_call desc', 'state asc', 'order_created_at desc', 'updated_at desc'] if @q.sorts.empty?
+    @q.sorts = ['emergency_call desc', 'state asc', 'updated_at desc', 'order_created_at desc'] if @q.sorts.empty?
     @orders = @q.result(distinct: true).includes(:order_owner, :order_payments, :order_products).page(params[:page])
     logger.debug("Testing For Loogger")
   end
@@ -23,6 +23,12 @@ class Admin::OrdersController < Admin::BaseController
       flash.now[:alert] = @order.errors
       render :new
     end
+  end
+
+  def clone
+    @order = Order.find(params[:id]).clone_order
+    @order.state = "notpaid"
+    render 'new'
   end
 
   def edit
@@ -56,7 +62,7 @@ class Admin::OrdersController < Admin::BaseController
     permitted =
       [
         :order_owner_id, :order_id,
-        :customer_name, :customer_contact, :customer_address,
+        :customer_name, :customer_contact, :customer_address, :currency,
         :emergency_call, :pickup_way, :state,
         order_products_attributes:
           [
@@ -82,7 +88,7 @@ class Admin::OrdersController < Admin::BaseController
 
   def set_content_header
     content_header = case params[:action]
-    when "index", "new", "create"
+    when "index", "new", "create", "clone"
       title = Order.model_name.human(count: 2)
       {
         header: params[:action] == "index" ? title : "#{t(:'button.new')} #{t(:'order.header_name')}",

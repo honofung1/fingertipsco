@@ -44,7 +44,9 @@ module AdminHelper
       when 'edit'
         options[:class] = "btn btn-success btn-sm"
       when 'delete', 'remove'
-        options[:class] = 'btn btn-danger btn-sm'
+        options[:class] = 'btn btn-danger btn-sm disabled'
+      when 'clone'
+        options[:class] = 'btn btn-info btn-sm'
       else
         options[:class] = 'btn btn-default btn-sm'
       end

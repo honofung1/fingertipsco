@@ -22,6 +22,13 @@ class OrderOwner < ApplicationRecord
   # Method
   #############################################################################
 
+  # count + 1 when the order is successfully created.
+  def add_order_count
+    # TODO: can add multiple numbers order but not use case for now
+    order_total_count = self.order_total_count + 1
+
+    self.update_columns(order_total_count: order_total_count)
+  end
   #############################################################################
   # Private Method
   #############################################################################

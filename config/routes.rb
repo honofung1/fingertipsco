@@ -11,14 +11,18 @@ Rails.application.routes.draw do
     post 'login', to: 'user_sessions#create'
     delete 'logout', to: 'user_sessions#destroy'
 
+    # Mange Admin user
+    resources :admin_users
+
     # Manage Order Owner
     resources :order_owners
 
     # Manage Order and its part
-    resources :orders
-
-    # Mange Admin user
-    resources :admin_users
+    resources :orders do
+      member do
+        get 'clone'
+      end
+    end
 
     # Mange Report
     resources :reports do
