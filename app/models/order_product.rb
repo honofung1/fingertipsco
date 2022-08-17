@@ -31,6 +31,10 @@ class OrderProduct < ApplicationRecord
   #############################################################################
 
   def update_order_total_price
+    # prevent the updating the order total price all the time when
+    # update the order poduct other informarion
+    return unless saved_change_to_product_quantity? || saved_change_to_product_price?
+
     order.calculate_order_total_price
   end
   #############################################################################

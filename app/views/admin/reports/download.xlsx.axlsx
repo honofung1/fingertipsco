@@ -2,13 +2,13 @@
 
 wb = xlsx_package.workbook
 # Need to discuss
-# xlsx_package.use_autowidth = false
+xlsx_package.use_autowidth = false
 default_column_width = 20
 
 wb.add_worksheet do |sheet|
   style = @result.report_style(sheet)
 
-  # Its optional
+  # It is optional for the report
   if @result.report_title.present?
     logger.debug("REPORT TITLE: #{@result.report_title}")
     @result.report_title.map do |_, titles|
@@ -32,8 +32,8 @@ wb.add_worksheet do |sheet|
           end
         end
       end
+      sheet.add_row
     end
-    sheet.add_row
   end
   # End of optional report title
 

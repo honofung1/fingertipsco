@@ -9,25 +9,27 @@ class Order < ApplicationRecord
   #   state :paidpartly
   #   state :fullpaid
   #   state :finished
+  #   state :accounted
   #   state :cancelled
   # end
-  # STATES = %w[notpaid paidpartly fullpaid finished cancelled].freeze
 
   # USING ENUM to define the state of order for now
-  # notpaid    --> 0
-  # paidpartly --> 1
-  # fullpaid   --> 2
-  # cancelled  --> 3
-  # finished   --> 4
+  # notpaid      -->  0
+  # paidpartly   -->  1
+  # fullpaid     -->  2
+  # finished     -->  3
+  # accounted    -->  4
+  # cancelled    -->  5
   #
   # State defination
   #  |State|            |Defination|
   #  notpaid            order is not have any payment yet, this is the default state of order
   #  paidpartly         order have payment, but not a full paid
   #  fullpaid           order have fullpaided, order balance should be 0 in this state
-  #  cancelled          order cancelled
-  #  finished           order finished
-  enum state: [:notpaid, :paidpartly, :fullpaid, :cancelled, :finished]
+  #  finished           order finished, but not yet proceed the accounting
+  #  accounted          order finished and finish the accounting
+  #  cancelled          order cancelled and should be ignore it
+  enum state: [:notpaid, :paidpartly, :fullpaid, :finished, :accounted, :cancelled]
 
   # set the default order code if the order doesn't have the order owner
   DEFAULT_ORDER_CODE_PREFIX = "DEF".freeze
@@ -71,6 +73,7 @@ class Order < ApplicationRecord
   #############################################################################
 
   before_create :ensure_order_created_at
+
   after_create :order_owner_count_increment
 
   before_save :ensure_order_finished_at
@@ -80,17 +83,6 @@ class Order < ApplicationRecord
   #############################################################################
   # Method
   #############################################################################
-
-  # Temp method
-  # STATES.each do |state|
-  #   define_method("#{state}?") do
-  #     self.state == state
-  #   end
-
-  #   define_method("#{state}!") do
-  #     self.update_attribute(:state, state)
-  #   end
-  # end
 
   def calculate_order_total_price
     total_price = 0
@@ -137,6 +129,8 @@ class Order < ApplicationRecord
   end
 
   # auto generate order_id
+  # order_id generate pattern
+  # Order Channel + year and mouth which is order created without ceuntry + Order Owner total count orders
   def reset_order_id
     order_id_code = order_owner_code
 
@@ -164,7 +158,7 @@ class Order < ApplicationRecord
       "-"
     else
       # order_products_attrs.join('/')
-      order_products_attrs.count == 1 ? "#{order_products_attrs.first}": "#{order_products_attrs.first}以及其他#{order_products_attrs.count - 1}樣資料"
+      order_products_attrs.count == 1 ? "#{order_products_attrs.first}": "#{order_products_attrs.first}和#{order_products_attrs.count - 1}樣資料"
     end
   end
 
@@ -198,10 +192,10 @@ class Order < ApplicationRecord
   #############################################################################
   private
 
-  # if the record is persisted(already in db), not able to changed the orde_owner_id
+  # if the record is persisted(already in db), not able to changed the order_owner_id
   def order_owner_id_cannot_changed
     if order_owner_id_changed? && self.persisted?
-      errors.add(:orde_owner_id, "Changed og Order Owner is not allowed!") # TODO: I18n
+      errors.add(:order_owner_id, "Changed on Order Owner is not allowed!") # TODO: I18n
     end
   end
 

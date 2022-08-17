@@ -44,6 +44,7 @@ zh-HK:
         other: "注文商品"
     attributes:
       order_owner:
+        name: "姓名"
         order_code_prefix: "注文Channel"
       order:
         order_id: "注文番号"
@@ -96,6 +97,7 @@ zh-HK:
     clone: "複製"
     destroy: "刪除"
     delete: "刪除"
+    remove: "刪除"
   message:
     flash_error: '錯誤'
     flash_success: '成功'
@@ -118,7 +120,7 @@ zh-HK:
     dashboard: "導航板"
     home: "首頁"
     # Sidebar
-    bidrecord: "BID Record"
+    bidrecord: "Inventory"
     order: "注文"
     report: "報告"
     export_report: "導出報告"
@@ -128,7 +130,7 @@ zh-HK:
     header_name: "注文擁有者"
     title: "注文擁有者"
     name: "姓名"
-    prefix_code: "Order Channel"
+    order_code_prefix: "注文Channel"
   order:
     header_name: "注文"
     title: "注文"
@@ -152,9 +154,12 @@ zh-HK:
     product_header: "商品資料"
     shipment_header: "配送"
     cost_header: "仕入れ"
+    ship_date: "輸出日"
+    receipt_date: "領收書日期"
   order_payment:
     new: "新注文付款"
     exist: "注文付款"
+    paid_date: "取引日"
   views:
     pagination:
       first: "&laquo; 首頁"
@@ -188,11 +193,12 @@ zh-HK:
       order_cost_report_title: "仕入高"
     order_export:
       title: "注文報告"
-      description: "Using all orders, order products and order paymenys data"
-      order_customer_report_title: "売上先"
+      description: "Using all orders, order products data"
+      order_processor_report_title: "經手人名:"
+      order_report_title: "注文"
       order_product_report_title: "商品"
-      order_product_price_report_title: "価格(HKD)"
       order_shipment_report_title: "配送"
+      order_check_report_title: "チェック"
     order_sales_export:
       title: "売上高報告"
       description: "Using orders and order payments data"
@@ -200,7 +206,8 @@ zh-HK:
   enums:
     order:
       notpaid: "未付款"
-      paidpartly: "尾數"
+      paidpartly: "有尾數"
       fullpaid: "已付全數"
+      finished: "完成交易"
+      accounted: "完成會計"
       cancelled: "已取消"
-      finished: "已完成"

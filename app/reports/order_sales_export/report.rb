@@ -139,7 +139,7 @@ class OrderSalesExport::Report < ReportBase
       order_id: { type: :field, display: Order.human_attribute_name(:order_id) },
       payment_method: { type: :field, display: OrderPayment.human_attribute_name(:payment_method) },
       paid_amount: { type: :field, display: OrderPayment.human_attribute_name(:paid_amount), col_data_type: :integer },
-      paid_date: { type: :date, display: OrderProduct.human_attribute_name(:receipt_date) }
+      paid_date: { type: :date, display: OrderProduct.human_attribute_name(:receipt_date), col_data_type: :date }
     }
 
     ###########################################################################

@@ -8,6 +8,7 @@ class OrderExport::Report < ReportBase
     header = OrderExport.header
     result = []
 
+    # Order order_created_at
     start_date = if @criteria_value_hash.dig(:order_created_at, :from)
                    @criteria_value_hash[:order_created_at][:from].to_date
                  else
@@ -20,39 +21,35 @@ class OrderExport::Report < ReportBase
                  nil
                end
 
+    # Order Product ship date
+    ship_start_date = if @criteria_value_hash.dig(:ship_date, :from)
+                        @criteria_value_hash[:ship_date][:from].to_date
+                      else
+                        nil
+                      end
+
+    ship_end_date = if @criteria_value_hash.dig(:ship_date, :to)
+                      @criteria_value_hash[:ship_date][:to].to_date
+                    else
+                      nil
+                    end
+
     # order_costs =Order.joins('LEFT JOIN order_products ON order_products.order_id = orders.id').select('orders.order_id,order_products.product_cost,order_products.shipment_cost,order_products.discount,order_products.total_cost,order_products.receipt_date').order(:id, 'orders.order_id')
     orders =
-      Order.joins('LEFT JOIN order_payments ON order_payments.order_id = orders.id')
-           .joins('LEFT JOIN order_products ON order_products.order_id = orders.id')
+      Order.joins('LEFT JOIN order_products ON order_products.order_id = orders.id')
            .select("orders.order_id,
-                    orders.customer_name,
-                    orders.customer_contact,
-                    orders.customer_address,
-                    orders.total_price,
                     CASE
                       WHEN orders.state = 0 THEN 'notpaid'
                       WHEN orders.state = 1 THEN 'paidpartly'
                       WHEN orders.state = 2 THEN 'fullpaid'
-                      WHEN orders.state = 3 THEN 'cancelled'
-                      WHEN orders.state = 4 THEN 'finished'
+                      WHEN orders.state = 3 THEN 'finished'
+                      WHEN orders.state = 4 THEN 'accounted'
+                      WHEN orders.state = 5 THEN 'cancelled'
                     END AS order_state,
                     order_products.shop_from,
                     order_products.product_name,
                     order_products.product_remark,
-                    order_products.product_price,
-                    order_products.product_quantity,
-                    order_products.receive_number,
-                    order_products.hk_tracking_number,
-                    order_products.ship_date,
-                    order_products.tracking_number,
-                    order_payments.payment_method,
-                    order_payments.paid_amount,
-                    order_payments.paid_date,
-                    order_products.product_cost,
-                    order_products.shipment_cost,
-                    order_products.discount,
-                    order_products.total_cost,
-                    order_products.receipt_date")
+                    order_products.ship_date")
            .order(:id, 'orders.order_id')
 
     if start_date.present? && end_date.present?
@@ -61,6 +58,13 @@ class OrderExport::Report < ReportBase
         orders.where('orders.order_created_at BETWEEN :from AND :to',
                      from: start_date.beginning_of_day.utc,
                      to: end_date.end_of_day.utc)
+    end
+
+    if ship_start_date.present? && ship_end_date.present?
+      orders =
+        orders.where('order_products.ship_date BETWEEN :from AND :to',
+                     from: ship_start_date.beginning_of_day.utc,
+                     to: ship_end_date.end_of_day.utc)
     end
 
     case format
@@ -85,6 +89,9 @@ class OrderExport::Report < ReportBase
     # TODO: Need to confirm with kylie
     # criteria.add_criterion(ReportCriterionDefinition.new(code: :order_owner_id, type: :enum_default_blank, enum: OrderOwner.all, enum_object_display_field: :order_code_prefix, model: OrderOwner, view_code: :order_code_prefix))
     criteria.add_criterion(ReportCriterionDefinition.new(code: :order_created_at, type: :date_range_default_blank, model: Order, view_code: :order_created_at))
+    # Order product ship date selector
+    # Example for the order
+    criteria.add_criterion(ReportCriterionDefinition.new(code: :ship_date, type: :date_range_default_blank, model: OrderProduct, view_code: :ship_date))
   end
 
   def on_validate
@@ -104,21 +111,9 @@ class OrderExport::Report < ReportBase
                                         sz: 12,
                                         border: Axlsx::STYLE_THIN_BORDER,
                                         alignment: { horizontal: :center, vertical: :center, wrap_text: true }),
-
-      sales_title: worksheet.styles.add_style(font_name: '游ゴシック',
-                                              sz: 12,
-                                              border: Axlsx::STYLE_THIN_BORDER,
-                                              bg_color: 'D6DCE4',
-                                              alignment: { horizontal: :center, vertical: :center, wrap_text: true }),
-
-      cost_title: worksheet.styles.add_style(font_name: '游ゴシック',
-                                             sz: 12,
-                                             border: Axlsx::STYLE_THIN_BORDER,
-                                             bg_color: 'FCE4D6',
-                                             alignment: { horizontal: :center, vertical: :center, wrap_text: true }),
       # header
       header: worksheet.styles.add_style(font_name: '游ゴシック',
-                                         sz: 12,
+                                         sz: 16,
                                          border: Axlsx::STYLE_THIN_BORDER,
                                          alignment: { horizontal: :center, vertical: :center, wrap_text: true }),
 
@@ -136,36 +131,32 @@ class OrderExport::Report < ReportBase
   end
 
   # ABCDEFGHIJKLMNOPQRSTUVWXYZ
-  # TODO: add comment
+  # TODO: add comment for the report title how is working
   def report_title
     report_title = {
       layer1: {
-        order_customer: {
-          merge_cell_size: "B1:D2",
-          merge_cell_data: [I18n.t(:'reports.order_export.order_customer_report_title'), "", ""],
-          offset: 1
+        order_processor: {
+          merge_cell_size: "A1:G2",
+          merge_cell_data: [I18n.t(:'reports.order_export.order_processor_report_title'), "", "", "", "", "", ""],
+          title_style: :header
+        }
+      },
+      layer2: {
+        order: {
+          merge_cell_size: "A3:A4",
+          merge_cell_data: [I18n.t(:'reports.order_export.order_report_title')]
         },
         order_product: {
-          merge_cell_size: "E1:G2",
+          merge_cell_size: "B3:D4",
           merge_cell_data: [I18n.t(:'reports.order_export.order_product_report_title'), "", ""]
         },
-        order_product_price: {
-          merge_cell_size: "H1:J2",
-          merge_cell_data: [I18n.t(:'reports.order_export.order_product_price_report_title'), "", ""]
-        },
         order_shipment: {
-          merge_cell_size: "K1:O2",
-          merge_cell_data: [I18n.t(:'reports.order_export.order_shipment_report_title'), "", "", "", ""]
+          merge_cell_size: "E3:F4",
+          merge_cell_data: [I18n.t(:'reports.order_export.order_shipment_report_title'), ""]
         },
-        order_sales: {
-          merge_cell_size: "P1:R2",
-          merge_cell_data: [I18n.t(:'reports.order_sales_export.order_sales_report_title'), "", ""],
-          title_style: :sales_title
-        },
-        order_cost: {
-          merge_cell_size: "S1:W2",
-          merge_cell_data: [I18n.t(:'reports.order_cost_export.order_cost_report_title'), "", "", "", ""],
-          title_style: :cost_title
+        order_check: {
+          merge_cell_size: "G3:G4",
+          merge_cell_data: [I18n.t(:'reports.order_export.order_check_report_title')]
         }
       }
     }
@@ -188,35 +179,18 @@ class OrderExport::Report < ReportBase
     ###########################################################################
     # CONSTANT
     ###########################################################################
-    FIELDS = %i[order_id customer_name customer_contact customer_address shop_from product_name product_remark
-                product_price product_quantity total_price receive_number hk_tracking_number order_state ship_date
-                tracking_number payment_method paid_amount paid_date product_cost shipment_cost discount
-                total_cost receipt_date].freeze
+    FIELDS = %i[order_id shop_from product_name product_remark order_state ship_date checking].freeze
 
     FIELD_MAPS = {
       order_id: { type: :field, display: Order.human_attribute_name(:order_id) },
-      customer_name: { type: :field, display: Order.human_attribute_name(:customer_name) },
-      customer_contact: { type: :field, display: Order.human_attribute_name(:customer_contact) },
-      customer_address: { type: :field, display: Order.human_attribute_name(:customer_address) },
       shop_from: { type: :field, display: OrderProduct.human_attribute_name(:shop_from) },
       product_name: { type: :field, display: OrderProduct.human_attribute_name(:product_name) },
       product_remark: { type: :field, display: OrderProduct.human_attribute_name(:product_remark) },
-      product_price: { type: :field, display: OrderProduct.human_attribute_name(:product_price), col_data_type: :integer },
-      product_quantity: { type: :field, display: OrderProduct.human_attribute_name(:product_quantity), col_data_type: :integer },
-      total_price: { type: :field, display: Order.human_attribute_name(:total_price), col_data_type: :integer },
-      receive_number: { type: :field, display: OrderProduct.human_attribute_name(:receive_number) },
-      hk_tracking_number: { type: :field, display: OrderProduct.human_attribute_name(:hk_tracking_number) },
       order_state: { type: :state, display: Order.human_attribute_name(:state) },
-      ship_date: { type: :field, display: OrderProduct.human_attribute_name(:ship_date) },
-      tracking_number: { type: :field, display: OrderProduct.human_attribute_name(:tracking_number) },
-      payment_method: { type: :field, display: OrderPayment.human_attribute_name(:payment_method), style: :sales_title },
-      paid_amount: { type: :field, display: OrderPayment.human_attribute_name(:paid_amount), col_data_type: :integer, style: :sales_title },
-      paid_date: { type: :date, display: OrderPayment.human_attribute_name(:paid_date), style: :sales_title },
-      product_cost: { type: :field, display: OrderProduct.human_attribute_name(:product_cost), col_data_type: :integer, style: :cost_title },
-      shipment_cost: { type: :field, display: OrderProduct.human_attribute_name(:shipment_cost), col_data_type: :integer, style: :cost_title },
-      discount: { type: :field, display: OrderProduct.human_attribute_name(:discount), col_data_type: :integer, style: :cost_title },
-      total_cost: { type: :field, display: OrderProduct.human_attribute_name(:total_cost), col_data_type: :integer, style: :cost_title },
-      receipt_date: { type: :date, display: OrderProduct.human_attribute_name(:receipt_date), style: :cost_title }
+      ship_date: { type: :date, display: OrderProduct.human_attribute_name(:ship_date), col_data_type: :date },
+      # the checking field is for the check manually and there is no database data here,
+      # just a dummy column
+      checking: { type: :field, display: "✔︎" }
     }
 
     ###########################################################################

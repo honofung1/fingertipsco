@@ -136,7 +136,7 @@ class OrderCostExport::Report < ReportBase
       shipment_cost: { type: :field, display: OrderProduct.human_attribute_name(:shipment_cost), col_data_type: :integer },
       discount: { type: :field, display: OrderProduct.human_attribute_name(:discount), col_data_type: :integer },
       total_cost: { type: :field, display: OrderProduct.human_attribute_name(:total_cost), col_data_type: :integer },
-      receipt_date: { type: :date, display: OrderProduct.human_attribute_name(:receipt_date) }
+      receipt_date: { type: :date, display: OrderProduct.human_attribute_name(:receipt_date), col_data_type: :date }
     }
 
     ###########################################################################

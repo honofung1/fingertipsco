@@ -27,10 +27,13 @@
         <%= yield %>
       </div>
       <!-- /.content-wrapper -->
-  
+
       <%= render 'admin/shared/footer' %>
  
     </div>
+
     <%= javascript_include_tag 'admin' %> <!--ここでadmin.jsを読み込む-->
+    <%= content_for(:inline_javascript) %>
+
   </body>
  </html>
