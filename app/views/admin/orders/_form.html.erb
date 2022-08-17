@@ -12,33 +12,33 @@
         </div>
 
         <div class="form-group">
-          <%= f.label :order_owner, Order.human_attribute_name(:pickup_way) %>
-          <%= f.select :pickup_way, Order::PICKUP_WAYS.map { |p| p }, {}, class: 'form-control select2 select2-hidden-accessible' %>
-        </div>
-
-        <div class="form-group">
           <%= f.label :order_owner, Order.human_attribute_name(:currency) %>
           <%= f.select :currency, Order::CURRENCYS.map { |c| c }, {}, class: 'form-control select2 select2-hidden-accessible' %>
         </div>
 
-        <div class="field form-group">
-          <%# https://stackoverflow.com/questions/32026202/select-box-by-simple-form-in-rails-save-id-not-title %>
-          <%= f.label :state, Order.human_attribute_name(:state) %>
-          <%= f.select :state, Order.states.keys.map{ |s| I18n.t(:"enums.order.#{s}") }.zip(Order.states.keys), {}, class: 'form-control select2 select2-hidden-accessible' %>
+        <div class="form-group">
+          <%= f.label :order_owner, Order.human_attribute_name(:pickup_way) %>
+          <%= f.select :pickup_way, Order::PICKUP_WAYS.map { |p| p }, {}, class: 'form-control select2 select2-hidden-accessible' %>
         </div>
         
         <%= f.input :customer_name, placeholder: t(:'order.customer_name') %>
         <%= f.input :customer_contact, placeholder: t(:'order.customer_contact') %>
         <%= f.input :customer_address, placeholder: t(:'order.customer_address') %>
 
-        <%= f.label :emergency_call %>
-        <%= f.check_box :emergency_call %>
+        <%= f.input :remark %>
+
+        <div class="form-group">
+            <%= f.check_box :emergency_call %>
+            <%= f.label :emergency_call %>
+        </div>
+
       </div>
-      <div class="card-footer">
+      <!--  Moving the submit button to the top right side after discuss -->
+      <!-- <div class="card-footer">
         <div class="actions">
           <%= f.submit class: "btn btn-md btn-success" %>
         </div>
-      </div>
+      </div> -->
 
     </div>
 
@@ -54,7 +54,7 @@
 
       <div class="card-body">
         <div class="form-group">
-          <div class="form-group container-group">
+          <div class="form-group container-group" id="order_product_groups">
             <%= f.simple_fields_for :order_products do |order_product_form| %>
               <%= render 'order_product_fields', f: order_product_form %>
             <% end %>
@@ -70,6 +70,26 @@
   </div>
 
   <div class="col-md-4">
+    <div class="card bg-transparent border-0">
+        <div class="actions">
+          <%= f.submit class: "btn btn-block btn-lg btn-success float-right" %>
+        </div>
+    </div>
+
+    <div class="card card-outline card-primary">
+      <div class="card-header">
+        <h3 class="card-title"><%= f.label :state %></h3>
+      </div>
+
+      <div class="card-body">
+        <div class="field form-group">
+          <%# https://stackoverflow.com/questions/32026202/select-box-by-simple-form-in-rails-save-id-not-title %>
+          <%= f.label :state, Order.human_attribute_name(:state) %>
+          <%= f.select :state, Order.states.keys.map{ |s| I18n.t(:"enums.order.#{s}") }.zip(Order.states.keys), {}, class: 'form-control select2 select2-hidden-accessible' %>
+        </div>
+      </div>
+    </div>
+
     <div class="card card-outline card-info">
       <div class="card-header">
         <h3 class="card-title"><%= f.label :order_payments %></h3>
@@ -96,3 +116,30 @@
 
   </div>
 </div>
+
+<% content_for :inline_javascript do %>
+  <script type="text/javascript" >
+    $(function(){
+      // This is for the newly added cocoon items
+      $('#order_product_groups').on('cocoon:after-insert', function(e, added_item) {
+          added_item.find('.product_cost, .shipment_cost, .discount').on('input', function() {
+            cal_total_cost(added_item);
+          });
+      });
+
+      // This is the way to handle the pre-exisited cocoon items
+      $('.order_product_fields').find('.product_cost, .shipment_cost, .discount').on('input', function() {
+        cal_total_cost($(this).closest('.product_cost_fields'));
+      });
+    });
+
+    function cal_total_cost(parent) {
+      var product_cost = parseFloat(parent.find('.product_cost').val()) || 0;
+      var shipment_cost = parseFloat(parent.find('.shipment_cost').val()) || 0;
+      var discount = parseFloat(parent.find('.discount').val()) || 0;
+
+      var total_cost = product_cost + shipment_cost - discount;
+      parent.find('.total_cost').val(total_cost);
+    }
+  </script>
+<% end %>

@@ -95,7 +95,7 @@ module AdminHelper
   end
 
   def format_boolean(flag)
-    flag ? "YES" : "NO" # TODO: I18n
+    flag ? "是" : "否" # TODO: I18n
   end
 
   def daterangepicker_data(

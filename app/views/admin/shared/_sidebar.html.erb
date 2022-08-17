@@ -22,54 +22,59 @@
      <nav class="mt-2">
        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 
-         <!-- Bid record -->
-         <li class="nav-item">
-           <%= link_to '#', class: "nav-link" do %>
-             <i class="nav-icon fa fa-industry"></i>
-             <%= content_tag :p, t("sidebar.bidrecord") %>
-           <% end %>
-         </li>
+        <!-- Order -->
+        <li class="nav-header"><%= t("sidebar.order") %></li>
 
-          <!-- Report -->
-         <li class="nav-item">
-           <%= link_to admin_reports_path, class: "nav-link" do %>
-             <i class="nav-icon far fa-file-excel"></i>
-             <%= content_tag :p, t("sidebar.report") %>
-           <% end %>
-         </li>
+        <li class="nav-item">
+          <%= link_to admin_orders_path, class: "nav-link" do %>
+            <i class="nav-icon fa fa-inbox fa-fw"></i>
+            <%= content_tag :p, t("sidebar.order") %>
+          <% end %>
+        </li>
 
-          <!-- Export report -->
-         <li class="nav-item">
-           <%= link_to '#', class: "nav-link" do %>
-             <i class="nav-icon fa fa-paper-plane"></i>
-             <%= content_tag :p, t("sidebar.export_report") %>
-           <% end %>
-         </li>
+        <!-- Order Owner -->
+        <li class="nav-item">
+          <%= link_to admin_order_owners_path, class: "nav-link" do %>
+            <i class="nav-icon far fa fa-users"></i>
+            <%= content_tag :p, t("sidebar.order_owner") %>
+          <% end %>
+        </li>
 
-         <!-- Order -->
-         <li class="nav-item">
-           <%= link_to admin_orders_path, class: "nav-link" do %>
-             <i class="nav-icon fa fa-inbox fa-fw"></i>
-             <%= content_tag :p, t("sidebar.order") %>
-           <% end %>
-         </li>
+        <!-- Bid record -->
+        <li class="nav-header"><%=t("sidebar.bidrecord") %></li>
+        <li class="nav-item">
+          <%= link_to '#', class: "nav-link" do %>
+            <i class="nav-icon fa fa-industry"></i>
+            <%= content_tag :p, t("sidebar.bidrecord") %>
+          <% end %>
+        </li>
 
-         <!-- Order OWnder -->
-         <li class="nav-item">
-           <%= link_to admin_order_owners_path, class: "nav-link" do %>
-             <i class="nav-icon far fa fa-users"></i>
-             <%= content_tag :p, t("sidebar.order_owner") %>
-           <% end %>
-         </li>
+        <!-- Report -->
+        <li class="nav-header"><%=t("sidebar.report") %></li>
+        <li class="nav-item">
+          <%= link_to admin_reports_path, class: "nav-link" do %>
+            <i class="nav-icon far fa-file-excel"></i>
+            <%= content_tag :p, t("sidebar.report") %>
+          <% end %>
+        </li>
+
+        <!-- Export report -->
+        <li class="nav-item">
+          <%= link_to '#', class: "nav-link" do %>
+            <i class="nav-icon fa fa-paper-plane"></i>
+            <%= content_tag :p, t("sidebar.export_report") %>
+          <% end %>
+        </li>
 
 
-         <!-- Admin user -->
-         <li class="nav-item">
-           <%= link_to admin_admin_users_path, class: "nav-link" do %>
-             <i class="nav-icon far fa-user"></i>
-             <%= content_tag :p, t("sidebar.admin_user") %>
-           <% end %>
-         </li>
+        <!-- Admin user -->
+        <li class="nav-header"><%=t("sidebar.admin_user") %></li>
+        <li class="nav-item">
+          <%= link_to admin_admin_users_path, class: "nav-link" do %>
+            <i class="nav-icon far fa-user"></i>
+            <%= content_tag :p, t("sidebar.admin_user") %>
+          <% end %>
+        </li>
 
        </ul>
      </nav>

@@ -1,5 +1,6 @@
 class Admin::OrdersController < Admin::BaseController
   before_action :set_order, only: %i[show edit update destroy]
+  prepend_before_action :handle_order_product_shipment_info, only: %i[create update]
   before_action :set_content_header
 
   def index
@@ -63,7 +64,7 @@ class Admin::OrdersController < Admin::BaseController
       [
         :order_owner_id, :order_id,
         :customer_name, :customer_contact, :customer_address, :currency,
-        :emergency_call, :pickup_way, :state,
+        :emergency_call, :pickup_way, :state, :remark,
         order_products_attributes:
           [
             :id,
@@ -115,4 +116,42 @@ class Admin::OrdersController < Admin::BaseController
     @layout_view_variables[:content_header] = content_header
   end
 
+  # Handle the params data before its begin create/ update
+  # The behavior of the order product shipment info is like below:
+  # Assume There have an order and its three order poructs
+  # -----------------------------------------------
+  # |    Order Product  |    Tracking Number      |
+  # -----------------------------------------------
+  # |         1         |         A123            |
+  # -----------------------------------------------
+  # |         2         |          ""             |
+  # -----------------------------------------------
+  # |         3         |         B123            |
+  # -----------------------------------------------
+  # After processing the shipment info, The data should be changed to the below:
+  # -----------------------------------------------
+  # |    Order Product  |    Tracking Number      |
+  # -----------------------------------------------
+  # |         1         |         A123            |
+  # -----------------------------------------------
+  # |         2         |         A123            |
+  # -----------------------------------------------
+  # |         3         |         B123            |
+  # -----------------------------------------------
+  def handle_order_product_shipment_info
+    order_product_params = params.dig(:order, :order_products_attributes)
+
+    return if order_product_params.nil?
+
+    # retrieve the first order product tracking number as a default tacking number
+    default_product_track_num = order_product_params.values.first['tracking_number']
+
+    return if default_product_track_num.blank?
+
+    order_product_params.each do |_, o|
+      order_product_tracking_num = o['tracking_number']
+      o['tracking_number'] = order_product_tracking_num.presence || default_product_track_num
+    end
+
+  end
 end

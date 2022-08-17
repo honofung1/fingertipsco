@@ -1,4 +1,4 @@
-<div class="card nested-fields">
+<div class="card nested-fields order_product_fields">
   <div class="card-header">
     <h4 class="card-title">
       <%= f.object.id.present? ? "#{t(:'order_product.exist')}: <b>#{h(f.object.product_name)}</b>".html_safe : t(:'order_product.new') %>
@@ -53,36 +53,36 @@
       <div class="field form-group col-md-4">
         <%= f.label :ship_date %>
         <div class="input-group" data-target-input="nearest">
-            <%= f.text_field :ship_date, id: "ship_date", class: "flatpickr", placeholder: "Ship Date" %>
+            <%= f.text_field :ship_date, id: "ship_date", class: "flatpickr", placeholder: t(:'order_product.ship_date') %>
         </div>
       </div>
 
     </div>
   </div>
 
-  <div class="card-body">
+  <div class="card-body product_cost_fields">
     <h5> <%= t(:'order_product.cost_header') %> </h5>
     <div class="clearfix row">
       <div class="field form-group col-md-4">
-        <%= f.input :product_cost %>
+        <%= f.input :product_cost, input_html: { class: 'product_cost' } %>
       </div>
 
       <div class="field form-group col-md-4">
-        <%= f.input :shipment_cost %>
+        <%= f.input :shipment_cost, input_html: { class: 'shipment_cost' } %>
       </div>
 
       <div class="field form-group col-md-4">
-        <%= f.input :discount %>
+        <%= f.input :discount, input_html: { class: 'discount' } %>
       </div>
 
-      <div class="field form-group col-md-6">
-        <%= f.input :total_cost %>
+      <div class="field form-group col-md-4">
+        <%= f.input :total_cost, input_html: { class: 'total_cost', readonly: true } %>
       </div>
 
       <div class="field form-group col-md-6">
         <%= f.label :receipt_date %>
         <div class="input-group date" data-target-input="nearest">
-            <%= f.text_field :receipt_date, id: "receipt_date", class: "flatpickr", placeholder: "Receipt Date" %>
+            <%= f.text_field :receipt_date, id: "receipt_date", class: "flatpickr", placeholder: t(:'order_product.receipt_date') %>
         </div>
       </div>
       

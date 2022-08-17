@@ -2,9 +2,17 @@
 $(document).ready(function(){
   $("table[role='datatable']").each(function(){
     $(this).DataTable({
+      order: [],
+      autoWidth: false,
       processing: true,
       paging: false,
       info: false,
+      columnDefs: [
+        {
+          targets: '_all',
+          className: 'wrap'
+        }
+     ]
     });
   });
 })
