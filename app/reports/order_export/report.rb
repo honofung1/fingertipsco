@@ -92,6 +92,8 @@ class OrderExport::Report < ReportBase
     # Order product ship date selector
     # Example for the order
     criteria.add_criterion(ReportCriterionDefinition.new(code: :ship_date, type: :date_range_default_blank, model: OrderProduct, view_code: :ship_date))
+    # TODO: temp to hide it
+    # criteria.add_criterion(ReportCriterionDefinition.new(code: :currency, type: :enum_default_blank, enum: Order::CURRENCYS, enum_translation: false, model: Order, view_code: :currency))
   end
 
   def on_validate

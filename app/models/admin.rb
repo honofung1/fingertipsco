@@ -6,6 +6,21 @@ class Admin < ApplicationRecord
   # Constant
   #############################################################################
 
+  # Defination of the role attribute of the admin
+  # There is two roles in the admin model [admin, super_admin]
+  # Different of the two roles
+  # UPDATED AT: 2022/09/07
+  # ------------------------------------------------------------------------
+  # |    Function/Role  |         Admin        |        Super Admin        |
+  # ------------------------------------------------------------------------
+  # |  Access the order |                      |                           |
+  # |  page             |           O          |              O            |
+  # ------------------------------------------------------------------------
+  # |  Access the admin |                      |                           |
+  # |  page             |           x          |              O            |
+  # ------------------------------------------------------------------------
+  enum role: [:admin, :super_admin]
+
   #############################################################################
   # Association
   #############################################################################
@@ -18,6 +33,8 @@ class Admin < ApplicationRecord
   validates :password, length: { minimum: 3 }, if: -> { new_record? || changes[:crypted_password] }
   validates :password, confirmation: true, if: -> { new_record? || changes[:crypted_password] }
   validates :password_confirmation, presence: true, if: -> { new_record? || changes[:crypted_password] }
+
+  validate :username_cannot_changed
   #############################################################################
   # Callback
   #############################################################################
@@ -29,7 +46,7 @@ class Admin < ApplicationRecord
   def avatar_url
     # TODO: temp method
     # Path app/assets/images/avatar2.png
-    "avatar2.png"
+    "avatar1.png"
   end
 
   def admin_ability
@@ -48,4 +65,11 @@ class Admin < ApplicationRecord
   #############################################################################
   # Private Method
   #############################################################################
+
+  # if the record is persisted(already in db), not able to changed the username
+  def username_cannot_changed
+    if username_changed? && self.persisted?
+      errors.add(:order_owner_id, "Changed on Username is not allowed!") # TODO: I18n
+    end
+  end
 end

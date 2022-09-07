@@ -36,6 +36,7 @@ class Order < ApplicationRecord
 
   # This is the order product pickup ways
   # Now we have two types of pickup ways TP AND S
+  # It is possible to add the pickup way later
   PICKUP_WAYS = %w[TP S].freeze
 
   # Order cuurency HKD AND JPY
@@ -65,6 +66,7 @@ class Order < ApplicationRecord
 
   validates :order_owner_id, presence: true
   validates :currency, inclusion: { in: CURRENCYS }
+  validates :pickup_way, inclusion: { in: PICKUP_WAYS }
 
   validate :order_owner_id_cannot_changed
 
@@ -139,6 +141,7 @@ class Order < ApplicationRecord
     "#{order_id_code}#{Time.now.strftime('%y%m')}#{order_id_ordering.to_s.rjust(4, '0')}"
   end
 
+  # For Admin page usage
   # get order_products attributes
   # eg. product_name
   def get_order_products_attr(product_attr)
@@ -147,7 +150,13 @@ class Order < ApplicationRecord
     order_products_attrs = []
 
     order_products.each do |p|
-      order_products_attrs << p.send("#{product_attr}")
+      # order_products_attrs << p.send("#{product_attr}")
+      attr_value = p.send(product_attr)
+      next if attr_value.nil?
+
+      attr_value = attr_value.strftime("%Y-%m-%d") if product_attr == "ship_date"
+
+      order_products_attrs << attr_value
     end
 
     # remove empty strings
@@ -155,7 +164,7 @@ class Order < ApplicationRecord
 
     # TODO: i18n or translate
     if order_products_attrs.empty?
-      "-"
+      " "
     else
       # order_products_attrs.join('/')
       order_products_attrs.count == 1 ? "#{order_products_attrs.first}": "#{order_products_attrs.first}和#{order_products_attrs.count - 1}樣資料"
@@ -172,7 +181,7 @@ class Order < ApplicationRecord
     total_paid_amount
   end
 
-  def order_balance_with_hkd
+  def order_balance
     # total price => when order product updated his product price, auto update the field
     # so do this here
 

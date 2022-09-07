@@ -33,44 +33,53 @@ zh-HK:
   # rails standard
   activerecord:
     models:
-      order_owner: 
-        one: "注文擁有者"
-        other: "注文擁有者"
+      admin:
+        one: "管理員"
+        other: "管理員"
+      order_owner:
+        one: "Key Account"
+        other: "Key Account"
       order:
-        one: "注文"
-        other: "注文"
+        one: "訂單"
+        other: "訂單"
       order_product:
-        one: "注文商品"
-        other: "注文商品"
+        one: "訂單商品"
+        other: "訂單商品"
     attributes:
+      admin:
+        name: "姓名"
+        username: "帳號"
+        role: "類別"
+        password: "密碼"
+        password_confirmation: "確認密碼"
       order_owner:
         name: "姓名"
-        order_code_prefix: "注文Channel"
+        order_code_prefix: "訂單號碼前綴"
       order:
-        order_id: "注文番号"
-        order_owner_id: "注文擁有者"
-        customer_name: "客人名稱"
-        customer_contact: "客人聯絡方式"
-        customer_address: "客人地址"
+        order_id: "訂單號碼"
+        order_owner_id: "Key Account"
+        customer_name: "客戶名稱"
+        customer_contact: "客戶電話"
+        customer_address: "收件地址"
         emergency_call: "標記為緊急"
-        order_created_at: "注文建立日期"
-        order_finished_at: "注文完成日期"
-        order_details: "注文詳細資料"
-        order_products: "注文商品"
-        order_payments: "注文付款"
-        order_costs: "注文成本"
-        state: "注文狀態"
-        total_price: "注文合計金額"
+        order_created_at: "訂單日期"
+        order_finished_at: "訂單完成日期"
+        order_details: "訂單資料"
+        order_products: "訂單商品資料"
+        order_payments: "付款紀錄"
+        order_costs: "訂單成本"
+        state: "訂單狀態"
+        total_price: "訂單合計金額"
         pickup_way: "取貨方式"
-        currency: "注文使用貨幣"
+        currency: "訂單貨幣"
         remark: "備註"
       order_product:
-        shop_from: "店"
+        shop_from: "供應商"
         product_name: "商品名稱"
-        product_price: "商品単価"
+        product_price: "售價"
         product_quantity: "商品數量"
         product_remark: "商品備註"
-        receive_number: "受け取り番号"
+        receive_number: "取貨號碼"
         hk_tracking_number: "香港配送追跡番号"
         tracking_number: "国際追跡番号"
         state: "注文状況"
@@ -89,8 +98,8 @@ zh-HK:
   # custom declare
   hello: "Hello world"
   button:
-    add_new: "建立新的"
-    new: "新しい"
+    add_new: "新增"
+    new: "新增"
     edit: "編輯"
     back: "返回"
     show: "詳細"
@@ -98,13 +107,14 @@ zh-HK:
     destroy: "刪除"
     delete: "刪除"
     remove: "刪除"
+    real_delete: "刪除"
   message:
     flash_error: '錯誤'
     flash_success: '成功'
     flash_warning: '警告'
     create_success: '%{header_name} 已成功建立。'
     update_success: '%{header_name} 已成功更新。'
-    destroy_success: '%{header_name} 已成功刪除 destroyed.'
+    destroy_success: '%{header_name} 已成功刪除。'
     update_failed: '%{header_name} 更新失敗。 錯誤: %{error}'
   no_record:
     header: '沒有記錄。'
@@ -120,45 +130,50 @@ zh-HK:
     dashboard: "導航板"
     home: "首頁"
     # Sidebar
+    bidrecord_header: "Fingertips Vintage"
     bidrecord: "Inventory"
-    order: "注文"
+    order_header: "訂單銷售"
+    order: "訂單管理"
+    order_owner: "Key Account"
     report: "報告"
-    export_report: "導出報告"
-    order_owner: "注文擁有者"
-    admin_user: "管理人"
+    # TODO: export report record
+    export_report: "導出報告(未完成)"
+    admin_header: "管理設定"
+    admin_user: "管理員"
   order_owner:
-    header_name: "注文擁有者"
-    title: "注文擁有者"
+    header_name: "Key Account"
+    title: "Key Account"
     name: "姓名"
-    order_code_prefix: "注文Channel"
+    order_code_prefix: "訂單號碼前綴"
   order:
-    header_name: "注文"
+    header_name: "訂單"
     title: "注文"
     order_owner_name: "Order Channel"
-    order_id: "注文番号"
-    customer_name: "客人名稱"
-    customer_contact: "客人聯絡方式"
-    customer_address: "客人地址"
-    state: "注文狀態"
-    order_balance: "残高"
+    order_id: "訂單號碼"
+    customer_name: "客戶名稱"
+    customer_contact: "客戶電話"
+    customer_address: "收件地址"
+    state: "訂單狀態"
+    order_balance: "餘額"
     emergency_call: "緊急注文"
-    order_created_at: "注文建立日期"
+    order_created_at: "訂單日期"
     order_finished_at: "注文完成日期"
-    order_receive_number: "受け取り番号"
-    order_products: "注文商品"
-    order_channel: "注文CHANNEL"
+    order_receive_number: "取貨號碼"
+    order_products: "訂單內容"
+    order_channel: "Key Account"
     order_pickup_way: "取貨方式"
+    order_ship_date: "輸出日"
   order_product:
     new: "新商品"
-    exist: "注文商品"
+    exist: "訂單商品"
     product_header: "商品資料"
     shipment_header: "配送"
-    cost_header: "仕入れ"
+    cost_header: "成本"
     ship_date: "輸出日"
     receipt_date: "領收書日期"
   order_payment:
-    new: "新注文付款"
-    exist: "注文付款"
+    new: "新付款紀錄"
+    exist: "付款紀錄"
     paid_date: "取引日"
   views:
     pagination:
@@ -168,6 +183,12 @@ zh-HK:
       next: "下頁 &rsaquo;"
       truncate: "&hellip;"
   admin:
+    header_name: "管理員"
+    name: "姓名"
+    username: "帳號"
+    role: "類別"
+    password: "密碼"
+    password_confirmation: "確認密碼"
     daterangepicker:
       from: '由'
       to: '到'
@@ -211,3 +232,6 @@ zh-HK:
       finished: "完成交易"
       accounted: "完成會計"
       cancelled: "已取消"
+    role:
+      admin: "管理員"
+      super_admin: "超級管理員"

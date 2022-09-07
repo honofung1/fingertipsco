@@ -21,7 +21,7 @@ class Admin::OrdersController < Admin::BaseController
     if @order.save
       redirect_to admin_orders_path, success: t(:'message.create_success', header_name: Order.model_name.human)
     else
-      flash.now[:alert] = @order.errors
+      flash.now[:danger] = @order.errors.full_messages.join("/")
       render :new
     end
   end
@@ -90,7 +90,9 @@ class Admin::OrdersController < Admin::BaseController
   def set_content_header
     content_header = case params[:action]
     when "index", "new", "create", "clone"
-      title = Order.model_name.human(count: 2)
+      # title = Order.model_name.human(count: 2)
+      # 2022/09/05 Kylie request for the specific title
+      title = I18n.t('sidebar.order')
       {
         header: params[:action] == "index" ? title : "#{t(:'button.new')} #{t(:'order.header_name')}",
         subheader: can?(:create, Order) && params[:action] == "index" ? {title: t(:'button.add_new'), url: new_admin_order_path} : {},
