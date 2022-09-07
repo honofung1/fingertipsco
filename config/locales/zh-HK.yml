@@ -147,7 +147,7 @@ zh-HK:
     order_code_prefix: "訂單號碼前綴"
   order:
     header_name: "訂單"
-    title: "注文"
+    title: "訂單"
     order_owner_name: "Order Channel"
     order_id: "訂單號碼"
     customer_name: "客戶名稱"
