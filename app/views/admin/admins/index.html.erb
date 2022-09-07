@@ -1,4 +1,4 @@
-<% content_for(:title, t('order_owner.title')) %>
+<% content_for(:title, t('admin.title')) %>
 <section class="content">
   <div class="row">
     <div class="col-md-12">
@@ -8,28 +8,30 @@
         </div>
         <!-- card header -->
 
-        <% if @order_owners.present? %>
+        <% if @admins.present? %>
           <div class="card-body table-responsive no-padding table-index-page" >
             <!-- rednering -->
             <table class="table table-hover table-striped text-sm" role='datatable' >
               <thead>
                 <tr>
-                  <th><%= t('order_owner.name') %></th>
-                  <th><%= t('order_owner.order_code_prefix') %></th>
+                  <th><%= t('admin.name') %></th>
+                  <th><%= t('admin.username') %></th>
+                  <th><%= t('admin.role') %></th>
                   <th data-orderable="false"></th>
                 </tr>
               </thead>
 
               <tbody>
-                <% @order_owners.each do |o| %>
+                <% @admins.each do |a| %>
                   <tr>
-                    <td><%= o.name %></td>
-                    <td><%= o.order_code_prefix %></td>
+                    <td><%= a.name %></td>
+                    <td><%= a.username %></td>
+                    <td><%= I18n.t(:"enums.role.#{a.role}") %></td>
                     <td>
                       <div class = "button-group" > <!-- not using class btn-group to split the button-->
-                        <%= link_to_btn admin_order_owner_path(o), 'show' %>
-                        <%= link_to_btn edit_admin_order_owner_path(o), 'edit' %>
-                        <%= link_to_btn admin_order_owner_path(o), 'real_delete', method: :delete, data: { confirm: '你確定嗎?' }, title: "Delete" %>
+                        <%= link_to_btn admin_admin_path(a), 'show' %>
+                        <%= link_to_btn edit_admin_admin_path(a), 'edit' %>
+                        <%= link_to_btn admin_admin_path(a), 'real_delete', method: :delete, data: { confirm: '你確定嗎?' }, title: "Delete" %>
                       </div>
                     </td>
                   </tr>
@@ -44,5 +46,5 @@
     </div>
     <!-- /.col-md-12 -->
   </div>
-  <%= render partial: "admin/shared/no_record_table" unless @order_owners.present? %>
+  <%= render partial: "admin/shared/no_record_table" unless @admins.present? %>
 </section>

@@ -5,6 +5,7 @@ $(document).ready(function(){
       order: [],
       autoWidth: false,
       processing: true,
+      searching: false,
       paging: false,
       info: false,
       columnDefs: [

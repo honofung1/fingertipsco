@@ -1,0 +1,21 @@
+<div class="row">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-body">
+        <%= f.input :name, placeholder: t(:'admin.name') %>
+        <%= f.input :username, placeholder: t(:'admin.username'), readonly: @admin.persisted? %>
+        <%= f.label :role, Admin.human_attribute_name(:role) %>
+        <%= f.select :role, Admin.roles.keys.map{ |r| I18n.t(:"enums.role.#{r}") }.zip(Admin.roles.keys), {}, class: 'form-control select2 select2-hidden-accessible' %>
+        <%= f.input :password, placeholder: t(:'admin.password') %>
+        <%= f.input :password_confirmation, placeholder: t(:'admin.password_confirmation') %>
+      </div>
+
+      <div class="card-footer">
+        <div class="actions">
+          <%= f.submit class: "btn btn-md btn-success" %>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>

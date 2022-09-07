@@ -2,7 +2,7 @@
  <aside class="main-sidebar sidebar-dark-primary elevation-4">
    <!-- Brand Logo -->
    <%= link_to admin_root_path, class:"brand-link" do %>
-     <%= image_tag 'AdminLTELogo.png', class: 'brand-image img-circle elevation-3' %>
+     <%= image_tag 'f_icon.png', class: 'brand-image img-circle elevation-3' %>
      <span class="brand-text font-weight-light">Fingertips Co</span> <!-- TODO: change to ENV -->
    <% end %>
  
@@ -23,7 +23,7 @@
        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 
         <!-- Order -->
-        <li class="nav-header"><%= t("sidebar.order") %></li>
+        <li class="nav-header"><%= t("sidebar.order_header") %></li>
 
         <li class="nav-item">
           <%= link_to admin_orders_path, class: "nav-link" do %>
@@ -41,10 +41,10 @@
         </li>
 
         <!-- Bid record -->
-        <li class="nav-header"><%=t("sidebar.bidrecord") %></li>
+        <li class="nav-header"><%=t("sidebar.bidrecord_header") %></li>
         <li class="nav-item">
           <%= link_to '#', class: "nav-link" do %>
-            <i class="nav-icon fa fa-industry"></i>
+            <i class="nav-icon fa fa-archive"></i>
             <%= content_tag :p, t("sidebar.bidrecord") %>
           <% end %>
         </li>
@@ -67,14 +67,16 @@
         </li>
 
 
-        <!-- Admin user -->
-        <li class="nav-header"><%=t("sidebar.admin_user") %></li>
-        <li class="nav-item">
-          <%= link_to admin_admin_users_path, class: "nav-link" do %>
-            <i class="nav-icon far fa-user"></i>
-            <%= content_tag :p, t("sidebar.admin_user") %>
-          <% end %>
-        </li>
+        <% if current_user.super_admin? %>
+          <!-- Admin user -->
+          <li class="nav-header"><%=t("sidebar.admin_header") %></li>
+          <li class="nav-item">
+            <%= link_to admin_admins_path, class: "nav-link" do %>
+              <i class="nav-icon far fa-user"></i>
+              <%= content_tag :p, t("sidebar.admin_user") %>
+            <% end %>
+          </li>
+        <% end %>
 
        </ul>
      </nav>

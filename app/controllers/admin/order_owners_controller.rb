@@ -17,7 +17,7 @@ class Admin::OrderOwnersController < Admin::BaseController
     if @order_owner.save
       redirect_to admin_order_owners_path, success: t(:'message.create_success', header_name: OrderOwner.model_name.human)
     else
-      flash.now[:alert] = @order_owner.errors
+      flash.now[:alert] = @order_owner.errors.full_messages.join("/")
       render :new
     end
   end

@@ -24,7 +24,7 @@ module AdminHelper
         options[:name] = "<i class='far fa-chart-bar'></i><strong>#{t(:"button.#{title}")}</strong>".html_safe
       when 'edit'
         options[:name] = "<i class='fa fa-edit'></i><strong>#{t(:"button.#{title}")}</strong>".html_safe
-      when 'delete', 'remove'
+      when 'delete', 'remove', 'real_delete'
         options[:name] = "<i class='fa fa-trash'></i><strong>#{t(:"button.#{title}")}</strong>".html_safe
       when 'download'
         options[:name] = "<i class='fa fa-download'></i><strong>#{t(:"button.#{title}")}</strong>".html_safe
@@ -45,6 +45,8 @@ module AdminHelper
         options[:class] = "btn btn-success btn-sm"
       when 'delete', 'remove'
         options[:class] = 'btn btn-danger btn-sm disabled'
+      when 'real_delete'
+        options[:class] = 'btn btn-danger btn-sm'
       when 'clone'
         options[:class] = 'btn btn-info btn-sm'
       else

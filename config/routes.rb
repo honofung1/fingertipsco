@@ -12,7 +12,7 @@ Rails.application.routes.draw do
     delete 'logout', to: 'user_sessions#destroy'
 
     # Mange Admin user
-    resources :admin_users
+    resources :admins
 
     # Manage Order Owner
     resources :order_owners
