@@ -8,7 +8,7 @@ class Admin::OrdersController < Admin::BaseController
     @q = Order.ransack(params[:q])
     @q.sorts = ['emergency_call desc', 'state asc', 'updated_at desc', 'order_created_at desc'] if @q.sorts.empty?
     @orders = @q.result(distinct: true).includes(:order_owner, :order_payments, :order_products).page(params[:page])
-    logger.debug("Testing For Loogger")
+    # logger.debug("Testing For Loogger")
   end
 
   def new
@@ -65,13 +65,12 @@ class Admin::OrdersController < Admin::BaseController
         :order_owner_id, :order_id,
         :customer_name, :customer_contact, :customer_address, :currency,
         :emergency_call, :pickup_way, :state, :remark,
+        :receive_number, :hk_tracking_number, :tracking_number, :ship_date,
         order_products_attributes:
           [
             :id,
             :shop_from,
             :product_name, :product_remark, :product_quantity, :product_price,
-            :receive_number, :hk_tracking_number, :tracking_number,
-            :state, :ship_date,
             :product_cost, :shipment_cost, :discount, :total_cost,
             :receipt_date,
             :_destroy
@@ -92,9 +91,9 @@ class Admin::OrdersController < Admin::BaseController
     when "index", "new", "create", "clone"
       # title = Order.model_name.human(count: 2)
       # 2022/09/05 Kylie request for the specific title
-      title = I18n.t('sidebar.order')
+      title = t(:'order.header_name')
       {
-        header: params[:action] == "index" ? title : "#{t(:'button.new')} #{t(:'order.header_name')}",
+        header: params[:action] == "index" ? I18n.t('sidebar.order') : "#{t(:'button.new')} #{t(:'order.header_name')}",
         subheader: can?(:create, Order) && params[:action] == "index" ? {title: t(:'button.add_new'), url: new_admin_order_path} : {},
         labels: [],
         breadcrumbs: [
@@ -104,7 +103,7 @@ class Admin::OrdersController < Admin::BaseController
     when "show", "edit", "update"
       title = t(:'order.header_name')
       {
-        header: params[:action] == "show" ? title: "#{t(:'button.edit')} #{t(:'order.header_name')}",
+        header: params[:action] == "show" ? title : "#{t(:'button.edit')} #{t(:'order.header_name')}",
         subheader: {},
         labels: [],
         breadcrumbs: [

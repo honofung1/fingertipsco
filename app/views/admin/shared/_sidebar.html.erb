@@ -58,6 +58,14 @@
           <% end %>
         </li>
 
+        <!-- Import report -->
+        <li class="nav-item">
+          <%= link_to '#', class: "nav-link" do %>
+            <i class="nav-icon fa fa-upload"></i>
+            <%= content_tag :p, t("sidebar.import_report") %>
+          <% end %>
+        </li>
+
         <!-- Export report -->
         <li class="nav-item">
           <%= link_to '#', class: "nav-link" do %>
