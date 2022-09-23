@@ -69,6 +69,7 @@ class Order < ApplicationRecord
   validates :pickup_way, inclusion: { in: PICKUP_WAYS }
 
   validate :order_owner_id_cannot_changed
+  validate :check_state_condition
 
   #############################################################################
   # Callback
@@ -96,7 +97,8 @@ class Order < ApplicationRecord
     self.update_columns(total_price: total_price)
   end
 
-  # HKD and JPY have different dollar sign
+  # HKD and JPY should have different dollar sign
+  # Two use case for now (HKD and JPY)
   def curreny_with_sign
     dollar_sign = currency == "HKD" ? "$" : "¥"
     "#{currency}#{dollar_sign}"
@@ -204,8 +206,28 @@ class Order < ApplicationRecord
   # if the record is persisted(already in db), not able to changed the order_owner_id
   def order_owner_id_cannot_changed
     if order_owner_id_changed? && self.persisted?
-      errors.add(:order_owner_id, "Changed on Order Owner is not allowed!") # TODO: I18n
+      errors.add(:order_owner_id, "不允許改變") # TODO: I18n
     end
   end
 
+  def check_state_condition
+    return unless state_changed?
+
+    if finished? && ship_date.nil?
+      state_error_call(state, I18n.t(:'errors.order.ship_date_blank'))
+    end
+
+    if accounted? && order_products.where("receipt_date IS NULL").count > 0
+      state_error_call(state, I18n.t(:'errors.order.receipt_date_blank'))
+    end
+  end
+
+  def state_error_call(status, error_msg)
+    errors.add(
+      :state,
+      I18n.t(:'message.state_update_failed',
+      state: I18n.t(:"enums.order.#{status}"),
+      error: error_msg)
+    )
+  end
 end

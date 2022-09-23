@@ -52,6 +52,26 @@
             </tr>
 
             <tr>
+              <th class="col-md-6"><%= Order.human_attribute_name(:receive_number) %>:</th>
+              <td><%= @order.receive_number %></td>
+            </tr>
+
+            <tr>
+              <th class="col-md-6"><%= Order.human_attribute_name(:hk_tracking_number) %>:</th>
+              <td><%= @order.hk_tracking_number %></td>
+            </tr>
+
+            <tr>
+              <th class="col-md-6"><%= Order.human_attribute_name(:tracking_number) %>:</th>
+              <td><%= @order.tracking_number %></td>
+            </tr>
+
+            <tr>
+              <th class="col-md-6"><%= Order.human_attribute_name(:ship_date) %>:</th>
+              <td><%= format_date(@order.ship_date) %></td>
+            </tr>
+
+            <tr>
               <th class="col-md-6"><%= Order.human_attribute_name(:total_price) %>:</th>
               <td><%= @order.total_price %></td>
             </tr>
@@ -83,7 +103,7 @@
   </div>
 
 <div class="row">
-  <div class="col-md-11">
+  <div class="col-md-8">
     <div class="card">
       <div class="card-header">
         <h3 class="card-title"><%= Order.human_attribute_name(:order_products) %></h3>
@@ -98,10 +118,6 @@
             <th><%= OrderProduct.human_attribute_name(:product_remark) %></th>
             <th><%= OrderProduct.human_attribute_name(:product_quantity) %></th>
             <th><%= OrderProduct.human_attribute_name(:product_price) %></th>
-            <th><%= OrderProduct.human_attribute_name(:receive_number) %></th>
-            <th><%= OrderProduct.human_attribute_name(:hk_tracking_number) %></th>
-            <th><%= OrderProduct.human_attribute_name(:tracking_number) %></th>
-            <th><%= OrderProduct.human_attribute_name(:ship_date) %></th>
             <th><%= OrderProduct.human_attribute_name(:product_cost) %></th>
             <th><%= OrderProduct.human_attribute_name(:shipment_cost) %></th>
             <th><%= OrderProduct.human_attribute_name(:discount) %></th>
@@ -115,10 +131,6 @@
             <td><%= order_product.product_remark %></td>
             <td><%= order_product.product_quantity %></td>
             <td><%= order_product.product_price %></td>
-            <td><%= order_product.receive_number %></td>
-            <td><%= order_product.hk_tracking_number %></td>
-            <td><%= order_product.tracking_number %></td>
-            <td><%= format_date(order_product.ship_date) %></td>
             <td><%= order_product.product_cost %></td>
             <td><%= order_product.shipment_cost %></td>
             <td><%= order_product.discount %></td>

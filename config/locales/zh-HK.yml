@@ -73,6 +73,10 @@ zh-HK:
         pickup_way: "取貨方式"
         currency: "訂單貨幣"
         remark: "備註"
+        receive_number: "取貨號碼"
+        hk_tracking_number: "香港配送追跡番号"
+        tracking_number: "国際追跡番号"
+        ship_date: "輸出日"
       order_product:
         shop_from: "供應商"
         product_name: "商品名稱"
@@ -116,6 +120,8 @@ zh-HK:
     update_success: '%{header_name} 已成功更新。'
     destroy_success: '%{header_name} 已成功刪除。'
     update_failed: '%{header_name} 更新失敗。 錯誤: %{error}'
+    state_update_failed: '不能更新為%{state}。錯誤： %{error}'
+
   no_record:
     header: '沒有記錄。'
     content: '這裹沒有 %{header_name} 的記錄'
@@ -137,6 +143,7 @@ zh-HK:
     order_owner: "Key Account"
     report: "報告"
     # TODO: export report record
+    import_report: "匯入報告"
     export_report: "導出報告(未完成)"
     admin_header: "管理設定"
     admin_user: "管理員"
@@ -235,3 +242,7 @@ zh-HK:
     role:
       admin: "管理員"
       super_admin: "超級管理員"
+  errors:
+    order:
+      ship_date_blank: "輸出日是空白"
+      receipt_date_blank: "領收書日期有空白"

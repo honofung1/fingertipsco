@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_07_21_070059) do
+ActiveRecord::Schema.define(version: 2022_09_20_084602) do
 
   create_table "admin_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "username", null: false
@@ -215,6 +215,10 @@ ActiveRecord::Schema.define(version: 2022_07_21_070059) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "currency"
+    t.string "receive_number"
+    t.string "hk_tracking_number"
+    t.string "tracking_number"
+    t.datetime "ship_date"
     t.index ["currency"], name: "index_orders_on_currency"
     t.index ["order_created_at", "order_finished_at"], name: "index_orders_on_created_finished"
     t.index ["order_id"], name: "index_orders_on_order_id", unique: true

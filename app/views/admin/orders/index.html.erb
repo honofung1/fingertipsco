@@ -83,10 +83,10 @@
                     <td><%= o.customer_contact %></td>
                     <td><%= o.get_order_products_attr("product_name") %></td>
                     <td><%= o.pickup_way %></td>
-                    <td><%= o.get_order_products_attr("receive_number") %></td>
+                    <td><%= o.receive_number %></td>
                     <td><%= I18n.t(:"enums.order.#{o.state}") %></td>
                     <td><%= o.order_balance %></td>
-                    <td><%= o.get_order_products_attr("ship_date") %></td>
+                    <td><%= format_date(o.ship_date) %></td>
                     <td>
                       <div class = "button-group" > <!-- not using class btn-group to split the button-->
                         <%= link_to_btn admin_order_path(o), 'show' %>

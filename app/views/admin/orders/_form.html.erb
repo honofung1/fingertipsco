@@ -21,11 +21,31 @@
           <%= f.select :pickup_way, Order::PICKUP_WAYS.map { |p| p }, {}, class: 'form-control select2 select2-hidden-accessible' %>
         </div>
         
-        <%= f.input :customer_name, placeholder: t(:'order.customer_name') %>
-        <%= f.input :customer_contact, placeholder: t(:'order.customer_contact') %>
-        <%= f.input :customer_address, placeholder: t(:'order.customer_address') %>
+        <%= f.input :customer_name %>
+        <%= f.input :customer_contact %>
+        <%= f.input :customer_address %>
 
-        <%= f.input :remark %>
+        <div class="clearfix row">
+          <div class="field form-group col-md-6">
+            <%= f.input :tracking_number %>
+          </div>
+
+          <div class="field form-group col-md-6">
+            <%= f.input :hk_tracking_number %>
+          </div>
+
+          <div class="field form-group col-md-4">
+            <%= f.input :receive_number %>
+          </div>
+
+          <div class="field form-group col-md-4">
+            <%= f.label :ship_date %>
+            <div class="input-group" data-target-input="nearest">
+                <%= f.text_field :ship_date, id: "ship_date", class: "flatpickr", placeholder: t(:'order_product.ship_date') %>
+            </div>
+          </div>
+
+        </div>
 
         <div class="form-group">
             <%= f.check_box :emergency_call %>
