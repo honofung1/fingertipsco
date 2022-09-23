@@ -31,7 +31,7 @@ class OrderOwner < ApplicationRecord
   end
 
   # TODO: create a monthly job to reset the order count to zero
-  def reset_the_order_count
+  def reset_order_count
     self.update_columns(order_total_count: 0)
   end
 
