@@ -21,7 +21,7 @@ class OrderExport::Report < ReportBase
                  nil
                end
 
-    # Order Product ship date
+    # Order ship date
     ship_start_date = if @criteria_value_hash.dig(:ship_date, :from)
                         @criteria_value_hash[:ship_date][:from].to_date
                       else
@@ -49,7 +49,7 @@ class OrderExport::Report < ReportBase
                     order_products.shop_from,
                     order_products.product_name,
                     order_products.product_remark,
-                    order_products.ship_date")
+                    orders.ship_date") # Due to the order version, we put order's ship date under the order products infomation
            .order(:id, 'orders.order_id')
 
     if start_date.present? && end_date.present?
@@ -62,7 +62,7 @@ class OrderExport::Report < ReportBase
 
     if ship_start_date.present? && ship_end_date.present?
       orders =
-        orders.where('order_products.ship_date BETWEEN :from AND :to',
+        orders.where('orders.ship_date BETWEEN :from AND :to',
                      from: ship_start_date.beginning_of_day.utc,
                      to: ship_end_date.end_of_day.utc)
     end
@@ -86,14 +86,13 @@ class OrderExport::Report < ReportBase
 
   # Define criteria for the report
   def define_criteria(criteria)
-    # TODO: Need to confirm with kylie
-    # criteria.add_criterion(ReportCriterionDefinition.new(code: :order_owner_id, type: :enum_default_blank, enum: OrderOwner.all, enum_object_display_field: :order_code_prefix, model: OrderOwner, view_code: :order_code_prefix))
+    # Order created date selector
     criteria.add_criterion(ReportCriterionDefinition.new(code: :order_created_at, type: :date_range_default_blank, model: Order, view_code: :order_created_at))
-    # Order product ship date selector
-    # Example for the order
-    criteria.add_criterion(ReportCriterionDefinition.new(code: :ship_date, type: :date_range_default_blank, model: OrderProduct, view_code: :ship_date))
-    # TODO: temp to hide it
+    # Order ship date selector
+    criteria.add_criterion(ReportCriterionDefinition.new(code: :ship_date, type: :date_range_default_blank, model: Order, view_code: :ship_date))
+    # TODO: temp to hide the currency and order owner filter
     # criteria.add_criterion(ReportCriterionDefinition.new(code: :currency, type: :enum_default_blank, enum: Order::CURRENCYS, enum_translation: false, model: Order, view_code: :currency))
+    # criteria.add_criterion(ReportCriterionDefinition.new(code: :order_owner_id, type: :enum_default_blank, enum: OrderOwner.all, enum_object_display_field: :order_code_prefix, model: OrderOwner, view_code: :order_code_prefix))
   end
 
   def on_validate
@@ -189,9 +188,9 @@ class OrderExport::Report < ReportBase
       product_name: { type: :field, display: OrderProduct.human_attribute_name(:product_name) },
       product_remark: { type: :field, display: OrderProduct.human_attribute_name(:product_remark) },
       order_state: { type: :state, display: Order.human_attribute_name(:state) },
-      ship_date: { type: :date, display: OrderProduct.human_attribute_name(:ship_date), col_data_type: :date },
+      ship_date: { type: :date, display: Order.human_attribute_name(:ship_date), col_data_type: :date },
       # the checking field is for the check manually and there is no database data here,
-      # just a dummy column
+      # just a dummy column for the check mark on the report
       checking: { type: :field, display: "✔︎" }
     }
 
