@@ -92,7 +92,10 @@
                         <%= link_to_btn admin_order_path(o), 'show' %>
                         <%= link_to_btn clone_admin_order_path(o), 'clone' %>
                         <%= link_to_btn edit_admin_order_path(o), 'edit' %>
-                        <!-- <%= link_to_btn admin_order_path(o), 'delete', method: :delete, data: { confirm: 'Are you sure?' }, title: "Delete" %> --> 
+                        <% if current_user.super_admin? %>
+                          <!--  TODO: confirm message i18n -->
+                          <%= link_to_btn admin_order_path(o), 'real_delete', method: :delete, data: { confirm: '你確定嗎?' }, title: "Delete" %>
+                        <% end %>
                       </div>
                     </td>
                   </tr>
