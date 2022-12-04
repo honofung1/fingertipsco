@@ -1,0 +1,6 @@
+<section class="content">
+  <%= simple_form_for(@deposit_record, :url => admin_deposit_record_path(@deposit_record.id), role: 'form', html: { class: 'deposit_record_form' }) do |f| %>
+    <%= render 'form' , f: f %>
+  <% end %>
+  <%= link_to t(:'button.back'), admin_deposit_records_path, class: 'btn btn-default' %>
+</section>

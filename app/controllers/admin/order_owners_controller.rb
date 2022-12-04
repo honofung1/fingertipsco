@@ -1,5 +1,4 @@
 class Admin::OrderOwnersController < Admin::BaseController
-
   before_action :set_order_owner, only: [:show, :edit, :update, :destroy]
   before_action :set_content_header
 
@@ -17,7 +16,7 @@ class Admin::OrderOwnersController < Admin::BaseController
     if @order_owner.save
       redirect_to admin_order_owners_path, success: t(:'message.create_success', header_name: OrderOwner.model_name.human)
     else
-      flash.now[:alert] = @order_owner.errors.full_messages.join("/")
+      flash.now[:danger] = @order_owner.errors.full_messages.join("/")
       render :new
     end
   end
@@ -51,7 +50,10 @@ class Admin::OrderOwnersController < Admin::BaseController
 
   def order_owner_params
     # permitted = OrderOwner.globalize_attribute_names + [:name, :order_code_prefix]
-    permitted = [:name, :order_code_prefix]
+    permitted = [
+      :name, :order_code_prefix,
+      :telephone, :addresses, :handling_fee
+    ]
 
     params.require(:order_owner).permit(*permitted)
   end

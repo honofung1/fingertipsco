@@ -36,6 +36,9 @@ zh-HK:
       admin:
         one: "管理員"
         other: "管理員"
+      deposit_record:
+        one: "入數紀錄"
+        other: "入數紀錄"
       order_owner:
         one: "Key Account"
         other: "Key Account"
@@ -45,6 +48,12 @@ zh-HK:
       order_product:
         one: "訂單商品"
         other: "訂單商品"
+      order_payment:
+        one: "付款紀錄"
+        other: "付款紀錄"
+      system_setting:
+        one: "系統設定"
+        other: "系統設定"
     attributes:
       admin:
         name: "姓名"
@@ -52,9 +61,20 @@ zh-HK:
         role: "類別"
         password: "密碼"
         password_confirmation: "確認密碼"
+      deposit_record:
+        order_owner_id: "Key Account"
+        deposit_amount: "存入金額"
+        deposit_date: "存入日期"
       order_owner:
         name: "姓名"
         order_code_prefix: "訂單號碼前綴"
+        order_code_prefix: "訂單號碼前綴"
+        addresses: "住所"
+        telephone: "電話"
+        balance: "結餘"
+        handling_fee: "手續費金額(以%計算)"
+        additional_fee: "附加費金額(以%計算)"
+        orders: "訂單" #For depentent error message
       order:
         order_id: "訂單號碼"
         order_owner_id: "Key Account"
@@ -68,6 +88,7 @@ zh-HK:
         order_products: "訂單商品資料"
         order_payments: "付款紀錄"
         order_costs: "訂單成本"
+        order_owners: "Key Account"
         state: "訂單狀態"
         total_price: "訂單合計金額"
         pickup_way: "取貨方式"
@@ -77,6 +98,14 @@ zh-HK:
         hk_tracking_number: "香港配送追跡番号"
         tracking_number: "国際追跡番号"
         ship_date: "輸出日"
+        handling_amount: "手續費金額"
+        additional_amount: "附加費金額"
+        additional_fee: "附加費"
+        additional_fee_type: "附加費種類"
+      order/order_payments:
+        payment_method: "支払方法"
+        paid_amount: "預金金額"
+        paid_date: "取引日"
       order_product:
         shop_from: "供應商"
         product_name: "商品名稱"
@@ -97,10 +126,13 @@ zh-HK:
         payment_method: "支払方法"
         paid_amount: "預金金額"
         paid_date: "取引日"
+      system_setting:
+        name: '名稱'
+        value: '值'
+        value_type: '值種類'
   # End of rails standard
 
   # custom declare
-  hello: "Hello world"
   button:
     add_new: "新增"
     new: "新增"
@@ -108,10 +140,15 @@ zh-HK:
     back: "返回"
     show: "詳細"
     clone: "複製"
+    create: '建立'
     destroy: "刪除"
     delete: "刪除"
     remove: "刪除"
     real_delete: "刪除"
+    update: '更新'
+    search: '搜尋'
+    submit: '提交'
+    submit_button: '%{action} %{header_name}'
   message:
     flash_error: '錯誤'
     flash_success: '成功'
@@ -121,10 +158,11 @@ zh-HK:
     destroy_success: '%{header_name} 已成功刪除。'
     update_failed: '%{header_name} 更新失敗。 錯誤: %{error}'
     state_update_failed: '不能更新為%{state}。錯誤： %{error}'
+    confirm_delete_message: "確定刪除%{order_id}嗎？"
 
   no_record:
     header: '沒有記錄。'
-    content: '這裹沒有 %{header_name} 的記錄'
+    content: '暫時沒有 %{header_name} 的記錄'
     btn: '建立新 %{header_name}'
   # TODO: rename
   defaults:
@@ -138,23 +176,39 @@ zh-HK:
     # Sidebar
     bidrecord_header: "Fingertips Vintage"
     bidrecord: "Inventory"
+    deposit_record: "入數紀錄"
     order_header: "訂單銷售"
     order: "訂單管理"
     order_owner: "Key Account"
     report: "報告"
+    system_setting: "系統設定"
     # TODO: export report record
     import_report: "匯入報告"
-    export_report: "導出報告(未完成)"
+    export_report: "導出報告紀錄(未完成)"
     admin_header: "管理設定"
     admin_user: "管理員"
+  deposit_record:
+    header_name: "入數紀錄"
+    title: "入數紀錄"
+    order_owner_name: "Key Account"
+    deposit_amount: "存入金額"
+    deposit_date: "存入日期"
   order_owner:
     header_name: "Key Account"
     title: "Key Account"
     name: "姓名"
     order_code_prefix: "訂單號碼前綴"
+    addresses: "住所"
+    telephone: "電話"
+    balance: "結餘"
+    handling_fee: "手續費金額"
+    additional_fee: "附加費金額"
   order:
+    handling_amount: "手續費金額"
+    additional_amount: "附加金額"
     header_name: "訂單"
     title: "訂單"
+    total_price: "訂單合計金額"
     order_owner_name: "Order Channel"
     order_id: "訂單號碼"
     customer_name: "客戶名稱"
@@ -170,6 +224,7 @@ zh-HK:
     order_channel: "Key Account"
     order_pickup_way: "取貨方式"
     order_ship_date: "輸出日"
+    remark: "訂單備註"
   order_product:
     new: "新商品"
     exist: "訂單商品"
@@ -177,10 +232,14 @@ zh-HK:
     shipment_header: "配送"
     cost_header: "成本"
     ship_date: "輸出日"
+    shop_from: "供應商"
     receipt_date: "領收書日期"
+    product_price: "售價"
   order_payment:
     new: "新付款紀錄"
     exist: "付款紀錄"
+    payment_method: "支払方法"
+    paid_amount: "預金金額"
     paid_date: "取引日"
   views:
     pagination:
@@ -191,6 +250,7 @@ zh-HK:
       truncate: "&hellip;"
   admin:
     header_name: "管理員"
+    title: "管理員"
     name: "姓名"
     username: "帳號"
     role: "類別"
@@ -205,6 +265,11 @@ zh-HK:
   report:
     title: "報告"
     description: "簡介"
+  system_setting:
+    header_name: "系統設定"
+    name: '名稱'
+    value: '值'
+    value_type: '值種類'
   reports:
     _common:
       format: "格式"
@@ -217,20 +282,32 @@ zh-HK:
           xlsx: 'Excel檔'
     order_cost_export:
       title: "仕入れ高報告"
-      description: "Using orders and order porducts data"
+      description: "using orders and order porducts data to export costing report."
       order_cost_report_title: "仕入高"
     order_export:
       title: "注文報告"
-      description: "Using all orders, order products data"
-      order_processor_report_title: "經手人名:"
-      order_report_title: "注文"
-      order_product_report_title: "商品"
-      order_shipment_report_title: "配送"
-      order_check_report_title: "チェック"
+      description: "using orders, order products data to export order details report."
+      customer_title: "売上先"
+      product_title: "商品"
+      shipment_title: "配送"
+    transport_export:
+      title: "運輸紀錄"
+      description: "using orders, order products data to export order transport checkment."
+      processor_title: "經手人名:"
+      order_title: "注文"
+      product_title: "商品"
+      shipment_title: "配送"
+      check_title: "チェック"
     order_sales_export:
       title: "売上高報告"
-      description: "Using orders and order payments data"
+      description: "using orders and order payments data to export payment report."
       order_sales_report_title: "売上高"
+    prepaid_order_export:
+      title: "預付訂單報告"
+      description: "different with order report, this report is only for prepaid order."
+      order_title: "訂單"
+      product_title: "商品"
+      shipment_title: "配送"
   enums:
     order:
       notpaid: "未付款"
@@ -239,10 +316,19 @@ zh-HK:
       finished: "完成交易"
       accounted: "完成會計"
       cancelled: "已取消"
+      prepaided: "已付款"
+      shipped: "已寄出"
+      printed: "已會計"
     role:
       admin: "管理員"
       super_admin: "超級管理員"
+  enumerize:
+      order:
+        additional_fee_type:
+          fixed_value: "固定數值"
+          discount : "百分比"
   errors:
     order:
       ship_date_blank: "輸出日是空白"
       receipt_date_blank: "領收書日期有空白"
+      order_balance_not_zero: "訂單尚有欠款/餘額"

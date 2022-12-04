@@ -1,6 +1,17 @@
 <section class="content">
-  <%= simple_form_for(@order, :url => admin_order_path(@order.id), role: 'form', html: { class: 'order_form' }) do |f| %>
-    <%= render 'form' , f: f %>
+  <% if @order.order_type == Order::ORDER_TYPE_NORMAL %>
+    <%= simple_form_for(@order, :url => admin_order_path(@order.id), role: 'form', html: { class: 'order_form' }) do |f| %>
+      <%= render 'form' , f: f %>
+    <% end %>
+  <% else %>
+    <%= simple_form_for(@order, :url => admin_order_owner_order_path(@order_owner.id, @order.id), role: 'form', html: { class: 'order_form' }) do |f| %>
+      <%= render 'form_prepaid' , f: f %>
+    <% end %>
   <% end %>
-  <%= link_to t(:'button.back'), admin_orders_path, class: 'btn btn-default' %>
+
+  <% if @order.order_type == Order::ORDER_TYPE_NORMAL %>
+    <%= link_to t(:'button.back'), admin_orders_path, class: 'btn btn-default' %>
+  <% else %>
+    <%= link_to t(:'button.back'), admin_order_owner_orders_path(@order_owner, type: "prepaid"), class: 'btn btn-default' %>
+  <% end %>
 </section>

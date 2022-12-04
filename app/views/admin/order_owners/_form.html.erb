@@ -2,8 +2,11 @@
   <div class="col-md-6">
     <div class="card">
       <div class="card-body">
-        <%= f.input :name, placeholder: t(:'order_owner.name') %>
-        <%= f.input :order_code_prefix, placeholder: t(:'order_owner.order_code_prefix') %>
+        <%= f.input :name %>
+        <%= f.input :order_code_prefix %>
+        <%= f.input :telephone %>
+        <%= f.input :addresses %>
+        <%= f.input :handling_fee %>
       </div>
 
       <div class="card-footer">

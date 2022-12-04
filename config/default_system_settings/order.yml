@@ -1,0 +1,41 @@
+# Default config for system setting variable.
+#
+# WHEN ADDING NEW SYSTEM SETTING PLEASE SPEND ONE MORE SECOND TO ADD IN
+#
+#   ***ALPHABETICAL ORDER PLEASE***!!
+#
+# Data type for config value:
+# _desc: String, # this key is optional which can be omitted
+# _value_type: String, # type can be 'string', 'integer', 'boolean', 'float', 'enum'
+# _setting_types: Array (string array), # type can be ['ecom', 'mobile', 'pos', 'sa', 'mirror', 'peek', 'ba']
+# (Deprecated) _editable: Boolean , # edit in admin page is not allowed if set to false.
+# _value_list: ('enum' _value_type only) Array # selector for the enum type
+# _default: Boolean || Float || Integer || String (depend on _value_type), [Notice: when _value_type is 'enum', make sure _default is in the _value_list selector]
+#
+# For example: SystemSetting.get('address.country.hide_default')
+#   address:
+#     country:
+#       hide_default:
+#         _value_type: 'boolean'
+#         _setting_types: []
+#         _default: true
+#
+# Another example (enum value type): SystemSetting.get('account.required_username_field')
+#   account:
+#     required_username_field:
+#       _desc: 'Require which user attribute for signin as username'
+#       _value_type: 'enum'
+#       _value_list: ['email', 'phone', 'either', 'all']
+#       _setting_types: ['ecom', 'mobile', 'pos', 'mirror']
+#       _default: 'email'
+#
+##############################################################################
+
+order:
+  show_prepaid_order_in_sidebar:
+    order_owner_codes:
+      _desc: 'JSON Array of order owner codes to show prepaid type order unique page in sidebar'
+      _value_type: 'json'
+      _default: '["JA", "SY", "KM"]'
+
+

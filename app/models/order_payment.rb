@@ -3,6 +3,11 @@ class OrderPayment < ApplicationRecord
   # Constant
   #############################################################################
 
+  ##############################################################################
+  # Extension
+  ##############################################################################
+  has_paper_trail
+
   #############################################################################
   # Association
   #############################################################################
@@ -12,6 +17,11 @@ class OrderPayment < ApplicationRecord
   # Validation
   #############################################################################
 
+  # If fill in one of them, other two column no one less
+  validates :paid_amount, :paid_date, presence: true, if: :payment_method?
+  validates :payment_method, :paid_date, presence: true, if: :paid_amount?
+  validates :payment_method, :paid_amount, presence: true, if: :paid_date?
+
   #############################################################################
   # Callback
   #############################################################################
@@ -19,6 +29,18 @@ class OrderPayment < ApplicationRecord
   #############################################################################
   # Method
   #############################################################################
+
+  def payment_method?
+    payment_method.present?
+  end
+
+  def paid_amount?
+    paid_amount.present?
+  end
+
+  def paid_date?
+    paid_date.present?
+  end
 
   #############################################################################
   # Private Method

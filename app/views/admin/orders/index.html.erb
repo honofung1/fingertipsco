@@ -9,11 +9,11 @@
             <%= search_form_for(@q, url: admin_orders_path, class: 'form-inline') do |f| %>
               <%= hidden_field_tag :locale, params[:locale] %>
               <div class="form-group filter_margin">
-                <%= f.select :order_owner_id_eq, OrderOwner.all.map{ |o| [o.order_code_prefix, o.id] }, { include_blank: true }, { style: 'min-width: 125px;', placeholder: Order.human_attribute_name(:order_owner_id), class: 'form-control form-control-sm select2 select2-hidden-accessible' } %>
+                <%= f.select :order_owner_id_eq, OrderOwner.not_key_account.map{ |o| [o.order_code_prefix, o.id] }, { include_blank: true }, { style: 'min-width: 125px;', placeholder: Order.human_attribute_name(:order_owner_id), class: 'form-control form-control-sm select2 select2-hidden-accessible' } %>
               </div>
 
               <div class="form-group filter_margin">
-                <%= f.select :state_eq, Order.states.map{ |s| [I18n.t(:"enums.order.#{s.first}"), s.last] }, { include_blank: true }, { style: 'min-width: 125px;', placeholder: Order.human_attribute_name(:state), class: 'form-control form-control-sm select2 select2-hidden-accessible' } %>
+                <%= f.select :state_eq, Order.states.reject{ |s| Order::PREPAID_ORDER_STATE.include?(s) }.map{ |s| [I18n.t(:"enums.order.#{s.first}"), s.last] }, { include_blank: true }, { style: 'min-width: 125px;', placeholder: Order.human_attribute_name(:state), class: 'form-control form-control-sm select2 select2-hidden-accessible' } %>
               </div>
 
               <div class="form-group filter_margin">
@@ -85,7 +85,7 @@
                     <td><%= o.pickup_way %></td>
                     <td><%= o.receive_number %></td>
                     <td><%= I18n.t(:"enums.order.#{o.state}") %></td>
-                    <td><%= o.order_balance %></td>
+                    <td><%= o.order_balance_with_dollar_sign %></td>
                     <td><%= format_date(o.ship_date) %></td>
                     <td>
                       <div class = "button-group" > <!-- not using class btn-group to split the button-->
@@ -94,7 +94,7 @@
                         <%= link_to_btn edit_admin_order_path(o), 'edit' %>
                         <% if current_user.super_admin? %>
                           <!--  TODO: confirm message i18n -->
-                          <%= link_to_btn admin_order_path(o), 'real_delete', method: :delete, data: { confirm: '你確定嗎?' }, title: "Delete" %>
+                          <%= link_to_btn admin_order_path(o), 'real_delete', method: :delete, data: { confirm: I18n.t(:'message.confirm_delete_message', order_id: o.order_id) }, title: "Delete" %>
                         <% end %>
                       </div>
                     </td>

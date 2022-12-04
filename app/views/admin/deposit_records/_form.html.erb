@@ -1,0 +1,29 @@
+<div class="row">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-body">
+
+        <div class="form-group">
+          <%= f.label :order_owner, OrderOwner.model_name.human %>
+          <%= f.select :order_owner_id, OrderOwner.all.collect{ |o| [o.order_code_prefix, o.id] }, {}, class: 'form-control select2 select2-hidden-accessible' %>
+        </div>
+
+        <%= f.input :deposit_amount %>
+
+        <div class="field form-group">
+          <%= f.label :deposit_date %>
+          <div class="input-group" data-target-input="nearest">
+              <%= f.text_field :deposit_date, id: "deposit_date", class: "flatpickr flatpickr-form", placeholder: t(:'deposit_record.deposit_date') %>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="actions">
+          <%= f.submit class: "btn btn-md btn-success" %>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>

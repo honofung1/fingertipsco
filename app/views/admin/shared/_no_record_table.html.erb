@@ -11,13 +11,19 @@
 
   end
 
-  btn ||= link_to t(:'no_record.btn', header_name: header_name), new_polymorphic_path([:admin, controller_name.classify.constantize]), class: 'btn btn-primary' rescue ''
+  # TODO: refactor
+  # tempf for use
+  if @order_owner.present?
+    btn ||= link_to t(:'no_record.btn', header_name: header_name), new_admin_order_owner_order_path(@order_owner.id, type: "prepaid"), class: 'btn btn-primary' rescue ''
+  else
+    btn ||= link_to t(:'no_record.btn', header_name: header_name), new_polymorphic_path([:admin, controller_name.classify.constantize]), class: 'btn btn-primary' rescue ''
+  end
   header ||= t(:'no_record.header')
   content ||= t(:'no_record.content', header_name: header_name)
 -%>
 
 <div class="error-page">
-  <h2 class="headline "> <span class="info-box-icon bg-light-blue"><i class="ion ion-egg"></i></span></h2>
+  <h2 class="headline "> <span class="info-box-icon bg-light-blue"><i class="fa fa-unlock"></i></span></h2>
   <div class="error-content">
     <h3><%= header %></h3>
     <p><%= content %></p>

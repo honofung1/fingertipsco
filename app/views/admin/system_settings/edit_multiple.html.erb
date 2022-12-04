@@ -1,0 +1,155 @@
+<section class="content">
+  <%= form_tag(update_multiple_admin_system_settings_path, method: :put ) do %>
+    <div class="card">
+      <div class="card-body card-body table-responsive p-0">
+        <table class="table table-hover text-nowrap">
+          <thead>
+            <tr>
+              <th><%= SystemSetting.human_attribute_name(:name) %></th>
+              <th><%= SystemSetting.human_attribute_name(:value) %></th>
+              <th><%= SystemSetting.human_attribute_name(:value_type)%></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @system_settings.each do |system_setting| %>
+              <tr class="system_setting_row">
+                <%= hidden_field_tag "system_settings[][id]", system_setting.id %>
+                <td class="<%= 'has-error' if system_setting.errors.keys.include?(:name) %> col-md-1">
+                  <%= text_field_tag("system_settings[][name]", system_setting.name,
+                        class: "form-control",
+                        disabled: DEFAULT_SYSTEM_SETTINGS.keys.include?(system_setting.name) && !system_setting.new_record?) %>
+
+                  <% if DEFAULT_SYSTEM_SETTINGS[system_setting.name].try(:[],'desc') %>
+                    <i class="fa fa-info-circle"></i>
+                    <%= DEFAULT_SYSTEM_SETTINGS[system_setting.name]['desc'].capitalize %>
+                  <% end %>
+
+                  <% if system_setting.errors.keys.include?(:name) %>
+                    <span class="help-block">
+                      <%= system_setting.errors.generate_message(:name) %>
+                    </span>
+                  <% end %>
+                </td>
+                <td class= "value_input <%= 'has-error' if system_setting.errors.keys.include?(:value) %> col-md-10">
+                  <div class="string_value_input" style="<%= 'display: none;' unless system_setting.value_type == 'string' %>">
+                    <%= text_field_tag("system_settings[][value]", system_setting.value(mode: :admin_page),
+                          class: "form-group",
+                          disabled: (system_setting.value_type != 'string')) %>
+                  </div>
+
+                  <div class="enum_value_input" style="<%= 'display: none;' unless system_setting.value_type == 'enum' %>">
+                    <% if system_setting.get_default_config.try(:[],'value_list').present? %>
+                      <%= select_tag "system_settings[][value]",
+                          options_for_select(system_setting.get_default_config['value_list'], system_setting.value),
+                          { include_blank: false, class: 'form-control', id: 'select_value', disabled: (system_setting.value_type != 'enum') } %>
+                    <% else %>
+                      <%= text_field_tag("system_settings[][value]", system_setting.value(mode: :admin_page),
+                          class: "form-group", disabled: (system_setting.value_type != 'enum') ) %>
+                    <% end %>
+                  </div>
+
+                  <div class="json_value_input" style="<%= 'display: none;' unless system_setting.value_type == 'json' %>">
+                    <%= text_area_tag("system_settings[][value]", system_setting.value(mode: :admin_page).to_json,
+                          class: "form-control",
+                          size: "25x4",
+                          disabled: (system_setting.value_type != 'json'))
+                    %>
+                  </div>
+
+                  <div class="integer_value_input" style="<%= 'display: none;' unless system_setting.value_type == 'integer' %>">
+                    <%= number_field_tag("system_settings[][value]", system_setting.value(mode: :admin_page),
+                          class: "form-control",
+                          disabled: (system_setting.value_type != 'integer') ) %>
+                  </div>
+
+                  <div class="float_value_input" style="<%= 'display: none;' unless system_setting.value_type == 'float' %>">
+                    <%= number_field_tag("system_settings[][value]", system_setting.value(mode: :admin_page),
+                          class: "form-control",
+                          step: :any,
+                          disabled: (system_setting.value_type != 'float')) %>
+                  </div>
+
+                  <div class="boolean_value_input" style="<%= 'display: none;' unless system_setting.value_type == 'boolean' %>">
+                    <%= select_tag "system_settings[][value]",
+                           options_for_select([true,false], system_setting.value(mode: :admin_page)),
+                           { include_blank: false, class: 'form-control'} %>
+                  </div>
+
+                  <% if system_setting.errors.keys.include?(:value) %>
+                    <span class="help-block">
+                      <%= system_setting.errors.generate_message(:value) %>
+                    </span>
+                  <% end %>
+                </td>
+                <td class="<%= 'has-error' if system_setting.errors.keys.include?(:value_type) %> col-md-1">
+                  <%= select_tag "system_settings[][value_type]",
+                        options_for_select(SystemSetting::VALUE_TYPES.map{ |v| [ v, v] }, system_setting.value_type),
+                        { include_blank: false, class: 'form-control', id: 'select_value_type'} %>
+                  <% if system_setting.errors.keys.include?(:value_type) %>
+                    <span class="help-block">
+                      <%= system_setting.errors.generate_message(:value_type) %>
+                    </span>
+                  <% end %>
+                </td>
+              </tr>
+               <% if DEFAULT_SYSTEM_SETTINGS[system_setting.name].try(:[],'example') %>
+                  <tr class="system_setting_example">
+                    <th class="col-md-4">
+                      <%= SystemSetting.human_attribute_name(:example) %>
+                    </th>
+                    <td colspan="3" class="col-md-8">
+                    <pre>
+                    <%= DEFAULT_SYSTEM_SETTINGS[system_setting.name]['example'] %>
+                    </pre>
+                    </td>
+                  </tr>
+                <% end %>
+
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer">
+        <div class="actions">
+          <%= submit_tag t(:'button.submit_button',
+                          header_name: t(:'system_setting.header_name'),
+                          action: t(:'button.update') ), class: "btn btn-md btn-success" %>
+        </div>
+      </div>
+    </div>
+  <% end # form %>
+
+  <%= link_to t(:'button.back'), admin_system_settings_path, class: "btn btn-default" %>
+
+</section>
+
+<!--  Modify this part,we are dealing multiple records update -->
+<% content_for(:inline_javascript) do %>
+  <script>
+    $(document).ready(function(){
+      $("[name*='[value_type]']", '.system_setting_row').on("change",function() {
+
+        var this_row = $(this).parents('.system_setting_row');
+        var select_node = $(this);
+        var selected_value_input = select_node.val() + '_value_input';
+
+        // hide/show input fields
+        $('<%= SystemSetting::VALUE_TYPES.map{|a| ".#{a}_value_input" }.join(', ') %>', this_row).hide();
+        $('.' + selected_value_input, this_row).show();
+
+        // disable all field first.
+        $('.value_input input', this_row).prop('disabled', true);
+        // FOR BOOLEAN VALUE INPUT, it is select tag.
+        $('.value_input select', this_row).prop('disabled', true);
+
+        // enable the correct one.
+        $('.' + selected_value_input + ' input', this_row).prop("disabled", false);
+        $('.' + selected_value_input + ' select', this_row).prop("disabled", false);
+        $('.' + selected_value_input + ' textarea', this_row).prop("disabled", false);
+
+      });
+      $("[name*='[value_type]']", '.system_setting_row').trigger('change'); // init
+    });
+  </script>
+<% end %>

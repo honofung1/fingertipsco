@@ -3,6 +3,7 @@ Rails.application.routes.draw do
 
   # Temp method for now
   # redirect the root page to admin login page
+  # TODO
   # for the security, when someone try to access the root directory
   # it should redirect to the blank page instead of redirect to login page
   root to: redirect("/admin/login"), as: :redirected_root
@@ -17,11 +18,24 @@ Rails.application.routes.draw do
     post 'login', to: 'user_sessions#create'
     delete 'logout', to: 'user_sessions#destroy'
 
-    # Mange Admin user
+    # Manage Admin user
     resources :admins
 
+    # Manage Deposit record
+    resources :deposit_records
+
+    # Manage import file task
+    resources :file_import_tasks
+
     # Manage Order Owner
-    resources :order_owners
+    resources :order_owners do
+      # Manage the orders belongs to its order owner
+      resources :orders do
+        member do
+          get 'clone'
+        end
+      end
+    end
 
     # Manage Order and its part
     resources :orders do
@@ -30,18 +44,23 @@ Rails.application.routes.draw do
       end
     end
 
-    # Mange Report
+    # Manage Report
     resources :reports do
       member do
         get 'download'
       end
     end
 
-    # Manage the import task
-    resources :file_import_tasks
+    # Manage System Setting
+    resources :system_settings ,:except => [:edit,:update, :show] do
+      collection do
+        get :edit_multiple
+        put :update_multiple
+      end
+    end
 
     # Manage the fingertips vintage parts
-    # TODO: temp to remove due to not start that parts
+    # TODO: temp to remove due to not start working on that parts
     # we block the access of that url for now
     # resources :inventorys
   end

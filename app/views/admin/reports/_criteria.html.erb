@@ -47,7 +47,7 @@
     <div class="form-group">
       <%= f.label criterion.code, criterion.display_name %>
       <br>
-      <%= f.select criterion.code, criterion.get_select_list, { include_blank: true }, { class: "form-control select2", multiple: true } %>
+      <%= f.select criterion.code, criterion.get_select_list, { include_blank: true }, { class: "form-control select2", multiple: false } %>
     </div>
   <% when :number %>
     <div class="from-group">

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_09_20_084602) do
+ActiveRecord::Schema.define(version: 2022_11_15_095758) do
 
   create_table "admin_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "username", null: false
@@ -158,12 +158,24 @@ ActiveRecord::Schema.define(version: 2022_09_20_084602) do
     t.text "ShoesRemarkJP", limit: 16777215, null: false
   end
 
+  create_table "deposit_records", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "order_owner_id", null: false
+    t.integer "deposit_amount", null: false
+    t.datetime "deposit_date", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "order_owners", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name", null: false
     t.string "order_code_prefix", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "order_total_count", default: 0
+    t.string "addresses"
+    t.integer "telephone"
+    t.integer "balance", default: 0, null: false
+    t.integer "handling_fee"
   end
 
   create_table "order_payments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -219,6 +231,11 @@ ActiveRecord::Schema.define(version: 2022_09_20_084602) do
     t.string "hk_tracking_number"
     t.string "tracking_number"
     t.datetime "ship_date"
+    t.integer "additional_fee"
+    t.string "additional_fee_type"
+    t.integer "additional_amount"
+    t.integer "handling_amount"
+    t.string "order_type"
     t.index ["currency"], name: "index_orders_on_currency"
     t.index ["order_created_at", "order_finished_at"], name: "index_orders_on_created_finished"
     t.index ["order_id"], name: "index_orders_on_order_id", unique: true
@@ -231,10 +248,28 @@ ActiveRecord::Schema.define(version: 2022_09_20_084602) do
     t.integer "created_by_id"
   end
 
+  create_table "system_settings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "name"
+    t.string "value"
+    t.string "value_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "userdata", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.text "username", limit: 16777215, null: false
     t.text "password", limit: 16777215, null: false
     t.text "name", limit: 16777215, null: false
+  end
+
+  create_table "versions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.string "item_type", limit: 191, null: false
+    t.bigint "item_id", null: false
+    t.string "event", null: false
+    t.string "whodunnit"
+    t.text "object", limit: 4294967295
+    t.datetime "created_at"
+    t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
 end
