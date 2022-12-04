@@ -20,16 +20,38 @@
  
      <!-- Sidebar Menu -->
      <nav class="mt-2">
-       <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+       <ul class="nav nav-pills nav-sidebar nav-child-indent flex-column nav-collapse-hide-child" data-widget="treeview" role="menu" data-accordion="false">
 
         <!-- Order -->
         <li class="nav-header"><%= t("sidebar.order_header") %></li>
 
-        <li class="nav-item">
-          <%= link_to admin_orders_path, class: "nav-link" do %>
-            <i class="nav-icon fa fa-inbox fa-fw"></i>
-            <%= content_tag :p, t("sidebar.order") %>
+        <li class="nav-item has-treeview">
+          <%= link_to '#', class: "nav-link" do %>
+            <i class="nav-icon fa fa-shopping-cart"></i>
+            <p>
+              <%= t("sidebar.order") %>
+              <i class="right fas fa-angle-left"></i>
+            </p>
           <% end %>
+
+          <ul class="nav nav-treeview" style="display: none;">
+            <li class="nav-item">
+              <%= link_to admin_orders_path, class: "nav-link" do %>
+                <i class="nav-icon fa fa-database"></i>
+                <%= content_tag :p, t("sidebar.order") %>
+              <% end %>
+            </li>
+
+            <% show_order_in_sidear.each do |o| %>
+              <li class="nav-item">
+                <%= link_to admin_order_owner_orders_path(o.id, type: "prepaid"), class: "nav-link" do %>
+                  <i class="nav-icon fa fa-id-badge"></i>
+                  <%= content_tag :p, "#{t("sidebar.order")}_#{o.name}" %>
+                <% end %>
+              </li>
+            <% end %>
+
+          </ul>
         </li>
 
         <!-- Order Owner -->
@@ -39,6 +61,16 @@
             <%= content_tag :p, t("sidebar.order_owner") %>
           <% end %>
         </li>
+
+        <% if current_user.super_admin? %>
+          <!-- Deposit Record -->
+          <li class="nav-item">
+            <%= link_to admin_deposit_records_path, class: "nav-link" do %>
+              <i class="nav-icon fa fa-credit-card"></i>
+              <%= content_tag :p, t("sidebar.deposit_record") %>
+            <% end %>
+          </li>
+        <% end %>
 
         <!-- Bid record -->
         <li class="nav-header"><%=t("sidebar.bidrecord_header") %></li>
@@ -78,10 +110,18 @@
         <% if current_user.super_admin? %>
           <!-- Admin user -->
           <li class="nav-header"><%=t("sidebar.admin_header") %></li>
+
           <li class="nav-item">
             <%= link_to admin_admins_path, class: "nav-link" do %>
               <i class="nav-icon far fa-user"></i>
               <%= content_tag :p, t("sidebar.admin_user") %>
+            <% end %>
+          </li>
+
+          <li class="nav-item">
+            <%= link_to admin_system_settings_path, class: "nav-link" do %>
+              <i class="nav-icon fa fa-cogs"></i>
+              <%= content_tag :p, t("sidebar.system_setting") %>
             <% end %>
           </li>
         <% end %>

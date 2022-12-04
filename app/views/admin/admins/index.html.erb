@@ -31,7 +31,7 @@
                       <div class = "button-group" > <!-- not using class btn-group to split the button-->
                         <%= link_to_btn admin_admin_path(a), 'show' %>
                         <%= link_to_btn edit_admin_admin_path(a), 'edit' %>
-                        <%= link_to_btn admin_admin_path(a), 'real_delete', method: :delete, data: { confirm: '你確定嗎?' }, title: "Delete" %>
+                        <%= link_to_btn admin_admin_path(a), 'real_delete', method: :delete, data: { confirm: I18n.t(:'message.confirm_delete_message') }, title: "Delete" %>
                       </div>
                     </td>
                   </tr>

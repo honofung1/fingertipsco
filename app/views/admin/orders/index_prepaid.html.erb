@@ -1,0 +1,114 @@
+<% content_for(:title, t('order.title')) %>
+<section class="content">
+  <div class="callout callout-info col-md-2">
+    <h5><%= "#{@order_owner.name} 結餘: ¥#{@order_owner.balance}" %></h5>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">&nbsp;</h3>
+          <div class="card-tools">
+            <%= search_form_for(@q, url: admin_order_owner_orders_path(@order_owner.id), class: 'form-inline') do |f| %>
+              <%= hidden_field_tag :locale, params[:locale] %>
+              <%= hidden_field_tag :type, "prepaid" %>
+
+              <div class="form-group filter_margin">
+                <%= f.select :state_eq, Order.states.reject{ |s| Order::NORMAL_ORDER_STATE.include?(s) }.map{ |s| [I18n.t(:"enums.order.#{s.first}"), s.last] }, { include_blank: true }, { style: 'min-width: 125px;', placeholder: Order.human_attribute_name(:state), class: 'form-control form-control-sm select2 select2-hidden-accessible' } %>
+              </div>
+
+              <div class="form-group filter_margin">
+                <%= f.select :currency_eq, Order::CURRENCYS.map{ |c| [c] }, { include_blank: true }, { style: 'min-width: 125px;', placeholder: Order.human_attribute_name(:currency), class: 'form-control form-control-sm select2 select2-hidden-accessible' } %>
+              </div>
+
+              <div class="form-group filter_margin input-sm">
+                <%= f.search_field :order_id_cont, placeholder: Order.human_attribute_name(:order_id), class: 'form-control form-control-sm' %>
+              </div>
+
+              <div class="form-group filter_margin input-sm">
+                <%= f.search_field :order_products_product_name_cont, placeholder: I18n.t('order.order_products'), class: 'form-control form-control-sm' %>
+              </div>
+
+              <div class="form-group filter_margin input-sm">
+                <%= f.search_field :created_at_gteq, type: "text", class: "flatpickr form-control form-control-sm", placeholder: Order.human_attribute_name(:order_created_at) %>
+                <span>~</span>
+                <%= f.search_field :created_at_lteq_end_of_day, type: "text", class: "flatpickr form-control form-control-sm", placeholder: Order.human_attribute_name(:order_created_at) %>
+              </div>
+
+              <div class="form-group filter_margin">
+                <%= button_tag(type: 'submit', name: nil, class: 'btn btn-default btn-sm') do %>
+                  <i class="fa fa-search"></i><span class="sr-only">Search</span>
+                <% end %>
+              </div>
+            <% end %>
+
+          </div>
+        </div>
+        <!-- card header -->
+        <% if @orders.present? %>
+          <div class="card-body table-responsive no-padding table-index-page" >
+            <!-- rendering -->
+            <table class="table table-hover table-striped text-sm" role='datatable' >
+              <thead>
+                <tr>
+                  <th><%= t('order.order_channel') %></th>
+                  <th><%= t('order.order_id') %></th>
+                  <th><%= t('order.order_created_at')%></th>
+                  <th><%= t('order_product.shop_from')%></th>
+                  <th><%= t('order.order_products') %></th>
+                  <th><%= t('order_product.product_price') %></th>
+                  <th><%= t('order.handling_amount') %></th>
+                  <th><%= t('order.additional_amount') %></th>
+                  <th><%= t('order.total_price') %></th>
+                  <th><%= t('order.state') %></th>
+                  <th><%= t('order.order_ship_date')%></th>
+                  <th><%= t('order.remark')%></th>
+                  <th data-orderable="false"></th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <% @orders.each do |o| %>
+                  <tr>
+                    <td>
+                      <% if o.emergency_call? %>
+                        <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>
+                      <% end %>
+                      <%= o.order_owner.order_code_prefix %>
+                    </td>
+                    <td><%= o.order_id %></td>
+                    <td><%= format_date(o.order_created_at) %></td>
+                    <td><%= o.order_products.first.shop_from     unless o.order_products.blank? %></td>
+                    <td><%= o.get_order_products_attr("product_name") %></td>
+                    <td><%= show_amount_with_currency(o.currency, o.order_products.first.product_price) unless o.order_products.blank? %></td>
+                    <td><%= show_amount_with_currency(o.currency, o.handling_amount) %></td>
+                    <td><%= show_amount_with_currency(o.currency, o.additional_amount) %></td>
+                    <td><%= show_amount_with_currency(o.currency, o.total_price) %></td>
+                    <td><%= I18n.t(:"enums.order.#{o.state}") %></td>
+                    <td><%= format_date(o.ship_date) %></td>
+                    <td><%= o.remark %></td>
+                    <td>
+                      <div class = "button-group" > <!-- not using class btn-group to split the button-->
+                        <%= link_to_btn admin_order_owner_order_path(@order_owner, o), 'show' %>
+                        <%= link_to_btn edit_admin_order_owner_order_path(@order_owner, o), 'edit' %>
+                        <% if current_user.super_admin? %>
+                          <!--  TODO: confirm message i18n -->
+                          <%= link_to_btn admin_order_path(o), 'real_delete', method: :delete, data: { confirm: I18n.t(:'message.confirm_delete_message', order_id: o.order_id) }, title: "Delete" %>
+                        <% end %>
+                      </div>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+          <%= paginate @orders %>
+        <% end %>
+      </div>
+      <!-- /.card-body -->
+
+    </div>
+    <!-- /.col-md-12 -->
+  </div>
+  <%= render partial: "admin/shared/no_record_table" unless @orders.present? %>
+</section>

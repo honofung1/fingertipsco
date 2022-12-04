@@ -17,6 +17,11 @@
             </tr>
 
             <tr>
+              <th class="col-md-6"><%= Order.human_attribute_name(:order_created_at) %>:</th>
+              <td><%= format_date(@order.order_created_at) %></td>
+            </tr>
+
+            <tr>
               <th class="col-md-6"><%= Order.human_attribute_name(:currency) %>:</th>
               <td><%= @order.currency %></td>
             </tr>
@@ -52,6 +57,11 @@
             </tr>
 
             <tr>
+              <th class="col-md-6"><%= Order.human_attribute_name(:total_price) %>:</th>
+              <td><%= @order.total_price %></td>
+            </tr>
+
+            <tr>
               <th class="col-md-6"><%= Order.human_attribute_name(:receive_number) %>:</th>
               <td><%= @order.receive_number %></td>
             </tr>
@@ -72,16 +82,6 @@
             </tr>
 
             <tr>
-              <th class="col-md-6"><%= Order.human_attribute_name(:total_price) %>:</th>
-              <td><%= @order.total_price %></td>
-            </tr>
-
-            <tr>
-              <th class="col-md-6"><%= Order.human_attribute_name(:order_created_at) %>:</th>
-              <td><%= format_date(@order.order_created_at) %></td>
-            </tr>
-
-            <tr>
               <th class="col-md-6"><%= Order.human_attribute_name(:order_finished_at) %>:</th>
               <td><%= format_date(@order.order_finished_at) %></td>
             </tr>
@@ -89,11 +89,6 @@
             <tr>
               <th class="col-md-6"><%= Order.human_attribute_name(:emergency_call) %>:</th>
               <td><%= format_boolean(@order.emergency_call) %></td>
-            </tr>
-
-            <tr>
-              <th class="col-md-6"><%= Order.human_attribute_name(:remark) %>:</th>
-              <td><%= @order.remark %></td>
             </tr>
 
           </table>

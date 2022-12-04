@@ -100,6 +100,19 @@ module AdminHelper
     flag ? "是" : "否" # TODO: I18n
   end
 
+  def format_percentage(amount)
+    return if amount.nil? || amount == 0
+
+    "#{amount}%"
+  end
+
+  def show_amount_with_currency(currency, amount)
+    return if amount.nil? || amount == 0
+
+    dollar_sign = currency == "HKD" ? "$" : "¥"
+    "#{currency}#{dollar_sign}#{amount}"
+  end
+
   def daterangepicker_data(
     direction = 'up',
     start_date = 3.months.ago,
@@ -131,4 +144,9 @@ module AdminHelper
     'YYYY-MM-DD'
   end
 
+  # Filter out the exactly existing order owner
+  # to avoid the code only existing in system setting.yml
+  def show_order_in_sidear
+    OrderOwner.where(order_code_prefix: SystemSetting.get('order.show_prepaid_order_in_sidebar.order_owner_codes'))
+  end
 end

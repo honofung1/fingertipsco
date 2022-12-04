@@ -11,22 +11,6 @@
 
 #################### Custom Cops ###########################
 
-# Cop/ApiChannelTypo:
-#   Severity: error
-#   Enabled: true
-
-# Cop/PhonyDangerousCalls:
-#   Severity: error
-#   Enabled: true
-
-# Cop/UniqOnActiveRecord:
-#   Severity: error
-#   Enabled: true
-
-# Cop/BooleanUtilityApplication:
-#   Severity: error
-#   Enabled: true
-
 #################### Layout ###########################
 AllCops:
   NewCops: enable

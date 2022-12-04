@@ -1,7 +1,14 @@
-class Order < ApplicationRecord
+class Order < ApplicationRecord  
+  #############################################################################
+  # Attribute
+  #############################################################################
+  attribute :total_price, :integer, default: 0
+  # attribute :additional_fee, :integer, default: 0
+
   #############################################################################
   # Constant
   #############################################################################
+  extend Enumerize
 
   # TODO: change state to state_machine
   # state_machine :state, initial: :notpaid do
@@ -13,15 +20,36 @@ class Order < ApplicationRecord
   #   state :cancelled
   # end
 
-  # USING ENUM to define the state of order for now
-  # notpaid      -->  0
-  # paidpartly   -->  1
-  # fullpaid     -->  2
-  # finished     -->  3
-  # accounted    -->  4
-  # cancelled    -->  5
-  #
-  # State defination
+  # Order type
+  # -------------------------------------------------------------------------------|
+  # |    Order Type     |                      Description                         |
+  # -------------------------------------------------------------------------------|
+  # |       normal      |         counting the order total price only              |
+  # -------------------------------------------------------------------------------|
+  # |       prepaid     |         subtract the order owner balance                 |
+  # -------------------------------------------------------------------------------|
+  ORDER_TYPES = [
+    ORDER_TYPE_NORMAL  = 'normal',
+    ORDER_TYPE_PREPAID = 'prepaid'
+  ].freeze
+
+  # Additional fee type
+  # -------------------------------------------------------------------------------|
+  # |    Order Type       |                      Description                       |
+  # -------------------------------------------------------------------------------|
+  # |       fixed_value   |         a fixed amount for a order                     |
+  # -------------------------------------------------------------------------------|
+  # |       discount      |         a percentage discount for a order              |
+  # -------------------------------------------------------------------------------|
+  ADDITIONAL_FEE_TYPES = [
+    ADDITIONAL_FEE_TYPE_FIXED = 'fixed_value',
+    ADDITIONAL_FEE_TYPE_PER   = 'discount'
+  ].freeze
+
+  enumerize :order_type, in: ORDER_TYPES, predicates: { prefix: true }, scope: true
+  enumerize :additional_fee_type, in: ADDITIONAL_FEE_TYPES, predicates: { prefix: true }, scope: true
+
+  #  State defination FOR NORMAL TYPE ORDER
   #  |State|            |Defination|
   #  notpaid            order is not have any payment yet, this is the default state of order
   #  paidpartly         order have payment, but not a full paid
@@ -29,7 +57,25 @@ class Order < ApplicationRecord
   #  finished           order finished, but not yet proceed the accounting
   #  accounted          order finished and finish the accounting
   #  cancelled          order cancelled and should be ignore it
-  enum state: [:notpaid, :paidpartly, :fullpaid, :finished, :accounted, :cancelled]
+
+  #  State defination FOR PREPAID TYPE ORDER
+  #  |State|            |Defination|
+  #  prepaided          due to this order type is prepaid, the order creation will start in fullpaid
+  #  shipped            same as normal order type finished
+  #  accounted          same as normal order type acounted
+
+  #  |State|            |ENUM state code|
+  #  notpaid                    0
+  #  paidpartly                 1
+  #  fullpaid                   2
+  #  finished                   3
+  #  accounted                  4
+  #  cancelled                  5
+
+  #  prepaided                  6
+  #  shipped                    7
+  #  accounted                  8
+  enum state: [:notpaid, :paidpartly, :fullpaid, :finished, :accounted, :cancelled, :prepaided, :shipped, :printed]
 
   # set the default order code if the order doesn't have the order owner
   DEFAULT_ORDER_CODE_PREFIX = "DEF".freeze
@@ -37,15 +83,27 @@ class Order < ApplicationRecord
   # This is the order product pickup ways
   # Now we have two types of pickup ways TP AND S
   # It is possible to add the pickup way later
+  # TODO: let the pickup way modelize
   PICKUP_WAYS = %w[TP S].freeze
 
   # Order cuurency HKD AND JPY
   CURRENCYS = %w[HKD JPY].freeze
 
+  # normal order defination
+  NORMAL_ORDER_STATE = %w[notpaid paidpartly fullpaid finished accounted cancelled].freeze
+
+  # prepaid order defination
+  PREPAID_ORDER_STATE = %w[prepaided shipped printed].freeze
+
+  ##############################################################################
+  # Extension
+  ##############################################################################
+  has_paper_trail
+
   #############################################################################
   # Association
   #############################################################################
-  belongs_to :order_owner
+  belongs_to :order_owner, autosave: true
 
   has_many :order_products, dependent: :destroy, inverse_of: :order
   accepts_nested_attributes_for :order_products, reject_if: :all_blank, allow_destroy: true
@@ -63,34 +121,78 @@ class Order < ApplicationRecord
   #############################################################################
   # Validation
   #############################################################################
-
   validates :order_owner_id, presence: true
+  validates :order_type,     presence: true
   validates :currency, inclusion: { in: CURRENCYS }
   validates :pickup_way, inclusion: { in: PICKUP_WAYS }
+
+  validates :additional_fee,      presence: true, if: :additional_fee_type?
+  validates :additional_fee_type, presence: true, if: :additional_fee?
+
+  validates :state, inclusion: { in: NORMAL_ORDER_STATE }, if: :is_normal?
+  validates :state, inclusion: { in: PREPAID_ORDER_STATE }, if: :is_prepaid?
 
   validate :order_owner_id_cannot_changed
   validate :check_state_condition
 
+  validate :validate_prepaid_order_proudct, if: :is_prepaid?
+  validate :validate_prepaid_order_payment, if: :is_prepaid?
+  validate :validate_order_owner_have_enough_quota, if: :is_prepaid?
+  validate :prepaid_order_cannot_modify_product, if: :is_prepaid?
+  validate :prepaid_order_cannot_change_additional_fee, if: :is_prepaid?
+  validate :prepaid_order_cannot_change_additional_fee_type, if: :is_prepaid?
+  validate :prevent_prepaid_order_product_delete, if: :is_prepaid?
+
+  validate :validate_normal_order_handling_fee, if: :is_normal?
+
   #############################################################################
   # Callback
   #############################################################################
-
   before_create :ensure_order_created_at
 
   after_create :order_owner_count_increment
+  after_create :deduct_balacne_from_order_owner, if: :is_prepaid?
 
-  before_save :ensure_order_finished_at
+  before_save :ensure_order_finished_at, if: :will_save_change_to_state?
   before_save :ensure_order_owner
   before_save :ensure_order_id
+
+  after_destroy :return_balance_to_order_orwner, if: :is_prepaid?
+
+  ##############################################################################
+  # Scope
+  ##############################################################################
+
+  scope :prepaid_order, -> { where(order_type: ORDER_TYPE_PREPAID) }
+  scope :normal_order, -> { where(order_type: ORDER_TYPE_NORMAL) }
 
   #############################################################################
   # Method
   #############################################################################
 
+  # Self define a method for order type
+  ORDER_TYPES.each do |this_order_type|
+    define_method "is_#{this_order_type}?" do
+      self.order_type == this_order_type
+    end
+  end
+
+  # Overwrite the setter to rely on validations instead of [ArgumentError]
+  # https://github.com/rails/rails/issues/13971
+  def state=(value)
+    self[:state] = value
+  rescue ArgumentError
+    self[:state] = nil
+  end
+
+  # This is for normal order now
+  # cause prepaid prder cannot change or update order product
   def calculate_order_total_price
+    return unless is_normal?
+
     total_price = 0
 
-    order_products.each do |p|
+    order_products.reload.each do |p|
       total_price += p.product_quantity * p.product_price
     end
 
@@ -99,13 +201,14 @@ class Order < ApplicationRecord
 
   # HKD and JPY should have different dollar sign
   # Two use case for now (HKD and JPY)
+  # TODO: REFACTOR
   def curreny_with_sign
     dollar_sign = currency == "HKD" ? "$" : "¥"
     "#{currency}#{dollar_sign}"
   end
 
   def clone_order
-    self.deep_clone include: [ :order_products ]
+    self.deep_clone include: [:order_products]
   end
 
   def ensure_order_created_at
@@ -113,9 +216,21 @@ class Order < ApplicationRecord
   end
 
   def ensure_order_finished_at
-    return unless finished?
+    return unless finished? || printed?
 
     self.order_finished_at = Time.now
+  end
+
+  def deduct_balacne_from_order_owner
+    new_balance = order_owner.balance - self.total_price
+    order_owner.update_columns(balance: new_balance)
+  end
+
+  def return_balance_to_order_orwner
+    return if self.total_price.nil? || self.total_price == 0
+
+    new_balance = order_owner.balance + self.total_price
+    order_owner.update_columns(balance: new_balance)
   end
 
   def order_owner_code
@@ -176,7 +291,10 @@ class Order < ApplicationRecord
   def order_total_paid_amount
     total_paid_amount = 0
 
-    order_payments.each do |p|
+    # Remove the nil paid amount order payment record
+    has_payment = order_payments.reject { |p| p.paid_amount.nil? }
+
+    has_payment.each do |p|
       total_paid_amount += p.paid_amount
     end
 
@@ -184,12 +302,17 @@ class Order < ApplicationRecord
   end
 
   def order_balance
+    order_total_paid_amount - self.total_price
+  end
+
+  def order_balance_with_dollar_sign
+    # order_total_paid_amount => refer the method
     # total price => when order product updated his product price, auto update the field
     # so do this here
 
     # Set the total_price to 0 when the order not have products yet
     self.total_price ||= 0
-    "#{curreny_with_sign}#{order_total_paid_amount - self.total_price}"
+    "#{curreny_with_sign}#{order_balance}"
   end
 
   # After create the order, call the order owner method to count the order totals which is the order
@@ -202,6 +325,14 @@ class Order < ApplicationRecord
   # Private Method
   #############################################################################
   private
+
+  def additional_fee?
+    additional_fee.present?
+  end
+
+  def additional_fee_type?
+    additional_fee_type.present?
+  end
 
   # if the record is persisted(already in db), not able to changed the order_owner_id
   def order_owner_id_cannot_changed
@@ -217,6 +348,14 @@ class Order < ApplicationRecord
       state_error_call(state, I18n.t(:'errors.order.ship_date_blank'))
     end
 
+    if shipped? && ship_date.nil?
+      state_error_call(state, I18n.t(:'errors.order.ship_date_blank'))
+    end
+
+    if finished? && order_balance < 0
+      state_error_call(state, I18n.t(:'errors.order.order_balance_not_zero'))
+    end
+
     if accounted? && order_products.where("receipt_date IS NULL").count > 0
       state_error_call(state, I18n.t(:'errors.order.receipt_date_blank'))
     end
@@ -226,8 +365,57 @@ class Order < ApplicationRecord
     errors.add(
       :state,
       I18n.t(:'message.state_update_failed',
-      state: I18n.t(:"enums.order.#{status}"),
-      error: error_msg)
+             state: I18n.t(:"enums.order.#{status}"),
+             error: error_msg)
     )
+  end
+
+  # limit prepaid order type product should always 1
+  # TODO: move out of the model
+  def validate_prepaid_order_proudct
+    if order_products.size > 1
+      errors.add(:order_products, "超過一樣")
+    end
+  end
+
+  def prepaid_order_cannot_modify_product
+    return if order_products.blank?
+
+    errors.add(:order_products, "不可更改") if persisted? && order_products.first.has_changes_to_save?
+  end
+
+  def prepaid_order_cannot_change_additional_fee
+    return unless persisted?
+    return unless will_save_change_to_additional_fee?
+
+    errors.add(:additional_fee, "不可更改")
+  end
+
+  def prevent_prepaid_order_product_delete
+    return if order_products.blank?
+
+    errors.add(:order_products, "不可刪除") if persisted? && order_products.first.marked_for_destruction?
+  end
+
+  def prepaid_order_cannot_change_additional_fee_type
+    return unless persisted?
+    return unless will_save_change_to_additional_fee_type?
+
+    errors.add(:additional_fee_type, "不可更改")
+  end
+
+  # avoid prepaid order type own order payment
+  def validate_prepaid_order_payment
+    errors.add(:order_payments, "不可擁有") unless order_payments.empty?
+  end
+
+  def validate_order_owner_have_enough_quota
+    if order_owner.balance - self.total_price < 0
+      errors.add(:order_owners, "餘額不足以建立訂單")
+    end
+  end
+
+  def validate_normal_order_handling_fee
+    errors.add(:handling_amount, "不可擁有") if handling_amount > 0
   end
 end

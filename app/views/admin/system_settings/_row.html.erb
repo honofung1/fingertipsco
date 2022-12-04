@@ -1,0 +1,79 @@
+<%
+# if current node has system setting object?
+system_setting = value['__object__']
+
+# find out all the children system setting ID which belongs to this key prefix.
+@editable_keys = []
+def get_system_setting_id_from_nested_hash(hash)
+  if hash['__object__']
+    # Make sure system_setting present before inserting to result.
+    @editable_keys << hash['__object__'].id # SystemSetting ID
+  else
+    # Next Dimension
+    hash.each do |key , value|
+      # Update the result after each loop
+      get_system_setting_id_from_nested_hash(value)
+    end
+  end
+end
+get_system_setting_id_from_nested_hash(value)
+
+%>
+<tr>
+  <td nowrap>
+    <%= ("&nbsp;&nbsp;&nbsp;&nbsp;" * parents.count).html_safe %>
+    <% if system_setting %>
+      <% if DEFAULT_SYSTEM_SETTINGS[system_setting.name].try(:[],'desc') %>
+        <i class="glyphicon glyphicon-info-sign" title="<%= DEFAULT_SYSTEM_SETTINGS[system_setting.name]['desc'].capitalize %>" data-toggle="tooltip"></i>
+      <% end %>
+      <u title="<%= "#{parents.join('.')}#{parents.blank? ? '' : '.'}#{key}" %>" data-toggle="tooltip"><%= key %></u>
+    <% else %>
+      <i><%= key %></i>
+    <% end %>
+  </td>
+  <td>
+    <%= system_setting.nil? ? '-' : system_setting.value_type %>
+  </td>
+  <td style="word-break: break-all;">
+    <%=
+        if system_setting.nil?
+          '-'
+        elsif system_setting.value_type == 'json'
+          system_setting.value.to_json
+        else
+          system_setting.value(mode: :admin_page)
+        end
+    %>
+  </td>
+  <td>
+    <%
+    # Not using render partial for performance, instead, the pre-rendered html was added.
+    #= render partial: 'admins/shared/split_buttons', locals: { buttons: buttons } %>
+    <div class="btn-group pull-right split-btn">
+      <a class="btn btn-default btn btn-default btn-sm" href="<%= edit_multiple_admin_system_settings_path(ids: @editable_keys) %>">
+        <i class="fa fa-edit"></i> <%= t(:'button.edit') %>
+      </a>
+      <% if system_setting %>
+      <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+        <span class="caret"></span>
+        <span class="sr-only">Toggle Dropdown</span>
+      </button>
+      <div class="dropdown-menu" role="menu">
+          <li><a class="dropdown-item" data-confirm="<%= t(:'message.confirm_delete_message') %>" data-method="delete" href="<%= admin_system_setting_path(system_setting) %>">
+            <i class="fa fa-trash"></i> <%= t(:'button.delete') %></a>
+          </li>
+      </div>
+      <% end %>
+    </div>
+  </td>
+</tr>
+<%
+# only add if has children
+if (value.keys - ['__object__']).present?
+  parents << key
+end
+value.each do |next_key, next_value| # next level
+  next if next_key == '__object__'
+%>
+  <%= render partial: 'row', locals: { parents: parents.clone, key: next_key, value: next_value } %>
+<% end %>

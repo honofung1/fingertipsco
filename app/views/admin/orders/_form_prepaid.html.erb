@@ -1,0 +1,187 @@
+<div class="row">
+  <div class="col-md-8">
+    <div class="card card-outline card-primary">
+      <div class="card-header">
+          <h3 class="card-title"><%= f.label :order_details %></h3>
+      </div>
+      <div class="card-body">
+
+        <%= f.hidden_field :order_type, value: @order.order_type %>
+        <%= f.hidden_field :order_owner_id, value: @order_owner.id %>
+
+        <div class="form-group">
+          <%= f.label :order_owner, OrderOwner.model_name.human %>
+          <%= f.select :order_owner_id, OrderOwner.all.order(:order_code_prefix).collect{ |o| [o.order_code_prefix, o.id] }, {}, { class: 'form-control select2 select2-hidden-accessible', disabled: true }%>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :order_owner, Order.human_attribute_name(:currency) %>
+          <%= f.select :currency, Order::CURRENCYS.map { |c| c }, {}, class: 'form-control select2 select2-hidden-accessible' %>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :order_owner, Order.human_attribute_name(:pickup_way) %>
+          <%= f.select :pickup_way, Order::PICKUP_WAYS.map { |p| p }, {}, class: 'form-control select2 select2-hidden-accessible' %>
+        </div>
+        
+        <%= f.input :customer_name, readonly: true %>
+        <%= f.input :customer_contact, readonly: true %>
+        <%= f.input :customer_address, readonly: true %>
+
+        <div class="clearfix row">
+          <div class="field form-group col-md-6">
+            <%= f.input :tracking_number %>
+          </div>
+
+          <div class="field form-group col-md-6">
+            <%= f.input :hk_tracking_number %>
+          </div>
+
+          <div class="field form-group col-md-4">
+            <%= f.input :receive_number %>
+          </div>
+
+          <div class="field form-group col-md-4">
+            <%= f.label :ship_date %>
+            <div class="input-group" data-target-input="nearest">
+                <%= f.text_field :ship_date, id: "ship_date", class: "flatpickr flatpickr-form", placeholder: t(:'order.order_ship_date') %>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="form-group">
+            <%= f.check_box :emergency_call %>
+            <%= f.label :emergency_call %>
+        </div>
+
+      </div>
+      <!--  Moving the submit button to the top right side after discuss -->
+      <!-- <div class="card-footer">
+        <div class="actions">
+          <%= f.submit class: "btn btn-md btn-success" %>
+        </div>
+      </div> -->
+
+    </div>
+
+    <div class="card card-outline card-info">
+      <div class="card-header">
+        <h3 class="card-title"><%= f.label :order_products %></h3>
+        <div class="card-tools pull-right">
+          <button type="button" class="btn btn-tool" data-card-widget="collapse">
+            <i class="fas fa-minus"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="form-group">
+          <div class="form-group container-group" id="order_product_groups">
+            <%= f.simple_fields_for :order_products do |order_product_form| %>
+              <%= render 'order_product_fields', f: order_product_form %>
+            <% end %>
+            <div id="order_products_container" class='links'>
+              <%= link_to_add_association t(:'button.new'), f, :order_products, class: 'btn btn-primary', id: 'add-order_product' %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="col-md-4">
+    <div class="card bg-transparent border-0">
+        <div class="actions">
+          <%= f.submit class: "btn btn-block btn-lg btn-success float-right" %>
+        </div>
+    </div>
+
+    <div class="card card-outline card-primary">
+      <div class="card-header">
+        <h3 class="card-title"><%= f.label :state %></h3>
+      </div>
+
+      <div class="card-body">
+        <div class="field form-group">
+          <%# https://stackoverflow.com/questions/32026202/select-box-by-simple-form-in-rails-save-id-not-title %>
+          <%= f.label :state, Order.human_attribute_name(:state) %>
+          <%= f.select :state, Order.states.keys
+                                           .reject{ |s| Order::PREPAID_ORDER_STATE.exclude?(s) }
+                                           .map{ |s| I18n.t(:"enums.order.#{s}") }
+                                           .zip(Order::PREPAID_ORDER_STATE), {}, class: 'form-control select2 select2-hidden-accessible' 
+          %>
+        </div>
+      </div>
+    </div>
+
+    <div class="card card-outline card-info">
+      <div class="card-header">
+        <h3 class="card-title"><%= f.label :additional_amount %></h3>
+        <div class="card-tools pull-right">
+          <button type="button" class="btn btn-tool" data-card-widget="collapse">
+            <i class="fas fa-minus"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="form-group col-md-8">
+          <%= f.label :additional_fee_type, Order.human_attribute_name(:additional_fee_type) %>
+          <%= f.select :additional_fee_type, Order.additional_fee_type.options, { include_blank: true }, class: 'form-control select2 select2-hidden-accessible' %>
+        </div>
+        <div class="form-group col-md-8">
+          <%= f.input :additional_fee %>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<% content_for :inline_javascript do %>
+  <script type="text/javascript" >
+    $(function(){
+      // This is for the newly added cocoon items
+      $('#order_product_groups').on('cocoon:after-insert', function(e, added_item) {
+          added_item.find('.product_cost, .shipment_cost, .discount').on('input', function() {
+            cal_total_cost(added_item);
+          });
+      });
+
+      // This is the way to handle the pre-exisited cocoon items
+      $('.order_product_fields').find('.product_cost, .shipment_cost, .discount').on('input', function() {
+        cal_total_cost($(this).closest('.product_cost_fields'));
+      });
+    });
+
+    function cal_total_cost(parent) {
+      var product_cost = parseFloat(parent.find('.product_cost').val()) || 0;
+      var shipment_cost = parseFloat(parent.find('.shipment_cost').val()) || 0;
+      var discount = parseFloat(parent.find('.discount').val()) || 0;
+
+      var total_cost = product_cost + shipment_cost - discount;
+      parent.find('.total_cost').val(total_cost);
+    }
+
+    $('#order_product_groups').on('cocoon:after-insert', function() {
+      check_to_hide_or_show_add_link();
+    });
+
+    $('#order_product_groups').on('cocoon:after-remove', function() {
+      check_to_hide_or_show_add_link();
+    });
+
+    check_to_hide_or_show_add_link();
+
+    function check_to_hide_or_show_add_link() {
+      if ($('.order_product_fields').length == 1) {
+        $('#add-order_product').hide();
+      } else {
+        $('#add-order_product').show();
+      }
+    }
+  </script>
+<% end %>

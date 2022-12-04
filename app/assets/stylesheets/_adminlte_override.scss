@@ -2,11 +2,6 @@ body {
   font-size: 14px;
 }
 
-tr td:last-child {
-  width: 1%;
-  white-space: nowrap;
-}
-
 .content-header {
   small a {
     font-weight: 400;
@@ -66,6 +61,11 @@ tr th:last-child {
   white-space: nowrap;
 }
 
+tr td:last-child {
+  width: 1%;
+  white-space: nowrap;
+}
+
 .wrap {
   word-wrap: break-word;
 }
@@ -80,4 +80,18 @@ tr th:last-child {
   max-width: 360px;
   border-radius: 3px;
   background: #fff;
+}
+
+textarea {
+  border: none;
+  width: 100%;
+  -webkit-box-sizing: border-box; /* <=iOS4, <= Android  2.3 */
+     -moz-box-sizing: border-box; /* FF1+ */
+          box-sizing: border-box; /* Chrome, IE8, Opera, Safari 5.1*/
+}
+
+// Not work with using Adminlte3 class
+// Do this myself
+li > ul {
+  margin-left: 15px;
 }

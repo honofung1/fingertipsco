@@ -36,8 +36,16 @@ class OrderExport::Report < ReportBase
 
     # order_costs =Order.joins('LEFT JOIN order_products ON order_products.order_id = orders.id').select('orders.order_id,order_products.product_cost,order_products.shipment_cost,order_products.discount,order_products.total_cost,order_products.receipt_date').order(:id, 'orders.order_id')
     orders =
-      Order.joins('LEFT JOIN order_products ON order_products.order_id = orders.id')
+      Order.normal_order
+           .joins('LEFT JOIN order_products ON order_products.order_id = orders.id')
            .select("orders.order_id,
+                    orders.customer_name,
+                    orders.customer_contact,
+                    orders.customer_address,
+                    orders.total_price,
+                    orders.receive_number,
+                    orders.hk_tracking_number,
+                    orders.tracking_number,
                     CASE
                       WHEN orders.state = 0 THEN 'notpaid'
                       WHEN orders.state = 1 THEN 'paidpartly'
@@ -48,7 +56,6 @@ class OrderExport::Report < ReportBase
                     END AS order_state,
                     order_products.shop_from,
                     order_products.product_name,
-                    order_products.product_remark,
                     orders.ship_date") # Due to the order version, we put order's ship date under the order products infomation
            .order(:id, 'orders.order_id')
 
@@ -86,13 +93,15 @@ class OrderExport::Report < ReportBase
 
   # Define criteria for the report
   def define_criteria(criteria)
+    # Order Owner selector
+    criteria.add_criterion(ReportCriterionDefinition.new(code: :order_owner_id, type: :enum_default_blank, enum: OrderOwner.all, enum_object_display_field: :order_code_prefix, model: OrderOwner, view_code: :order_code_prefix))
     # Order created date selector
     criteria.add_criterion(ReportCriterionDefinition.new(code: :order_created_at, type: :date_range_default_blank, model: Order, view_code: :order_created_at))
     # Order ship date selector
     criteria.add_criterion(ReportCriterionDefinition.new(code: :ship_date, type: :date_range_default_blank, model: Order, view_code: :ship_date))
+
     # TODO: temp to hide the currency and order owner filter
     # criteria.add_criterion(ReportCriterionDefinition.new(code: :currency, type: :enum_default_blank, enum: Order::CURRENCYS, enum_translation: false, model: Order, view_code: :currency))
-    # criteria.add_criterion(ReportCriterionDefinition.new(code: :order_owner_id, type: :enum_default_blank, enum: OrderOwner.all, enum_object_display_field: :order_code_prefix, model: OrderOwner, view_code: :order_code_prefix))
   end
 
   def on_validate
@@ -133,31 +142,28 @@ class OrderExport::Report < ReportBase
 
   # ABCDEFGHIJKLMNOPQRSTUVWXYZ
   # TODO: add comment for the report title how is working
+  # but it is too complicated workload, so do this later
   def report_title
     report_title = {
       layer1: {
-        order_processor: {
-          merge_cell_size: "A1:G2",
-          merge_cell_data: [I18n.t(:'reports.order_export.order_processor_report_title'), "", "", "", "", "", ""],
-          title_style: :header
-        }
-      },
-      layer2: {
+        blank: {
+          merge_cell_size: "A1:A2",
+          merge_cell_data: [""]
+        },
         order: {
-          merge_cell_size: "A3:A4",
-          merge_cell_data: [I18n.t(:'reports.order_export.order_report_title')]
+          merge_cell_size: "B1:D2",
+          merge_cell_data: [I18n.t(:'reports.order_export.customer_title'), "", ""],
+          title_style: :header
         },
         order_product: {
-          merge_cell_size: "B3:D4",
-          merge_cell_data: [I18n.t(:'reports.order_export.order_product_report_title'), "", ""]
+          merge_cell_size: "E1:G2",
+          merge_cell_data: [I18n.t(:'reports.order_export.product_title'), "", ""],
+          title_style: :header
         },
         order_shipment: {
-          merge_cell_size: "E3:F4",
-          merge_cell_data: [I18n.t(:'reports.order_export.order_shipment_report_title'), ""]
-        },
-        order_check: {
-          merge_cell_size: "G3:G4",
-          merge_cell_data: [I18n.t(:'reports.order_export.order_check_report_title')]
+          merge_cell_size: "H1:L2",
+          merge_cell_data: [I18n.t(:'reports.order_export.shipment_title'), "", "", "", ""],
+          title_style: :header
         }
       }
     }
@@ -180,18 +186,26 @@ class OrderExport::Report < ReportBase
     ###########################################################################
     # CONSTANT
     ###########################################################################
-    FIELDS = %i[order_id shop_from product_name product_remark order_state ship_date checking].freeze
+    FIELDS = %i[
+      order_id 
+      customer_name customer_contact customer_address 
+      shop_from product_name total_price
+      receive_number hk_tracking_number order_state ship_date tracking_number 
+    ].freeze
 
     FIELD_MAPS = {
       order_id: { type: :field, display: Order.human_attribute_name(:order_id) },
+      customer_name: { type: :field, display: Order.human_attribute_name(:customer_name) },
+      customer_contact: { type: :field, display: Order.human_attribute_name(:customer_contact) },
+      customer_address: { type: :field, display: Order.human_attribute_name(:customer_address) },
       shop_from: { type: :field, display: OrderProduct.human_attribute_name(:shop_from) },
       product_name: { type: :field, display: OrderProduct.human_attribute_name(:product_name) },
-      product_remark: { type: :field, display: OrderProduct.human_attribute_name(:product_remark) },
-      order_state: { type: :state, display: Order.human_attribute_name(:state) },
+      total_price: { type: :field, display: Order.human_attribute_name(:total_price) },
       ship_date: { type: :date, display: Order.human_attribute_name(:ship_date), col_data_type: :date },
-      # the checking field is for the check manually and there is no database data here,
-      # just a dummy column for the check mark on the report
-      checking: { type: :field, display: "✔︎" }
+      receive_number: { type: :field, display: Order.human_attribute_name(:receive_number) },
+      hk_tracking_number: { type: :field, display: Order.human_attribute_name(:hk_tracking_number) },
+      order_state: { type: :state, display: Order.human_attribute_name(:state) },
+      tracking_number: { type: :field, display: Order.human_attribute_name(:tracking_number) },
     }
 
     ###########################################################################

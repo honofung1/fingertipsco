@@ -1,0 +1,39 @@
+<% content_for(:title, t('system_settings.title')) %>
+<section class="content">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">&nbsp;</h3>
+        </div>
+        <!-- card header -->
+
+        <% if @namespaced_system_settngs_hash.present? %>
+          <div class="card-body table-responsive no-padding table-index-page" >
+            <!-- rednering -->
+            <table class="table table-hover table-striped text-sm" role='datatable' >
+              <thead>
+                <tr>
+                  <th><%= t('system_setting.name') %></th>
+                  <th><%= t('system_setting.value_type') %></th>
+                  <th><%= t('system_setting.value') %></th>
+                  <th data-orderable="false"></th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <% @namespaced_system_settngs_hash.each do |key, value| # start from level 1 %>
+                  <%= render partial: 'row', locals: { parents: [], key: key, value: value } %>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% end %>
+      </div>
+        <!-- /.card-body -->
+
+    </div>
+    <!-- /.col-md-12 -->
+  </div>
+  <%= render partial: "admin/shared/no_record_table" unless @namespaced_system_settngs_hash.present? %>
+</section>

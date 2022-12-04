@@ -6,9 +6,10 @@
       </div>
       <div class="card-body">
 
+        <%= f.hidden_field :order_type, valvue: @order.order_type %>
         <div class="form-group">
           <%= f.label :order_owner, OrderOwner.model_name.human %>
-          <%= f.select :order_owner_id, OrderOwner.all.collect{ |o| [o.order_code_prefix, o.id] }, {}, class: 'form-control select2 select2-hidden-accessible' %>
+          <%= f.select :order_owner_id, OrderOwner.not_key_account.order(:order_code_prefix).collect{ |o| [o.order_code_prefix, o.id] }, {}, class: 'form-control select2 select2-hidden-accessible' %>
         </div>
 
         <div class="form-group">
@@ -41,7 +42,7 @@
           <div class="field form-group col-md-4">
             <%= f.label :ship_date %>
             <div class="input-group" data-target-input="nearest">
-                <%= f.text_field :ship_date, id: "ship_date", class: "flatpickr flatpickr-form", placeholder: t(:'order_product.ship_date') %>
+                <%= f.text_field :ship_date, id: "ship_date", class: "flatpickr flatpickr-form", placeholder: t(:'order.order_ship_date') %>
             </div>
           </div>
 
@@ -105,7 +106,11 @@
         <div class="field form-group">
           <%# https://stackoverflow.com/questions/32026202/select-box-by-simple-form-in-rails-save-id-not-title %>
           <%= f.label :state, Order.human_attribute_name(:state) %>
-          <%= f.select :state, Order.states.keys.map{ |s| I18n.t(:"enums.order.#{s}") }.zip(Order.states.keys), {}, class: 'form-control select2 select2-hidden-accessible' %>
+          <%= f.select :state, Order.states
+                                    .keys
+                                    .reject{ |s| Order::PREPAID_ORDER_STATE.include?(s) }
+                                    .map{ |s| I18n.t(:"enums.order.#{s}") }
+                                    .zip(Order.states.keys), {}, class: 'form-control select2 select2-hidden-accessible' %>
         </div>
       </div>
     </div>

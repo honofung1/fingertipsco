@@ -1,0 +1,49 @@
+<% content_for(:title, t('deposit_record.title')) %>
+<section class="content">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">&nbsp;</h3>
+        </div>
+        <!-- card header -->
+
+        <% if @deposit_records.present? %>
+          <div class="card-body table-responsive no-padding table-index-page" >
+            <!-- rednering -->
+            <table class="table table-hover table-striped text-sm" role='datatable' >
+              <thead>
+                <tr>
+                  <th><%= t('deposit_record.order_owner_name') %></th>
+                  <th><%= t('deposit_record.deposit_amount') %></th>
+                  <th><%= t('deposit_record.deposit_date') %></th>
+                  <th data-orderable="false"></th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <% @deposit_records.each do |d| %>
+                  <tr>
+                    <td><%= d.order_owner.name %></td>
+                    <td><%= show_amount_with_currency("JPY", d.deposit_amount) %></td>
+                    <td><%= format_date(d.deposit_date) %></td>
+                    <td>
+                      <div class = "button-group" > <!-- not using class btn-group to split the button-->
+                        <%= link_to_btn admin_deposit_record_path(d), 'show' %>
+                        <%= link_to_btn edit_admin_deposit_record_path(d), 'edit' %>
+                      </div>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% end %>
+      </div>
+        <!-- /.card-body -->
+
+    </div>
+    <!-- /.col-md-12 -->
+  </div>
+  <%= render partial: "admin/shared/no_record_table" unless @deposit_records.present? %>
+</section>

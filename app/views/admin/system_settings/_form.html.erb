@@ -1,0 +1,88 @@
+<div class="row">
+  <div class="col-md-8">
+    <div class="card">
+      <div class="card-body">
+        <div class="form-group">
+          <%= f.label :name %>
+          <%= f.text_field :name, class: "form-control", disabled: DEFAULT_SYSTEM_SETTINGS.keys.include?(f.object.name) && !f.object.new_record? %>
+        </div>
+        <div class="form-group">
+          <%= f.label :value_type %>
+          <%= f.select :value_type, options_for_select(SystemSetting::VALUE_TYPES.map{ |v| [ v, v] }, f.object.value_type), { include_blank: false }, {class: 'form-control', id: 'select_value_type'} %>
+        </div>
+        <div class="form-group">
+          <%= f.label :value %>
+
+          <div id="string_value_input" style="<%= 'display: none;' unless f.object.value_type == 'string' %>">
+            <%= f.text_field :value, class: "form-control", disabled: (f.object.value_type != 'string') %>
+          </div>
+
+          <div id="frontend_url_value_input" style="<%= 'display: none;' unless f.object.value_type == 'frontend_url' %>">
+            <%= f.text_field :value, class: "form-control", disabled: (f.object.value_type != 'frontend_url') %>
+          </div>
+
+          <div id="backend_url_value_input" style="<%= 'display: none;' unless f.object.value_type == 'backend_url' %>">
+            <%= f.text_field :value, class: "form-control", disabled: (f.object.value_type != 'backend_url') %>
+          </div>
+
+          <div id="json_value_input" style="<%= 'display: none;' unless f.object.value_type == 'json' %>">
+            <%= f.text_field :value, value: f.object.value.to_json, class: "form-control", disabled: (f.object.value_type != 'json') %>
+          </div>
+
+          <div id="integer_value_input" style="<%= 'display: none;' unless f.object.value_type == 'integer' %>">
+            <%= f.number_field :value, class: "form-control", disabled: (f.object.value_type != 'integer') %>
+          </div>
+
+          <div id="float_value_input" style="<%= 'display: none;' unless f.object.value_type == 'float' %>">
+            <%= f.number_field :value, class: "form-control", step: "any", disabled: (f.object.value_type != 'float') %>
+          </div>
+          <!-- text field for enum -->
+          <div id="enum_value_input" style="<%= 'display: none;' unless f.object.value_type == 'enum' %>">
+            <%= f.text_field :value, class: "form-control", disabled: (f.object.value_type != 'enum') %>
+          </div>
+
+          <div id="boolean_value_input" style="<%= 'display: none;' unless f.object.value_type == 'boolean' %>">
+            <div class="radio">
+              <label class="checkbox-inline">
+                <%= f.radio_button :value, true , disabled: (f.object.value_type != 'boolean') %>
+                <%= "True" %>
+              </label>
+
+              <label class="checkbox-inline">
+                <%= f.radio_button :value, false, disabled: (f.object.value_type != 'boolean') %>
+                <%= "False" %>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="actions">
+          <%= f.submit class: "btn btn-md btn-success", value: t(:'button.submit_button', header_name: t(:'system_setting.header_name'), action: f.object.persisted? ? t(:'button.update') : t(:'button.create')) %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<% content_for(:inline_javascript) do %>
+<script>
+$(document).ready(function(){
+
+  $('#select_value_type').on("change",function() {
+    var selected_value_input = $(this).val() + '_value_input';
+
+    // hide/show input fields
+    $('<%= SystemSetting::VALUE_TYPES.map{|a| "##{a}_value_input" }.join(', ') %>').hide();
+    $('#' + selected_value_input).show();
+
+    // enable/disable input fields
+    $(':input', '<%= SystemSetting::VALUE_TYPES.map{|a| "##{a}_value_input" }.join(', ') %>').prop('disabled', true);
+    $('#' + selected_value_input + ' :input').prop("disabled", false);
+
+  });
+  $('#select_value_type').trigger('change'); // init
+
+});
+</script>
+<% end %>

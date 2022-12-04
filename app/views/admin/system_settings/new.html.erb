@@ -1,0 +1,9 @@
+<section class="content">
+
+  <%= form_for(@system_setting , :url => admin_system_settings_path, role: "form" ) do |f| %>
+      <%= render 'form', f: f %>
+  <% end %>
+
+  <%= link_to t(:'button.back'), admin_system_settings_path, class: "btn btn-default" %>
+
+</section>
