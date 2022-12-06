@@ -417,6 +417,9 @@ class Order < ApplicationRecord
   # end
 
   def validate_normal_order_handling_fee
+    # prevent previous order occur error when they don't have handling_amount
+    return if handling_amount.nil?
+
     errors.add(:handling_amount, "不可擁有") if handling_amount > 0
   end
 end
