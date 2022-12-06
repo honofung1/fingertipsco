@@ -110,7 +110,18 @@ module AdminHelper
     return if amount.nil? || amount == 0
 
     dollar_sign = currency == "HKD" ? "$" : "¥"
-    "#{currency}#{dollar_sign}#{amount}"
+    "#{currency} #{dollar_sign}#{amount}"
+  end
+
+  def prepaid_order_price_without_tax(order)
+    return if order.order_products.blank?
+
+    primary_product = order.order_products.first
+
+    return if primary_product.product_price.nil?
+    return if primary_product.product_quantity.nil?
+
+    primary_product.product_price * primary_product.product_quantity
   end
 
   def daterangepicker_data(

@@ -73,9 +73,10 @@ class Order < ApplicationRecord
   #  cancelled                  5
 
   #  prepaided                  6
-  #  shipped                    7
-  #  accounted                  8
-  enum state: [:notpaid, :paidpartly, :fullpaid, :finished, :accounted, :cancelled, :prepaided, :shipped, :printed]
+  #  received                   7
+  #  shipped                    8
+  #  accounted                  9
+  enum state: [:notpaid, :paidpartly, :fullpaid, :finished, :accounted, :cancelled, :prepaided, :received, :shipped, :printed]
 
   # set the default order code if the order doesn't have the order owner
   DEFAULT_ORDER_CODE_PREFIX = "DEF".freeze
@@ -93,7 +94,7 @@ class Order < ApplicationRecord
   NORMAL_ORDER_STATE = %w[notpaid paidpartly fullpaid finished accounted cancelled].freeze
 
   # prepaid order defination
-  PREPAID_ORDER_STATE = %w[prepaided shipped printed].freeze
+  PREPAID_ORDER_STATE = %w[prepaided received shipped printed].freeze
 
   ##############################################################################
   # Extension
@@ -135,9 +136,9 @@ class Order < ApplicationRecord
   validate :order_owner_id_cannot_changed
   validate :check_state_condition
 
+  # validate :validate_order_owner_have_enough_quota, if: :is_prepaid?
   validate :validate_prepaid_order_proudct, if: :is_prepaid?
   validate :validate_prepaid_order_payment, if: :is_prepaid?
-  validate :validate_order_owner_have_enough_quota, if: :is_prepaid?
   validate :prepaid_order_cannot_modify_product, if: :is_prepaid?
   validate :prepaid_order_cannot_change_additional_fee, if: :is_prepaid?
   validate :prepaid_order_cannot_change_additional_fee_type, if: :is_prepaid?
@@ -204,7 +205,7 @@ class Order < ApplicationRecord
   # TODO: REFACTOR
   def curreny_with_sign
     dollar_sign = currency == "HKD" ? "$" : "¥"
-    "#{currency}#{dollar_sign}"
+    "#{currency} #{dollar_sign}"
   end
 
   def clone_order
@@ -409,11 +410,11 @@ class Order < ApplicationRecord
     errors.add(:order_payments, "不可擁有") unless order_payments.empty?
   end
 
-  def validate_order_owner_have_enough_quota
-    if order_owner.balance - self.total_price < 0
-      errors.add(:order_owners, "餘額不足以建立訂單")
-    end
-  end
+  # def validate_order_owner_have_enough_quota
+  #   if order_owner.balance - self.total_price < 0
+  #     errors.add(:order_owners, "餘額不足以建立訂單")
+  #   end
+  # end
 
   def validate_normal_order_handling_fee
     errors.add(:handling_amount, "不可擁有") if handling_amount > 0

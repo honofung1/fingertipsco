@@ -80,7 +80,7 @@
                     <td><%= format_date(o.order_created_at) %></td>
                     <td><%= o.order_products.first.shop_from     unless o.order_products.blank? %></td>
                     <td><%= o.get_order_products_attr("product_name") %></td>
-                    <td><%= show_amount_with_currency(o.currency, o.order_products.first.product_price) unless o.order_products.blank? %></td>
+                    <td><%= show_amount_with_currency(o.currency, prepaid_order_price_without_tax(o)) %></td>
                     <td><%= show_amount_with_currency(o.currency, o.handling_amount) %></td>
                     <td><%= show_amount_with_currency(o.currency, o.additional_amount) %></td>
                     <td><%= show_amount_with_currency(o.currency, o.total_price) %></td>

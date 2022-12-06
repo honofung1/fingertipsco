@@ -20,7 +20,7 @@ class OrderProduct < ApplicationRecord
   # Validation
   #############################################################################
 
-  # 2022/09/01 temp to remove the product_quanitity and product price validation due to kylie requested
+  # 2022/09/01 temp to remove the product_quantity and product price validation due to kylie requested
   # validates :product_quantity, presence: true, numericality: { greater_than: 0 }
   # validates :product_price, presence: true, numericality: { greater_than: 0 }
 

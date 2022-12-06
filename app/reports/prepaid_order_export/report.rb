@@ -50,6 +50,7 @@ class PrepaidOrderExport::Report < ReportBase
                     orders.order_created_at,
                     order_products.shop_from,
                     order_products.product_name,
+                    order_products.product_price * product_quantity AS product_price,
                     orders.handling_amount,
                     orders.additional_amount,
                     orders.total_price,
@@ -58,8 +59,9 @@ class PrepaidOrderExport::Report < ReportBase
                     orders.tracking_number,
                     CASE
                       WHEN orders.state = 6 THEN 'prepaided'
-                      WHEN orders.state = 7 THEN 'shipped'
-                      WHEN orders.state = 8 THEN 'printed'
+                      WHEN orders.state = 7 THEN 'received'
+                      WHEN orders.state = 8 THEN 'shipped'
+                      WHEN orders.state = 9 THEN 'printed'
                     END AS order_state,
                     orders.ship_date,
                     orders.remark")
@@ -163,12 +165,12 @@ class PrepaidOrderExport::Report < ReportBase
           title_style: :header
         },
         order: {
-          merge_cell_size: "D1:H2",
-          merge_cell_data: [I18n.t(:'reports.prepaid_order_export.product_title'), "", "", "", ""],
+          merge_cell_size: "D1:I2",
+          merge_cell_data: [I18n.t(:'reports.prepaid_order_export.product_title'), "", "", "", "", ""],
           title_style: :header
         },
         order_product: {
-          merge_cell_size: "I1:K2",
+          merge_cell_size: "J1:L2",
           merge_cell_data: [I18n.t(:'reports.prepaid_order_export.shipment_title'), "", ""],
           title_style: :header
         }
@@ -195,7 +197,8 @@ class PrepaidOrderExport::Report < ReportBase
     ###########################################################################
     FIELDS = %i[
       order_code_prefix order_id order_created_at
-      shop_from product_name handling_amount additional_amount total_price
+      shop_from product_name product_price 
+      handling_amount additional_amount total_price
       order_state ship_date remark
     ].freeze
 
@@ -205,6 +208,7 @@ class PrepaidOrderExport::Report < ReportBase
       order_created_at: { type: :date, display: Order.human_attribute_name(:order_created_at) },
       shop_from: { type: :field, display: OrderProduct.human_attribute_name(:shop_from) },
       product_name: { type: :field, display: OrderProduct.human_attribute_name(:product_name) },
+      product_price: { type: :field, display: OrderProduct.human_attribute_name(:product_price) },
       handling_amount: { type: :field, display: Order.human_attribute_name(:handling_amount) },
       additional_amount: { type: :field, display: Order.human_attribute_name(:additional_amount) },
       total_price: { type: :field, display: Order.human_attribute_name(:total_price) },

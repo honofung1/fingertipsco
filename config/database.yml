@@ -49,12 +49,12 @@ production:
   port: <%= ENV['DB_PORT'] || 5432 %>
 
 development:
-  adapter: mysql2
-  encoding: utf8
-  database: <%= ENV['DEV_DB_DATABASE'] || 'fingertipsco_dev' %>
+  adapter: postgresql
+  encoding: unicode
+  database: <%= ENV['DEV_DB_DATABASE'] || 'fingertipsco_development' %>
   host: <%= ENV['DEV_DB_HOST'] || 'localhost' %>
-  port: <%= ENV['DEV_DB_PORT'] || 3306 %>
-  username: <%= ENV['DEV_DB_USERNAME'] || 'mysql' %>
+  port: <%= ENV['DEV_DB_PORT'] || 5432 %>
+  username: <%= ENV['DEV_DB_USERNAME'] || 'fingertipsco' %>
   password: <%= ENV['DEV_DB_PASSWORD'] || 'password' %>
 
 test:

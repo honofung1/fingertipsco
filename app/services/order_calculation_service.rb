@@ -57,6 +57,10 @@ class OrderCalculationService
     ops_total_price = 0
 
     @order.order_products.each do |p|
+      # due to this service will call before the object save in controller
+      # we skip the nil object in here and let validation failed
+      next if p.product_price.nil? || p.product_quantity.nil?
+
       ops_total_price += p.product_quantity * p.product_price
     end
 
