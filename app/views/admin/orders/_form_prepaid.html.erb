@@ -47,7 +47,11 @@
                 <%= f.text_field :ship_date, id: "ship_date", class: "flatpickr flatpickr-form", placeholder: t(:'order.order_ship_date') %>
             </div>
           </div>
+        </div>
 
+        <div class="form-group">
+          <%= f.label :remark %>
+          <%= f.text_area :remark, class: "form-control" %>
         </div>
 
         <div class="form-group">

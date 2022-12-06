@@ -46,8 +46,9 @@ class TransportExport::Report < ReportBase
                       WHEN orders.state = 4 THEN 'accounted'
                       WHEN orders.state = 5 THEN 'cancelled'
                       WHEN orders.state = 6 THEN 'prepaided'
-                      WHEN orders.state = 7 THEN 'shipped'
-                      WHEN orders.state = 8 THEN 'printed'
+                      WHEN orders.state = 7 THEN 'received'
+                      WHEN orders.state = 8 THEN 'shipped'
+                      WHEN orders.state = 9 THEN 'printed'
                     END AS order_state,
                     order_products.shop_from,
                     order_products.product_name,

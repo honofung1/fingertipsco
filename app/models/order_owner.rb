@@ -25,7 +25,7 @@ class OrderOwner < ApplicationRecord
   #############################################################################
   validates :name, presence: true
   validates :order_code_prefix, uniqueness: true, presence: true
-  validates :balance, numericality: { greater_than_or_equal_to: 0 }
+  # validates :balance, numericality: { greater_than_or_equal_to: 0 }
 
   #############################################################################
   # Callback

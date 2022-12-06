@@ -38,6 +38,7 @@ class Admin::OrdersController < Admin::BaseController
     @order.customer_name = @order_owner.name
     @order.customer_contact = @order_owner.telephone
     @order.customer_address = @order_owner.addresses
+    @order.currency = "JPY"
   end
 
   def create
