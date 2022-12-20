@@ -1,6 +1,9 @@
 class Admin::BaseController < ApplicationController
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
 
+  # solving the ActionController::InvalidAuthenticityToken error
+  protect_from_forgery
+
   # 500 Error Helper
   if Rails.env.production?
     # Exceptionを補足
