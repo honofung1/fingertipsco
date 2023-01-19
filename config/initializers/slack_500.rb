@@ -2,7 +2,7 @@ require 'slack_500'
 
 Slack500.setup do |config|
   # pretext
-  config.pretext = 'Slack Report Title'
+  config.pretext = 'Admin Panel occuring an error'
 
   # タイトル
   config.title = 'Rendering 500 with exception.'
