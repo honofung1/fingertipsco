@@ -1,5 +1,5 @@
 <!-- Main Sidebar Container -->
- <aside class="main-sidebar sidebar-dark-primary elevation-4">
+ <aside class="main-sidebar sidebar-dark-primary elevation-4 sidebar_add">
    <!-- Brand Logo -->
    <%= link_to admin_root_path, class:"brand-link" do %>
      <%= image_tag 'f_icon.png', class: 'brand-image img-circle elevation-3' %>
@@ -37,7 +37,7 @@
           <ul class="nav nav-treeview" style="display: none;">
             <li class="nav-item">
               <%= link_to admin_orders_path, class: "nav-link" do %>
-                <i class="nav-icon fa fa-database"></i>
+                <i class="nav-icon fa fa-truck"></i>
                 <%= content_tag :p, t("sidebar.order") %>
               <% end %>
             </li>
@@ -45,8 +45,8 @@
             <% show_order_in_sidear.each do |o| %>
               <li class="nav-item">
                 <%= link_to admin_order_owner_orders_path(o.id, type: "prepaid"), class: "nav-link" do %>
-                  <i class="nav-icon fa fa-id-badge"></i>
-                  <%= content_tag :p, "#{t("sidebar.order")}_#{o.name}" %>
+                  <i class="nav-icon fa fa-bookmark"></i>
+                  <%= content_tag :p, "#{o.name}#{t("sidebar.order")}" %>
                 <% end %>
               </li>
             <% end %>
@@ -57,7 +57,7 @@
         <!-- Order Owner -->
         <li class="nav-item">
           <%= link_to admin_order_owners_path, class: "nav-link" do %>
-            <i class="nav-icon far fa fa-users"></i>
+            <i class="nav-icon fa fa-id-badge"></i>
             <%= content_tag :p, t("sidebar.order_owner") %>
           <% end %>
         </li>

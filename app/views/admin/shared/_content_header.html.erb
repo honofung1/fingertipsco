@@ -57,6 +57,7 @@ else
               if item.is_a?(Hash)
                 breadcrumb_title = item[:title]
                 breadcrumb_url = item[:url].present? ? item[:url] : '#'
+                breadcrumb_index_enable_href = item[:index_enable_href].present? ? item[:index_enable_href] : false
               elsif item.is_a?(ActiveRecord::Base) # AR object
                 # Put display_name as the highest pirority.
                 if !item.try(:display_name).nil?
@@ -119,7 +120,11 @@ else
               end
               %>
               <% if is_last_breadcrumb %>
-                <li class="breadcrumb-item active" ><%= breadcrumb_title %></li>
+                <% if params[:action] == "index" && breadcrumb_index_enable_href %>
+                  <li class="breadcrumb-item" ><a href="<%= breadcrumb_url %>"> <%= breadcrumb_title %></a></li>
+                <% else %>
+                  <li class="breadcrumb-item active" ><%= breadcrumb_title %></li>
+                <% end %>
               <% else %>
                 <li class="breadcrumb-item" ><a href="<%= breadcrumb_url %>"> <%= breadcrumb_title %></a></li>
               <% end %>

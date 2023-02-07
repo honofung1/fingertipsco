@@ -100,17 +100,25 @@ module AdminHelper
     flag ? "是" : "否" # TODO: I18n
   end
 
+  # TODO: refactor with bettering way
   def format_percentage(amount)
-    return if amount.nil? || amount == 0
+    return t(:'no_record.not_setting') if amount.nil? || amount == 0
 
     "#{amount}%"
   end
 
+  def format_order_owner_handling_fee(amount)
+    return t(:'no_record.not_setting') if amount.nil? || amount == 0
+
+    "¥#{amount}"
+  end
+
   def show_amount_with_currency(currency, amount)
-    return if amount.nil? || amount == 0
+    return t(:'no_record.not_applicable') if amount.nil? || amount == 0
 
     dollar_sign = currency == "HKD" ? "$" : "¥"
-    "#{currency} #{dollar_sign}#{amount}"
+    # "#{currency} #{dollar_sign}#{amount}"
+    "#{dollar_sign}#{amount}"
   end
 
   def prepaid_order_price_without_tax(order)
@@ -157,7 +165,8 @@ module AdminHelper
 
   # Filter out the exactly existing order owner
   # to avoid the code only existing in system setting.yml
+  # set the ordering according to name first
   def show_order_in_sidear
-    OrderOwner.where(order_code_prefix: SystemSetting.get('order.show_prepaid_order_in_sidebar.order_owner_codes'))
+    OrderOwner.where(order_code_prefix: SystemSetting.get('order.show_prepaid_order_in_sidebar.order_owner_codes')).order('name ASC')
   end
 end

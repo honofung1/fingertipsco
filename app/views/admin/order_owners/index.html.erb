@@ -19,6 +19,10 @@
                   <th><%= t('order_owner.addresses') %></th>
                   <th><%= t('order_owner.telephone') %></th>
                   <th><%= t('order_owner.handling_fee') %></th>
+                  <th><%= t('order_owner.minimum_handling_fee') %></th>
+                  <th><%= t('order_owner.maximum_handling_fee') %></th>
+                  <th><%= t('order_owner.enable_minimum_consumption') %></th>
+                  <th><%= t('order_owner.enable_maximum_consumption') %></th>
                   <th data-orderable="false"></th>
                 </tr>
               </thead>
@@ -30,7 +34,11 @@
                     <td><%= o.order_code_prefix %></td>
                     <td><%= o.addresses %></td>
                     <td><%= o.telephone %></td>
-                    <td><%= format_percentage(o.handling_fee) %></td>
+                    <td><%= o.key_account? ? format_percentage(o.handling_fee) : t('no_record.not_applicable') %></td>
+                    <td><%= o.key_account? ? format_order_owner_handling_fee(o.minimum_handling_fee) : t('no_record.not_applicable') %></td>
+                    <td><%= o.key_account? ? format_order_owner_handling_fee(o.maximum_handling_fee) : t('no_record.not_applicable') %></td>
+                    <td><%= o.key_account? ? format_boolean(o.enable_minimum_consumption) : t('no_record.not_applicable') %></td>
+                    <td><%= o.key_account? ? format_boolean(o.enable_maximum_consumption) : t('no_record.not_applicable') %></td>
                     <td>
                       <div class = "button-group" > <!-- not using class btn-group to split the button-->
                         <%= link_to_btn admin_order_owner_path(o), 'show' %>

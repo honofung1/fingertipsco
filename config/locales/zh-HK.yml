@@ -73,7 +73,12 @@ zh-HK:
         telephone: "電話"
         balance: "結餘"
         handling_fee: "手續費金額(以%計算)"
-        additional_fee: "附加費金額(以%計算)"
+        minimum_consumption_amount: "注文最低消費金額"
+        minimum_handling_fee: "最低手續費"
+        maximum_consumption_amount: "注文最高消費金額"
+        maximum_handling_fee: "最高手續費"
+        enable_minimum_consumption: "啟用最低消費"
+        enable_maximum_consumption: "啟用最高消費"
         orders: "訂單" #For depentent error message
       order:
         order_id: "訂單號碼"
@@ -149,6 +154,7 @@ zh-HK:
     search: '搜尋'
     submit: '提交'
     submit_button: '%{action} %{header_name}'
+    clipboard: '到剪貼簿'
   message:
     flash_error: '錯誤'
     flash_success: '成功'
@@ -159,9 +165,10 @@ zh-HK:
     update_failed: '%{header_name} 更新失敗。 錯誤: %{error}'
     state_update_failed: '不能更新為%{state}。錯誤： %{error}'
     confirm_delete_message: "確定刪除%{order_id}嗎？"
-
   no_record:
     header: '沒有記錄。'
+    not_applicable: "不適用"
+    not_setting: "未設定"
     content: '暫時沒有 %{header_name} 的記錄'
     btn: '建立新 %{header_name}'
   # TODO: rename
@@ -169,6 +176,7 @@ zh-HK:
     email: "帳號"
     password: "密碼"
     login: "登入"
+    logout: "登出"
   sidebar:
     # Breadcrumb
     dashboard: "導航板"
@@ -184,7 +192,7 @@ zh-HK:
     system_setting: "系統設定"
     # TODO: export report record
     import_report: "匯入報告"
-    export_report: "導出報告紀錄(未完成)"
+    export_report: "導出報告紀錄"
     admin_header: "管理設定"
     admin_user: "管理員"
   deposit_record:
@@ -202,7 +210,12 @@ zh-HK:
     telephone: "電話"
     balance: "結餘"
     handling_fee: "手續費金額"
-    additional_fee: "附加費金額"
+    minimum_consumption_amount: "注文最低消費金額"
+    minimum_handling_fee: "最低手續費"
+    maximum_consumption_amount: "注文最高消費金額"
+    maximum_handling_fee: "最高手續費"
+    enable_minimum_consumption: "啟用最低消費"
+    enable_maximum_consumption: "啟用最高消費"
   order:
     handling_amount: "手續費金額"
     additional_amount: "附加金額"
@@ -333,3 +346,11 @@ zh-HK:
       ship_date_blank: "輸出日是空白"
       receipt_date_blank: "領收書日期有空白"
       order_balance_not_zero: "訂單尚有欠款/餘額"
+      order_payments_blank: "沒有付款紀錄"
+      cannot_own: "不可擁有"
+      cannot_modify: "不可更改"
+      cannot_delete: "不可刪除"
+      over_limit: "超過一樣"
+    order_owner:
+      must_be_blank: "不可填入"
+

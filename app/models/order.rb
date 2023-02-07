@@ -49,6 +49,12 @@ class Order < ApplicationRecord
   enumerize :order_type, in: ORDER_TYPES, predicates: { prefix: true }, scope: true
   enumerize :additional_fee_type, in: ADDITIONAL_FEE_TYPES, predicates: { prefix: true }, scope: true
 
+  #  Order tx column explaination
+  #  |Column Name|    |Explanation|
+  #  xxxx_amount      The calculated tax amount, those columns will be added to order total price
+  #  xxxx_fee         The original tax amount, those columns will used to calculate xxxx_amount and WILL NOT added to order total price
+  #  xxxx_fee_type    The type of the xxxx_fee
+
   #  State defination FOR NORMAL TYPE ORDER
   #  |State|            |Defination|
   #  notpaid            order is not have any payment yet, this is the default state of order
@@ -62,20 +68,21 @@ class Order < ApplicationRecord
   #  |State|            |Defination|
   #  prepaided          due to this order type is prepaid, the order creation will start in fullpaid
   #  shipped            same as normal order type finished
-  #  accounted          same as normal order type acounted
+  #  printed            same as normal order type acounted
 
-  #  |State|            |ENUM state code|
-  #  notpaid                    0
-  #  paidpartly                 1
-  #  fullpaid                   2
-  #  finished                   3
-  #  accounted                  4
-  #  cancelled                  5
+  #  |State|            |ENUM state code|          |Show in Website|
+  #  notpaid                    0                        未付款
+  #  paidpartly                 1                        有尾數
+  #  fullpaid                   2                        已付全數
+  #  finished                   3                        完成交易
+  #  accounted                  4                        完成會計
+  #  cancelled                  5                        已取消
 
-  #  prepaided                  6
-  #  received                   7
-  #  shipped                    8
-  #  accounted                  9
+  #  prepaided                  6                        已付款
+  #  received                   7                        已收貨
+  #  shipped                    8                        已寄出
+  #  printed                    9                        已會計
+
   enum state: [:notpaid, :paidpartly, :fullpaid, :finished, :accounted, :cancelled, :prepaided, :received, :shipped, :printed]
 
   # set the default order code if the order doesn't have the order owner
@@ -144,7 +151,8 @@ class Order < ApplicationRecord
   validate :prepaid_order_cannot_change_additional_fee_type, if: :is_prepaid?
   validate :prevent_prepaid_order_product_delete, if: :is_prepaid?
 
-  validate :validate_normal_order_handling_fee, if: :is_normal?
+  validate :validate_normal_order_handling_amount,   if: :is_normal?
+  validate :validate_normal_order_additional_amount, if: :is_normal?
 
   #############################################################################
   # Callback
@@ -193,6 +201,7 @@ class Order < ApplicationRecord
 
     total_price = 0
 
+    # Check this
     order_products.reload.each do |p|
       total_price += p.product_quantity * p.product_price
     end
@@ -338,12 +347,16 @@ class Order < ApplicationRecord
   # if the record is persisted(already in db), not able to changed the order_owner_id
   def order_owner_id_cannot_changed
     if order_owner_id_changed? && self.persisted?
-      errors.add(:order_owner_id, "不允許改變") # TODO: I18n
+      errors.add(:order_owner_id, I18n.t(:'errors.order.cannot_modify'))
     end
   end
 
   def check_state_condition
     return unless state_changed?
+
+    if fullpaid? && order_payments.blank?
+      state_error_call(state, I18n.t(:'errors.order.order_payments_blank'))
+    end
 
     if finished? && ship_date.nil?
       state_error_call(state, I18n.t(:'errors.order.ship_date_blank'))
@@ -357,7 +370,10 @@ class Order < ApplicationRecord
       state_error_call(state, I18n.t(:'errors.order.order_balance_not_zero'))
     end
 
-    if accounted? && order_products.where("receipt_date IS NULL").count > 0
+    # if accounted? && order_products.where("receipt_date IS NULL").count > 0
+    # cannot use 'where' here due to not save to db yet so that cannot find
+    # out which receipt_date is null
+    if accounted? && order_products.filter(&:receipt_date?).blank?
       state_error_call(state, I18n.t(:'errors.order.receipt_date_blank'))
     end
   end
@@ -375,51 +391,60 @@ class Order < ApplicationRecord
   # TODO: move out of the model
   def validate_prepaid_order_proudct
     if order_products.size > 1
-      errors.add(:order_products, "超過一樣")
+      errors.add(:order_products, I18n.t(:'errors.order.over_limit'))
     end
   end
 
   def prepaid_order_cannot_modify_product
     return if order_products.blank?
 
-    errors.add(:order_products, "不可更改") if persisted? && order_products.first.has_changes_to_save?
+    errors.add(:order_products, I18n.t(:'errors.order.cannot_modify')) if persisted? && order_products.first.has_changes_to_save?
   end
 
   def prepaid_order_cannot_change_additional_fee
     return unless persisted?
     return unless will_save_change_to_additional_fee?
 
-    errors.add(:additional_fee, "不可更改")
+    errors.add(:additional_fee, I18n.t(:'errors.order.cannot_modify'))
   end
 
   def prevent_prepaid_order_product_delete
     return if order_products.blank?
 
-    errors.add(:order_products, "不可刪除") if persisted? && order_products.first.marked_for_destruction?
+    errors.add(:order_products, I18n.t(:'errors.order.cannot_delete')) if persisted? && order_products.first.marked_for_destruction?
   end
 
   def prepaid_order_cannot_change_additional_fee_type
     return unless persisted?
     return unless will_save_change_to_additional_fee_type?
 
-    errors.add(:additional_fee_type, "不可更改")
+    errors.add(:additional_fee_type, I18n.t(:'errors.order.cannot_modify'))
   end
 
   # avoid prepaid order type own order payment
   def validate_prepaid_order_payment
-    errors.add(:order_payments, "不可擁有") unless order_payments.empty?
+    errors.add(:order_payments, I18n.t(:'errors.order.cannot_own')) unless order_payments.empty?
   end
 
+  # 2023/01/27
+  # comment out for now due to this use case is not suitable for now
   # def validate_order_owner_have_enough_quota
   #   if order_owner.balance - self.total_price < 0
   #     errors.add(:order_owners, "餘額不足以建立訂單")
   #   end
   # end
 
-  def validate_normal_order_handling_fee
+  def validate_normal_order_handling_amount
     # prevent previous order occur error when they don't have handling_amount
     return if handling_amount.nil?
 
-    errors.add(:handling_amount, "不可擁有") if handling_amount > 0
+    errors.add(:handling_amount, I18n.t(:'errors.order.cannot_own')) if handling_amount > 0
+  end
+
+  def validate_normal_order_additional_amount
+    # prevent previous order occur error when they don't have additional_amount
+    return if additional_amount.nil?
+
+    errors.add(:additional_amount, I18n.t(:'errors.order.cannot_own')) if additional_amount > 0
   end
 end
