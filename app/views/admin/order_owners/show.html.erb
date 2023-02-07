@@ -19,11 +19,31 @@
             <dt><%= OrderOwner.human_attribute_name(:telephone) %>:</dt>
             <dd><%= @order_owner.telephone %></dd>
 
-            <dt><%= OrderOwner.human_attribute_name(:handling_fee) %>:</dt>
-            <dd><%= @order_owner.handling_fee %></dd>
+            <% if @order_owner.key_account? %>
+              <dt><%= OrderOwner.human_attribute_name(:handling_fee) %>:</dt>
+              <dd><%= @order_owner.handling_fee %></dd>
 
-            <dt><%= OrderOwner.human_attribute_name(:balance) %>:</dt>
-            <dd><%= @order_owner.balance %></dd>
+              <dt><%= OrderOwner.human_attribute_name(:minimum_consumption_amount) %>:</dt>
+              <dd><%= @order_owner.minimum_consumption_amount %></dd>
+
+              <dt><%= OrderOwner.human_attribute_name(:minimum_handling_fee) %>:</dt>
+              <dd><%= @order_owner.minimum_handling_fee %></dd>
+
+              <dt><%= OrderOwner.human_attribute_name(:maximum_consumption_amount) %>:</dt>
+              <dd><%= @order_owner.maximum_consumption_amount %></dd>
+
+              <dt><%= OrderOwner.human_attribute_name(:maximum_handling_fee) %>:</dt>
+              <dd><%= @order_owner.maximum_handling_fee %></dd>
+
+              <dt><%= OrderOwner.human_attribute_name(:enable_minimum_consumption) %>:</dt>
+              <dd><%= format_boolean(@order_owner.enable_minimum_consumption) %></dd>
+
+              <dt><%= OrderOwner.human_attribute_name(:enable_maximum_consumption) %>:</dt>
+              <dd><%= format_boolean(@order_owner.enable_maximum_consumption) %></dd>
+
+              <dt><%= OrderOwner.human_attribute_name(:balance) %>:</dt>
+              <dd><%= @order_owner.balance %></dd>
+            <% end %>
 
           </dl>
 

@@ -95,3 +95,64 @@ textarea {
 li > ul {
   margin-left: 15px;
 }
+
+.environment-heading {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  z-index: 9999;
+  width: 90%;
+  text-align: right;
+  color: #000000;
+  font-size: 35px;
+  // background-color: #ffffff;
+  background-color: transparent;
+  opacity: 0.6;
+}
+
+.sidebar_add {
+  z-index: 10000;
+}
+
+.copy-text-btn {
+  height: 38px;
+  margin-top: 29px;
+  bottom: 0;
+  text-align: center;
+  display: flex;       // 垂直水平置中
+  align-items: center; // 垂直水平置中
+  position: relative;
+}
+
+.copy-text-btn .tooltiptext {
+  visibility: hidden;
+  width: 100px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 150%;
+  left: 80%;
+  margin-left: -75px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.copy-text-btn .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.copy-text-btn:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}

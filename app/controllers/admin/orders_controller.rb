@@ -145,7 +145,7 @@ class Admin::OrdersController < Admin::BaseController
         subheader: can?(:create, Order) && params[:action] == "index" ? { title: t(:'button.add_new'), url: @order_owner.present? ? new_admin_order_owner_order_path(@order_owner.id, type: "prepaid") : new_admin_order_path } : {},
         labels: [],
         breadcrumbs: [
-          { title: title, url: admin_orders_path }
+          { title: title, url: @order_owner.present? ? admin_order_owner_orders_path(@order_owner.id, type: "prepaid") : admin_orders_path, index_enable_href: true } 
         ]
       }
     when "show", "edit", "update"

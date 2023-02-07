@@ -5,15 +5,36 @@ class OrderCalculationService
     # left : attr_reader's order
     # right: initialize(order)'s order
     @order = order
+    @order_owner = order.order_owner
   end
 
+  #############################################################################
+  # Order total price calculation
+  #############################################################################
+  # Step 1
+  # calculate order products total amount
+  #
+  # Step 2
+  # return the price if the order is normal type
+  #
+  # PREPAID TYPE Order calculation begin
+  #
+  # Step 3 (optional)
+  # get the minimum consumption charge
+  #
+  # Step 4
+  # calculate order owner handling fee
+  #
+  # Step 5 (optional)
+  # calculate order additional fee
+  #############################################################################
   def call
     order_total_price = order_total_price_calculation
 
     if @order == Order::ORDER_TYPE_NORMAL
       @order.total_price = order_total_price
     else
-      order_handling_tx = order_handling_tx_calculation(order_total_price_calculation) || 0
+      order_handling_tx = order_handling_tx_calculation(order_total_price) || 0
       order_price_with_handling_tx = order_total_price + order_handling_tx
 
       @order.handling_amount = order_handling_tx
@@ -35,22 +56,6 @@ class OrderCalculationService
 
   private
 
-  #############################################################################
-  # Order total price calculation
-  #############################################################################
-  # Step 1
-  # calculate order products total amount
-  #
-  # Step 2
-  # return the price if the order is normal type
-  #
-  # PREPAID TYPE Order calculation begin
-  # Step 3
-  # calculate order owner handling fee
-  #
-  # Step 4 (optional)
-  # calculate order additional fee
-  #############################################################################
   def order_total_price_calculation
     return if @order.order_products.nil?
 
@@ -70,7 +75,13 @@ class OrderCalculationService
   # Order owner handling fee process
   # Returning the tax only
   def order_handling_tx_calculation(total_price)
-    order_owner_handling_fee = @order.order_owner.handling_fee.to_f
+    # minimum consumption case
+    return @order_owner.minimum_handling_fee if need_change_to_minimum_handling_fee(total_price)
+
+    # maximum consumption case
+    return @order_owner.maximum_handling_fee if need_change_to_maximum_handling_fee(total_price)
+
+    order_owner_handling_fee = @order_owner.handling_fee.to_f
 
     ops_total_price_handling_tx = total_price.to_f * order_owner_handling_fee / 100.0
 
@@ -91,5 +102,13 @@ class OrderCalculationService
 
   def need_cal_additional_fee?
     @order.additional_fee.present? && @order.additional_fee_type.present?
+  end
+
+  def need_change_to_minimum_handling_fee(total_price)
+    @order_owner.enable_minimum_consumption? && total_price < @order_owner.minimum_consumption_amount
+  end
+
+  def need_change_to_maximum_handling_fee(total_price)
+    @order_owner.enable_maximum_consumption? && total_price > @order_owner.maximum_consumption_amount
   end
 end

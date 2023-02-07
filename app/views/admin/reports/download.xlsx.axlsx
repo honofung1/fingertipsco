@@ -5,7 +5,11 @@ wb = xlsx_package.workbook
 xlsx_package.use_autowidth = false
 default_column_width = 20
 
-wb.add_worksheet do |sheet|
+# https://github.com/randym/axlsx/blob/master/lib/axlsx/workbook/worksheet/page_setup.rb#L49
+# https://github.com/caxlsx/caxlsx/blob/master/lib/axlsx/workbook/worksheet/page_setup.rb
+# A4 paper size = 9
+# scale set to 50 to fit the one page print
+wb.add_worksheet(page_setup: { paper_size: 9, scale: 50 } ) do |sheet|
   style = @result.report_style(sheet)
 
   # It is optional for the report

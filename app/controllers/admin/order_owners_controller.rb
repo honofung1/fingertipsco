@@ -3,7 +3,7 @@ class Admin::OrderOwnersController < Admin::BaseController
   before_action :set_content_header
 
   def index
-    @order_owners = OrderOwner.all
+    @order_owners = OrderOwner.all.order("order_code_prefix ASC")
   end
 
   def new
@@ -52,7 +52,9 @@ class Admin::OrderOwnersController < Admin::BaseController
     # permitted = OrderOwner.globalize_attribute_names + [:name, :order_code_prefix]
     permitted = [
       :name, :order_code_prefix,
-      :telephone, :addresses, :handling_fee
+      :telephone, :addresses, :handling_fee,
+      :minimum_consumption_amount, :minimum_handling_fee, :enable_minimum_consumption,
+      :maximum_consumption_amount, :maximum_handling_fee, :enable_maximum_consumption
     ]
 
     params.require(:order_owner).permit(*permitted)

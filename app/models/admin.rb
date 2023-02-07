@@ -74,7 +74,7 @@ class Admin < ApplicationRecord
   # if the record is persisted(already in db), not able to changed the username
   def username_cannot_changed
     if username_changed? && self.persisted?
-      errors.add(:order_owner_id, "Changed on Username is not allowed!") # TODO: I18n
+      errors.add(:username, "Changed on Username is not allowed!") # TODO: I18n
     end
   end
 end
