@@ -66,6 +66,7 @@ class Admin < ApplicationRecord
   #   # send(:"#{sorcery_config.password_attribute_name}=", new_password)
   #   sorcery_adapter.save raise_on_failure: raise_on_failure
   # end
+  # Testing
 
   #############################################################################
   # Private Method
