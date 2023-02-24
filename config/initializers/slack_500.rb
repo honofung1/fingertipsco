@@ -15,5 +15,5 @@ Slack500.setup do |config|
 
   # WebHook URL
   # see https://slack.com/services/new/incoming-webhook
-  config.webhook_url = "https://hooks.slack.com/services/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"
+  config.webhook_url = "https://hooks.slack.com/services/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"
 end
