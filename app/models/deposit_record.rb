@@ -17,6 +17,7 @@ class DepositRecord < ApplicationRecord
   # Validation
   #############################################################################
   validates :deposit_amount, presence: true, numericality: { greater_than: 0 }
+  validates :deposit_date, presence: true
 
   #############################################################################
   # Callback

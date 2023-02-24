@@ -64,4 +64,15 @@ Rails.application.routes.draw do
     # we block the access of that url for now
     # resources :inventorys
   end
+
+  namespace :vendor do
+    # Login Session
+    # get '/' => 'dashboards#index', as: :dashboard
+    # root 'dashboards#index', as: :root
+    # get 'login', to: 'user_sessions#new'
+    # post 'login', to: 'user_sessions#create'
+    # delete 'logout', to: 'user_sessions#destroy'
+
+    # resources :key_accounts
+  end
 end

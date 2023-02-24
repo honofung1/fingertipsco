@@ -5,7 +5,7 @@ Slack500.setup do |config|
   config.pretext = 'Admin Panel occuring an error'
 
   # タイトル
-  config.title = 'Rendering 500 with exception.'
+  config.title = 'Rendering Exception.'
 
   # メッセージの左に表示されるバーのカラー
   config.color = '#FF0000'

@@ -1,10 +1,18 @@
 class AdminAbility
   include CanCan::Ability
 
+  # TODO: use return guard instead of if clasue
   def initialize(admin)
     if admin.present?
       can :read, Dashboard
       can :manage, :all
+    end
+
+    if admin.admin?
+      cannot :manage, DepositRecord
+      cannot :manage, SystemSetting
+      cannot :manage, Admin
+      cannot :destroy, Order
     end
 
     # Define abilities for the passed in user here. For example:

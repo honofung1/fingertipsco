@@ -58,7 +58,7 @@ zh-HK:
       admin:
         name: "姓名"
         username: "帳號"
-        role: "類別"
+        role: "等級"
         password: "密碼"
         password_confirmation: "確認密碼"
       deposit_record:
@@ -111,6 +111,8 @@ zh-HK:
         payment_method: "支払方法"
         paid_amount: "預金金額"
         paid_date: "取引日"
+      order/order_products:
+        product_price: "售價"
       order_product:
         shop_from: "供應商"
         product_name: "商品名稱"
@@ -165,6 +167,8 @@ zh-HK:
     update_failed: '%{header_name} 更新失敗。 錯誤: %{error}'
     state_update_failed: '不能更新為%{state}。錯誤： %{error}'
     confirm_delete_message: "確定刪除%{order_id}嗎？"
+    access_failed: "沒有權限進入"
+    modify_denied: "沒有權限更改"
   no_record:
     header: '沒有記錄。'
     not_applicable: "不適用"
@@ -266,7 +270,7 @@ zh-HK:
     title: "管理員"
     name: "姓名"
     username: "帳號"
-    role: "類別"
+    role: "等級"
     password: "密碼"
     password_confirmation: "確認密碼"
     daterangepicker:
@@ -334,8 +338,8 @@ zh-HK:
       shipped: "已寄出"
       printed: "已會計"
     role:
-      admin: "管理員"
-      super_admin: "超級管理員"
+      admin: "Junior"
+      super_admin: "Senior"
   enumerize:
       order:
         additional_fee_type:

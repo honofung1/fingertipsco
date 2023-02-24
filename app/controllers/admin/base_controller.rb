@@ -4,6 +4,9 @@ class Admin::BaseController < ApplicationController
   # solving the ActionController::InvalidAuthenticityToken error
   protect_from_forgery
 
+  # Handling CanCan::AccessDenied
+  rescue_from CanCan::AccessDenied, with: :rescue_access_denied
+
   # 500 Error Helper
   if Rails.env.production?
     # Exceptionを補足
@@ -33,12 +36,14 @@ class Admin::BaseController < ApplicationController
     logged_in? ? current_user.name : "Please Login in" # or whatever
   end
 
-  def record_not_found
-    render 'admin/404', status: 404
+  def authentication_super_admin!
+    redirect_to admin_dashboard_path unless current_user.super_admin?
   end
 
-  def authentication_super_admin!
-    redirect_to admins_dashboard_path unless current_user.super_admin?
+  def record_not_found(exception)
+    Slack500.post(request, exception)
+
+    render 'admin/404', status: 404
   end
 
   def rescue_internal_server_error(exception)
@@ -46,6 +51,12 @@ class Admin::BaseController < ApplicationController
     Slack500.post(request, exception)
 
     render 'admin/500', status: :internal_server_error, layout: 'application'
+  end
+
+  def rescue_access_denied(exception)
+    Slack500.post(request, exception)
+
+    redirect_to admin_dashboard_path, danger: t(:'message.access_failed')
   end
 
   # TODO: remove it cause seem not in use
