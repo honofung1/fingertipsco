@@ -9,15 +9,24 @@ class Admin < ApplicationRecord
   # Defination of the role attribute of the admin
   # There is two roles in the admin model [admin, super_admin]
   # Different of the two roles
-  # UPDATED AT: 2022/09/07
+  # UPDATED AT: 2023/02/23
   # ------------------------------------------------------------------------
-  # |    Function/Role  |         Admin        |        Super Admin        |
+  # |   Function/Role   |        Junior        |           Senior          |
   # ------------------------------------------------------------------------
   # |  Access the order |                      |                           |
   # |  page             |           O          |              O            |
   # ------------------------------------------------------------------------
-  # |  Access the admin |                      |                           |
+  # |  Delete order     |                      |                           |
+  # |  record           |           x          |              O            |
+  # ------------------------------------------------------------------------
+  # |  Manage admin     |                      |                           |
   # |  page             |           x          |              O            |
+  # ------------------------------------------------------------------------
+  # |  Manage system    |                      |                           |
+  # |  setting          |           x          |              O            |
+  # ------------------------------------------------------------------------
+  # |  Manage deposit   |                      |                           |
+  # |  record           |           x          |              O            |
   # ------------------------------------------------------------------------
   enum role: [:admin, :super_admin]
 

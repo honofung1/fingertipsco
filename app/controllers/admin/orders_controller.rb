@@ -10,7 +10,14 @@ class Admin::OrdersController < Admin::BaseController
   def index
     # TODO: sorting
     @q = Order.ransack(params[:q])
-    @q.sorts = ['emergency_call desc', 'state asc', 'updated_at desc', 'order_created_at desc'] if @q.sorts.empty?
+
+    sorting_logic = if @order_owner.present?
+                      ['emergency_call desc', 'state asc', 'order_id desc']
+                    else
+                      ['emergency_call desc', 'state asc', 'updated_at desc', 'order_created_at desc']
+                    end
+
+    @q.sorts = sorting_logic if @q.sorts.empty?
     @orders = @q.result(distinct: true).includes(:order_owner, :order_payments, :order_products).page(params[:page])
 
     @orders = if @order_owner.present?
@@ -79,7 +86,17 @@ class Admin::OrdersController < Admin::BaseController
   end
 
   def update
-    if @order.update(order_params)
+    @order.attributes = order_params
+    @order = OrderCalculationService.new(@order).call
+
+    unless AdminUpdateOrderValidationService.new(current_user, @order).validate
+      @order.errors.add(:total_price, I18n.t(:'message.modify_denied'))
+      flash.now[:danger] = @order.errors.full_messages.join("\n")
+      render :edit
+      return
+    end
+
+    if @order.save
       redirect_to corresponding_order_type_action_path(@order), success: t(:'message.update_success', header_name: Order.model_name.human)
     else
       flash.now[:danger] = @order.errors.full_messages.join("\n")

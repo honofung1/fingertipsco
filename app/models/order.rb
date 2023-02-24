@@ -143,13 +143,13 @@ class Order < ApplicationRecord
   validate :order_owner_id_cannot_changed
   validate :check_state_condition
 
-  # validate :validate_order_owner_have_enough_quota, if: :is_prepaid?
   validate :validate_prepaid_order_proudct, if: :is_prepaid?
   validate :validate_prepaid_order_payment, if: :is_prepaid?
-  validate :prepaid_order_cannot_modify_product, if: :is_prepaid?
-  validate :prepaid_order_cannot_change_additional_fee, if: :is_prepaid?
-  validate :prepaid_order_cannot_change_additional_fee_type, if: :is_prepaid?
   validate :prevent_prepaid_order_product_delete, if: :is_prepaid?
+  # validate :validate_order_owner_have_enough_quota, if: :is_prepaid?
+  # validate :prepaid_order_cannot_modify_product, if: :is_prepaid?
+  # validate :prepaid_order_cannot_change_additional_fee, if: :is_prepaid?
+  # validate :prepaid_order_cannot_change_additional_fee_type, if: :is_prepaid?
 
   validate :validate_normal_order_handling_amount,   if: :is_normal?
   validate :validate_normal_order_additional_amount, if: :is_normal?
@@ -160,13 +160,15 @@ class Order < ApplicationRecord
   before_create :ensure_order_created_at
 
   after_create :order_owner_count_increment
-  after_create :deduct_balacne_from_order_owner, if: :is_prepaid?
+  # after_create :deduct_balacne_from_order_owner, if: :is_prepaid?
 
   before_save :ensure_order_finished_at, if: :will_save_change_to_state?
   before_save :ensure_order_owner
   before_save :ensure_order_id
 
-  after_destroy :return_balance_to_order_orwner, if: :is_prepaid?
+  after_save :recalculate_order_owner_balance, if: :is_prepaid?
+
+  after_destroy :return_balance_to_order_owner, if: :is_prepaid?
 
   ##############################################################################
   # Scope
@@ -196,6 +198,7 @@ class Order < ApplicationRecord
 
   # This is for normal order now
   # cause prepaid prder cannot change or update order product
+  # 20230223 TODO: merge with prepaid order way
   def calculate_order_total_price
     return unless is_normal?
 
@@ -231,16 +234,29 @@ class Order < ApplicationRecord
     self.order_finished_at = Time.now
   end
 
-  def deduct_balacne_from_order_owner
-    new_balance = order_owner.balance - self.total_price
-    order_owner.update_columns(balance: new_balance)
+  # def deduct_balacne_from_order_owner
+  #   new_balance = order_owner.balance - self.total_price
+  #   order_owner.update_columns(balance: new_balance)
+  #   order_owner.update_attributes(balance: new_balance)
+  # end
+
+  def recalculate_order_owner_balance
+    return if self.total_price.nil? || self.total_price == 0
+    return unless saved_change_to_total_price?
+
+    # Order new create situation
+    before_total_price = total_price_before_last_save || 0
+    new_total_price = self.total_price
+
+    new_balance = order_owner.balance + before_total_price - new_total_price
+    order_owner.update_attributes(balance: new_balance)
   end
 
-  def return_balance_to_order_orwner
+  def return_balance_to_order_owner
     return if self.total_price.nil? || self.total_price == 0
 
     new_balance = order_owner.balance + self.total_price
-    order_owner.update_columns(balance: new_balance)
+    order_owner.update_attributes(balance: new_balance)
   end
 
   def order_owner_code
@@ -354,15 +370,14 @@ class Order < ApplicationRecord
   def check_state_condition
     return unless state_changed?
 
+    ##############################################################################
+    # normal order state
+    ##############################################################################
     if fullpaid? && order_payments.blank?
       state_error_call(state, I18n.t(:'errors.order.order_payments_blank'))
     end
 
     if finished? && ship_date.nil?
-      state_error_call(state, I18n.t(:'errors.order.ship_date_blank'))
-    end
-
-    if shipped? && ship_date.nil?
       state_error_call(state, I18n.t(:'errors.order.ship_date_blank'))
     end
 
@@ -373,18 +388,26 @@ class Order < ApplicationRecord
     # if accounted? && order_products.where("receipt_date IS NULL").count > 0
     # cannot use 'where' here due to not save to db yet so that cannot find
     # out which receipt_date is null
-    if accounted? && order_products.filter(&:receipt_date?).blank?
+
+    # if accounted? && order_products.filter(&:receipt_date?).blank?
+    if accounted? && order_products.filter(&:receipt_date?).count != order_products.count
+      state_error_call(state, I18n.t(:'errors.order.receipt_date_blank'))
+    end
+
+    ##############################################################################
+    # prepaid order state
+    ##############################################################################
+    if shipped? && ship_date.nil?
+      state_error_call(state, I18n.t(:'errors.order.ship_date_blank'))
+    end
+
+    if printed? && order_products.filter(&:receipt_date?).blank?
       state_error_call(state, I18n.t(:'errors.order.receipt_date_blank'))
     end
   end
 
   def state_error_call(status, error_msg)
-    errors.add(
-      :state,
-      I18n.t(:'message.state_update_failed',
-             state: I18n.t(:"enums.order.#{status}"),
-             error: error_msg)
-    )
+    errors.add(:state, I18n.t(:'message.state_update_failed', state: I18n.t(:"enums.order.#{status}"), error: error_msg))
   end
 
   # limit prepaid order type product should always 1
@@ -395,18 +418,16 @@ class Order < ApplicationRecord
     end
   end
 
-  def prepaid_order_cannot_modify_product
-    return if order_products.blank?
+  # def prepaid_order_cannot_modify_product
+  #   return if order_products.blank?
 
-    errors.add(:order_products, I18n.t(:'errors.order.cannot_modify')) if persisted? && order_products.first.has_changes_to_save?
-  end
+  #   prepaid_order_product = order_products.first
 
-  def prepaid_order_cannot_change_additional_fee
-    return unless persisted?
-    return unless will_save_change_to_additional_fee?
-
-    errors.add(:additional_fee, I18n.t(:'errors.order.cannot_modify'))
-  end
+  #   # must be order_products.first due to there has one product only
+  #   if persisted? && prepaid_order_product.has_changes_to_save?
+  #     errors.add(:order_products, I18n.t(:'errors.order.cannot_modify'))
+  #   end
+  # end
 
   def prevent_prepaid_order_product_delete
     return if order_products.blank?
@@ -414,12 +435,19 @@ class Order < ApplicationRecord
     errors.add(:order_products, I18n.t(:'errors.order.cannot_delete')) if persisted? && order_products.first.marked_for_destruction?
   end
 
-  def prepaid_order_cannot_change_additional_fee_type
-    return unless persisted?
-    return unless will_save_change_to_additional_fee_type?
+  # def prepaid_order_cannot_change_additional_fee
+  #   return unless persisted?
+  #   return unless will_save_change_to_additional_fee?
 
-    errors.add(:additional_fee_type, I18n.t(:'errors.order.cannot_modify'))
-  end
+  #   errors.add(:additional_fee, I18n.t(:'errors.order.cannot_modify'))
+  # end
+
+  # def prepaid_order_cannot_change_additional_fee_type
+  #   return unless persisted?
+  #   return unless will_save_change_to_additional_fee_type?
+
+  #   errors.add(:additional_fee_type, I18n.t(:'errors.order.cannot_modify'))
+  # end
 
   # avoid prepaid order type own order payment
   def validate_prepaid_order_payment

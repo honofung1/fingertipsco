@@ -40,7 +40,13 @@ class OrderCalculationService
       @order.handling_amount = order_handling_tx
       @order.total_price = order_price_with_handling_tx
 
-      return @order unless need_cal_additional_fee?
+      unless need_cal_additional_fee?
+        # force additional_amount to zero first
+        # and let recalculate the addtitional amount
+        @order.additional_amount = nil
+
+        return @order
+      end
 
       order_additional_tx = order_additional_tx_calculation(order_price_with_handling_tx) || 0
 
@@ -75,6 +81,9 @@ class OrderCalculationService
   # Order owner handling fee process
   # Returning the tax only
   def order_handling_tx_calculation(total_price)
+    # check if the order has or has not product
+    return nil unless need_cal_handling_fee?
+
     # minimum consumption case
     return @order_owner.minimum_handling_fee if need_change_to_minimum_handling_fee(total_price)
 
@@ -110,5 +119,9 @@ class OrderCalculationService
 
   def need_change_to_maximum_handling_fee(total_price)
     @order_owner.enable_maximum_consumption? && total_price > @order_owner.maximum_consumption_amount
+  end
+
+  def need_cal_handling_fee?
+    @order.order_products.present?
   end
 end

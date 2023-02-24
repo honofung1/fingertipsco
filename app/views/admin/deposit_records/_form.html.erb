@@ -5,7 +5,7 @@
 
         <div class="form-group">
           <%= f.label :order_owner, OrderOwner.model_name.human %>
-          <%= f.select :order_owner_id, OrderOwner.all.collect{ |o| [o.order_code_prefix, o.id] }, {}, class: 'form-control select2 select2-hidden-accessible' %>
+          <%= f.select :order_owner_id, OrderOwner.key_account.collect{ |o| [o.order_code_prefix, o.id] }, {}, class: 'form-control select2 select2-hidden-accessible' %>
         </div>
 
         <%= f.input :deposit_amount %>
