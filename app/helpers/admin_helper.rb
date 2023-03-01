@@ -169,4 +169,8 @@ module AdminHelper
   def show_order_in_sidear
     OrderOwner.where(order_code_prefix: SystemSetting.get('order.show_prepaid_order_in_sidebar.order_owner_codes')).order('name ASC')
   end
+
+  def preset_order_shop_from
+    SystemSetting.get('order.preset.shop_from')
+  end
 end

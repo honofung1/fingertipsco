@@ -14,7 +14,13 @@
     <h5> <%= t(:'order_product.product_header') %> </h5>
     <div class="clearfix row">
       <div class="field form-group col-md-3">
-        <%= f.input :shop_from %>
+        <%= f.label :shop_from %>
+        <%= f.text_field :shop_from , list: 'shop-from', class: "form-control string optional" %>
+        <datalist id="shop-from">
+          <% preset_order_shop_from.each do |shop| %>
+            <option value="<%= shop %>"></option>
+          <% end %>
+        </datalist>
       </div>
 
       <div class="field form-group col-md-9">
