@@ -358,4 +358,5 @@ zh-HK:
       over_limit: "超過一樣"
     order_owner:
       must_be_blank: "不可填入"
+      cannot_delete: "不可刪除"
 

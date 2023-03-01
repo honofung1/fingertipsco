@@ -136,4 +136,8 @@ class OrderOwner < ApplicationRecord
       errors.add(:enable_maximum_consumption, I18n.t(:'errors.order_owner.must_be_blank'))
     end
   end
+
+  def unable_to_destroy_order_owner
+    errors.add(:base, I18n.t(:'errors.order_owner.cannot_delete')) if orders.count > 0
+  end
 end
