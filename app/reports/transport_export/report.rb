@@ -8,6 +8,12 @@ class TransportExport::Report < ReportBase
     header = TransportExport.header
     result = []
 
+    order_owner_id = if @criteria_value_hash.dig(:order_owner_id)
+                       @criteria_value_hash[:order_owner_id]
+                     else
+                       nil
+                     end
+
     # Order order_created_at
     start_date = if @criteria_value_hash.dig(:order_created_at, :from)
                    @criteria_value_hash[:order_created_at][:from].to_date
@@ -69,6 +75,11 @@ class TransportExport::Report < ReportBase
         orders.where('orders.ship_date BETWEEN :from AND :to',
                      from: ship_start_date.beginning_of_day.utc,
                      to: ship_end_date.end_of_day.utc)
+    end
+
+    if order_owner_id.present?
+      orders =
+        orders.where('orders.order_owner_id': order_owner_id)
     end
 
     case format

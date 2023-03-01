@@ -34,6 +34,12 @@ class OrderExport::Report < ReportBase
                       nil
                     end
 
+    order_owner_id = if @criteria_value_hash.dig(:order_owner_id)
+                       @criteria_value_hash[:order_owner_id]
+                     else
+                       nil
+                     end
+
     # order_costs =Order.joins('LEFT JOIN order_products ON order_products.order_id = orders.id').select('orders.order_id,order_products.product_cost,order_products.shipment_cost,order_products.discount,order_products.total_cost,order_products.receipt_date').order(:id, 'orders.order_id')
     orders =
       Order.normal_order
@@ -74,6 +80,11 @@ class OrderExport::Report < ReportBase
                      to: ship_end_date.end_of_day.utc)
     end
 
+    if order_owner_id.present?
+      orders =
+        orders.where('orders.order_owner_id': order_owner_id)
+    end
+
     case format
     when 'html'
       # TODO: show result in html
@@ -94,7 +105,7 @@ class OrderExport::Report < ReportBase
   # Define criteria for the report
   def define_criteria(criteria)
     # Order Owner selector
-    criteria.add_criterion(ReportCriterionDefinition.new(code: :order_owner_id, type: :enum_default_blank, enum: OrderOwner.all, enum_object_display_field: :order_code_prefix, model: OrderOwner, view_code: :order_code_prefix))
+    criteria.add_criterion(ReportCriterionDefinition.new(code: :order_owner_id, type: :enum_default_blank, enum: OrderOwner.not_key_account, enum_object_display_field: :order_code_prefix, model: OrderOwner, view_code: :order_code_prefix))
     # Order created date selector
     criteria.add_criterion(ReportCriterionDefinition.new(code: :order_created_at, type: :date_range_default_blank, model: Order, view_code: :order_created_at))
     # Order ship date selector

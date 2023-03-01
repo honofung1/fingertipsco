@@ -13,14 +13,14 @@ $(document).ready(function(){
           targets: '_all',
           className: 'wrap'
         }
-     ]
+      ]
     });
   });
 })
 
 $('select').select2({
   theme: 'bootstrap4',
-  allowClear: true
+  allowClear: true,
 });
 
 

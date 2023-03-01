@@ -284,6 +284,7 @@ zh-HK:
     description: "簡介"
   system_setting:
     header_name: "系統設定"
+    title: "系統設定"
     name: '名稱'
     value: '值'
     value_type: '值種類'

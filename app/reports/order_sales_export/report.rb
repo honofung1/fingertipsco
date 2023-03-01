@@ -46,7 +46,7 @@ class OrderSalesExport::Report < ReportBase
 
     if order_owner_id.present?
       order_payments =
-        order_payments.where('order_owners.id': order_owner_id)
+        order_payments.where('orders.order_owner_id': order_owner_id)
     end
 
     case format
@@ -69,7 +69,7 @@ class OrderSalesExport::Report < ReportBase
 
   # Define criteria for the report
   def define_criteria(criteria)
-    criteria.add_criterion(ReportCriterionDefinition.new(code: :order_owner_id, type: :enum_default_blank, enum: OrderOwner.all, enum_object_display_field: :order_code_prefix, model: OrderOwner, view_code: :order_code_prefix))
+    criteria.add_criterion(ReportCriterionDefinition.new(code: :order_owner_id, type: :enum_default_blank, enum: OrderOwner.not_key_account, enum_object_display_field: :order_code_prefix, model: OrderOwner, view_code: :order_code_prefix))
     criteria.add_criterion(ReportCriterionDefinition.new(code: :ship_date, type: :date_range_default_blank, model: Order, view_code: :ship_date))
   end
 

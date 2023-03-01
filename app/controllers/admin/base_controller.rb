@@ -4,11 +4,11 @@ class Admin::BaseController < ApplicationController
   # solving the ActionController::InvalidAuthenticityToken error
   protect_from_forgery
 
-  # Handling CanCan::AccessDenied
-  rescue_from CanCan::AccessDenied, with: :rescue_access_denied
-
   # 500 Error Helper
   if Rails.env.production?
+    # Handling CanCan::AccessDenied
+    rescue_from CanCan::AccessDenied, with: :rescue_access_denied
+
     # Exceptionを補足
     rescue_from Exception, with: :rescue_internal_server_error
   end
@@ -61,7 +61,7 @@ class Admin::BaseController < ApplicationController
 
   # TODO: remove it cause seem not in use
   def not_authenticated
-    flash[:warning] = 'ログインしてください'
+    flash[:warning] = '請重新登入'
     redirect_to admin_login_path
   end
 

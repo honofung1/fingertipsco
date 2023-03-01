@@ -37,5 +37,10 @@ order:
       _desc: 'JSON Array of order owner codes to show prepaid type order unique page in sidebar'
       _value_type: 'json'
       _default: '["JA", "SY", "KM"]'
+  preset:
+    shop_from:
+      _desc: 'It allows you to preset the shop_form field value'
+      _value_type: 'json'
+      _default: '["Mercari"]'
 
 
