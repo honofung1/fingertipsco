@@ -22,7 +22,7 @@ class Admin::OrderOwnersController < Admin::BaseController
   end
 
   def edit
-    # Nothing here
+    @order_owner.build_order_owner_account if @order_owner.order_owner_account.nil?
   end
 
   def update
@@ -54,7 +54,10 @@ class Admin::OrderOwnersController < Admin::BaseController
       :name, :order_code_prefix,
       :telephone, :addresses, :handling_fee,
       :minimum_consumption_amount, :minimum_handling_fee, :enable_minimum_consumption,
-      :maximum_consumption_amount, :maximum_handling_fee, :enable_maximum_consumption
+      :maximum_consumption_amount, :maximum_handling_fee, :enable_maximum_consumption,
+      order_owner_account_attributes: [
+        :id, :email, :password, :_destroy
+      ]
     ]
 
     params.require(:order_owner).permit(*permitted)

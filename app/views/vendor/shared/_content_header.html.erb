@@ -1,0 +1,138 @@
+<%-
+  # Make sure each pages have the content header.
+
+  if @layout_view_variables[:content_header].blank? or @layout_view_variables[:content_header][:header].blank?
+    err_message = "You haven't set header for '#{params[:action]}' action yet. Please go to 'set_content_header' method in '#{params[:controller]}' controller to config it."
+  if response.status == 404
+    # 404 don't support header
+  elsif Rails.env.production?
+    ExceptionNotifier.notify(err_message)
+  else
+    raise err_message
+  end
+else
+-%>
+
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0 text-dark">
+          <%= @layout_view_variables[:content_header][:header] %>
+          <% if @layout_view_variables[:content_header][:subheader].present? && @layout_view_variables[:content_header][:subheader][:title].present? -%>
+            <small>
+              <% if @layout_view_variables[:content_header][:subheader][:url].present? -%>
+                <%= link_to @layout_view_variables[:content_header][:subheader][:title], @layout_view_variables[:content_header][:subheader][:url] -%>
+              <% else -%>
+                <%= @layout_view_variables[:content_header][:subheader][:title] -%>
+              <% end -%>
+            </small>
+          <% end %>
+          <% if @layout_view_variables[:content_header][:labels].present? -%>
+            <% @layout_view_variables[:content_header][:labels].each do |label| -%>
+              &nbsp;<span class="label label-<%= label[:class] %>"><%= label[:title] %></span>
+            <% end -%>
+          <% end -%>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right" >
+          <li class="breadcrumb-item" >
+            <%= link_to vendor_orders_path do %>
+              <i class="fa fa-home"></i> <%= t(:'sidebar.home') %>
+            <% end %>
+          </li>
+          <% if @layout_view_variables[:content_header][:breadcrumbs].present? -%>
+            <%
+            # auto insert New and Edit
+            if ["edit", "update"].include?(params[:action])
+              @layout_view_variables[:content_header][:breadcrumbs] << {title: t(:'button.edit').humanize}
+            elsif ["new", "create", "clone"].include?(params[:action]) # add action 'clone' in products with same header as 'new'
+              @layout_view_variables[:content_header][:breadcrumbs] << {title: t(:'button.new').humanize}
+            end
+            %>
+            <% @layout_view_variables[:content_header][:breadcrumbs].each_with_index do |item, index| -%>
+              <%
+              is_last_breadcrumb = @layout_view_variables[:content_header][:breadcrumbs].length == index + 1
+              if item.is_a?(Hash)
+                breadcrumb_title = item[:title]
+                breadcrumb_url = item[:url].present? ? item[:url] : '#'
+                breadcrumb_index_enable_href = item[:index_enable_href].present? ? item[:index_enable_href] : false
+              elsif item.is_a?(ActiveRecord::Base) # AR object
+                # Put display_name as the highest pirority.
+                if !item.try(:display_name).nil?
+                  breadcrumb_title = item.display_name
+                elsif !item.try(:name).nil?
+                  breadcrumb_title = item.name
+                elsif !item.try(:title).nil?
+                  breadcrumb_title = item.title
+                elsif !item.try(:reference_number).nil?
+                  breadcrumb_title = item.reference_number
+                elsif !item.try(:email).nil?
+                  breadcrumb_title = item.email
+                elsif !item.try(:product_title).nil?
+                  breadcrumb_title = item.product_title
+                elsif !item.try(:token).nil?
+                  breadcrumb_title = item.token
+                elsif !item.try(:code).nil?
+                  breadcrumb_title = item.code
+                elsif !item.try(:key).nil?
+                  breadcrumb_title = item.key
+                elsif item.respond_to?(:related_product_id)
+                  breadcrumb_title = item.product&.title
+                elsif item.respond_to?(:from_object) # RelatedRecord
+                  breadcrumb_title = item.from_object&.to_label
+                elsif !item.try(:price_group_id).nil?
+                  breadcrumb_title = item.price_group.code
+                elsif !item.try(:zone_code).nil?
+                  breadcrumb_title = item.zone_code
+                elsif !item.try(:season_id).nil?
+                  breadcrumb_title = item.product.title
+                elsif !item.try(:brand_id).nil?
+                  breadcrumb_title = item.product.title
+                elsif !item.try(:currency_id).nil?
+                  breadcrumb_title = item.currency.code
+                elsif !item.try(:payment_provider_id).nil?
+                  breadcrumb_title = item.payment_provider.to_label
+                elsif item.respond_to?(:name) # some model name is not required presence, if it flowed to here, just take it nil
+                  breadcrumb_title = item.name
+                elsif item.respond_to?(:to_label)
+                  breadcrumb_title = item.to_label
+                elsif item.respond_to?(:order_id)
+                  breadcrumb_title = item.order_id
+                elsif item.respond_to?(:order_owner_id)
+                  breadcrumb_title = item.order_owner.name
+                else
+                  if Rails.env.production?
+                    ExceptionNotifier.notify("Unknown object name for breadcrumb title.......#{item.to_json}")
+                    breadcrumb_title = "#{item.class} ##{item.id}"
+                  else
+                    raise "Unknown object name for breadcrumb title.......#{item.to_json}"
+                  end
+                end
+                # http://stackoverflow.com/questions/20057910/rails-url-for-behaving-differently-when-using-namespace-based-on-current-cont
+                begin
+                  breadcrumb_url = url_for([:admin, item])
+                rescue
+                  puts "#{item.class}'s URL not found, may need hard-code......."
+                  breadcrumb_url = '#'
+                end
+              end
+              %>
+              <% if is_last_breadcrumb %>
+                <% if params[:action] == "index" && breadcrumb_index_enable_href %>
+                  <li class="breadcrumb-item" ><a href="<%= breadcrumb_url %>"> <%= breadcrumb_title %></a></li>
+                <% else %>
+                  <li class="breadcrumb-item active" ><%= breadcrumb_title %></li>
+                <% end %>
+              <% else %>
+                <li class="breadcrumb-item" ><a href="<%= breadcrumb_url %>"> <%= breadcrumb_title %></a></li>
+              <% end %>
+            <% end -%>
+          <% end -%>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+<% end -%>

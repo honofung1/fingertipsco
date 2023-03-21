@@ -59,11 +59,13 @@ body {
 tr th:last-child {
   width: 1%;
   white-space: nowrap;
+  text-align: right;
 }
 
 tr td:last-child {
   width: 1%;
   white-space: nowrap;
+  text-align: right;
 }
 
 .wrap {
@@ -174,4 +176,25 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
+}
+
+.alnright td { text-align: right; }
+
+.vendor_order_table {
+  table-layout: fixed;
+  width: 100%;
+}
+.vendor_order_table th,
+.vendor_order_table td {
+  width: 1%;
+  word-wrap: break-word;
+}
+
+.admin_order_table {
+  width: 100%;
+}
+.admin_order_table th:not(:last-child),
+.admin_order_table td:not(:last-child) {
+  width: 1%;
+  word-wrap: break-word;
 }

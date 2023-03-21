@@ -18,7 +18,7 @@ class Admin::DashboardsController < Admin::BaseController
       title = t(:'sidebar.dashboard')
       {
         header: title,
-        subheader: {title: "Control panel"},
+        subheader: { title: "Control panel" },
         labels: [],
         breadcrumbs: [
           {title: title}

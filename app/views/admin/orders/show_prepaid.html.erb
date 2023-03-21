@@ -10,7 +10,7 @@
         </div>
 
         <div class="card-body">
-          <table class="table table-striped">
+          <table class="table table-striped alnright">
             <tr>
               <th class="col-md-6"><%= Order.human_attribute_name(:state) %>:</th>
               <td><%= I18n.t(:"enums.order.#{@order.state}") %></td>
@@ -24,16 +24,6 @@
             <tr>
               <th class="col-md-6"><%= Order.human_attribute_name(:currency) %>:</th>
               <td><%= @order.currency %></td>
-            </tr>
-
-            <tr>
-              <th class="col-md-6"><%= Order.human_attribute_name(:order_owner_id) %>:</th>
-              <td><%= @order.order_owner.name %></td>
-            </tr>
-
-            <tr>
-              <th class="col-md-6"><%= Order.human_attribute_name(:pickup_way) %>:</th>
-              <td><%= @order.pickup_way %></td>
             </tr>
 
             <tr>
@@ -57,8 +47,8 @@
             </tr>
 
             <tr>
-              <th class="col-md-6"><%= Order.human_attribute_name(:additional_fee) %>:</th>
-              <td><%= @order.additional_fee %></td>
+              <th class="col-md-6"><%= Order.human_attribute_name(:handling_amount) %>:</th>
+              <td><%= @order.handling_amount %></td>
             </tr>
 
             <tr>
@@ -67,8 +57,8 @@
             </tr>
 
             <tr>
-              <th class="col-md-6"><%= Order.human_attribute_name(:handling_amount) %>:</th>
-              <td><%= @order.handling_amount %></td>
+              <th class="col-md-6"><%= Order.human_attribute_name(:additional_fee) %>:</th>
+              <td><%= @order.additional_fee %></td>
             </tr>
 
             <tr>
@@ -79,6 +69,11 @@
             <tr>
               <th class="col-md-6"><%= Order.human_attribute_name(:total_price) %>:</th>
               <td><%= @order.total_price %></td>
+            </tr>
+
+            <tr>
+              <th class="col-md-6"><%= Order.human_attribute_name(:pickup_way) %>:</th>
+              <td><%= @order.pickup_way %></td>
             </tr>
 
             <tr>

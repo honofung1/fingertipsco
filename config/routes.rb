@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   # TODO
   # for the security, when someone try to access the root directory
   # it should redirect to the blank page instead of redirect to login page
-  root to: redirect("/admin/login"), as: :redirected_root
+  root to: redirect("/admin")
 
   # TODO: rename admin to admins
   # need testing
@@ -65,14 +65,16 @@ Rails.application.routes.draw do
     # resources :inventorys
   end
 
-  namespace :vendor do
-    # Login Session
-    # get '/' => 'dashboards#index', as: :dashboard
-    # root 'dashboards#index', as: :root
-    # get 'login', to: 'user_sessions#new'
-    # post 'login', to: 'user_sessions#create'
-    # delete 'logout', to: 'user_sessions#destroy'
+  devise_for :order_owner_accounts,
+    module: "vendor",
+    path: 'vendor',
+    path_names: {
+      sign_in: 'login', sign_out: 'logout',
+      password: 'secret', confirmation: 'verification',
+      registration: 'register', edit: 'edit/profile'
+    }
 
-    # resources :key_accounts
+  namespace :vendor do
+    resources :orders, only: [:index, :show], param: :order_id
   end
 end
