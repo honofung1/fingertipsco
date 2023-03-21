@@ -1,0 +1,37 @@
+<!-- Main Sidebar Container -->
+<aside class="main-sidebar sidebar-dark-primary elevation-4 sidebar_add">
+  <!-- Brand Logo -->
+  <%= link_to vendor_orders_path, class:"brand-link" do %>
+    <%= image_tag 'f_icon.png', class: 'brand-image img-circle elevation-3' %>
+    <span class="brand-text font-weight-light">Fingertips Co</span> <!-- TODO: change to ENV -->
+  <% end %>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <!-- Sidebar user panel (optional) -->
+    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+      <div class="image">
+        <%= image_tag current_user.avatar_url, class: 'img-circle elevation-2' %>
+      </div>
+      <div class="info">
+        <a href="#" class="d-block"><%= current_user.name %></a>
+      </div>
+    </div>
+
+    <!-- Sidebar Menu -->
+    <nav class="mt-2">
+      <ul class="nav nav-pills nav-sidebar nav-child-indent flex-column nav-collapse-hide-child" data-widget="treeview" role="menu" data-accordion="false">
+
+        <li class="nav-item">
+          <%= link_to vendor_orders_path, class: "nav-link" do %>
+            <i class="nav-icon fa fa-shopping-basket"></i>
+            <%= content_tag :p, t("sidebar.order") %>
+          <% end %>
+        </li>
+
+      </ul>
+    </nav>
+    <!-- /.sidebar-menu -->
+  </div>
+  <!-- /.sidebar -->
+</aside>

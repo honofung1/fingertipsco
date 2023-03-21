@@ -21,6 +21,9 @@ class OrderOwner < ApplicationRecord
   has_many :deposit_records, dependent: :restrict_with_error
   has_many :orders, dependent: :restrict_with_error
 
+  has_one :order_owner_account, dependent: :destroy, inverse_of: :order_owner
+  accepts_nested_attributes_for :order_owner_account, reject_if: :all_blank, allow_destroy: true
+
   #############################################################################
   # Validation
   #############################################################################
@@ -75,6 +78,17 @@ class OrderOwner < ApplicationRecord
     SystemSetting.get('order.show_prepaid_order_in_sidebar.order_owner_codes').include?(order_code_prefix)
   end
 
+  def avatar_url
+    # TODO: temp method
+    # Path app/assets/images/avatar2.png
+    "avatar5.png"
+  end
+
+  def order_owner_ability
+    @order_owner_ability ||= OrderOwnerAbility.new(self)
+  end
+
+  delegate :can?, :cannot?, to: :order_owner_ability
   #############################################################################
   # Private Method
   #############################################################################

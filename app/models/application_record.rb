@@ -45,5 +45,4 @@ class ApplicationRecord < ActiveRecord::Base
   # Private Method
   ##############################################################################
   private
-  
 end

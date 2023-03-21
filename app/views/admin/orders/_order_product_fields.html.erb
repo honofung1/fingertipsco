@@ -80,7 +80,7 @@
       </div>
 
       <div class="field form-group col-md-4">
-        <%= f.input :discount, input_html: { class: 'discount' } %>
+        <%= f.input :discount, input_html: { class: 'discount' }, placeholder: "ポイント不計算在內" %>
       </div>
 
       <div class="field form-group col-md-4">
@@ -90,7 +90,11 @@
       <div class="field form-group col-md-6">
         <%= f.label :receipt_date %>
         <div class="input-group date" data-target-input="nearest">
-            <%= f.text_field :receipt_date, id: "receipt_date", class: "flatpickr flatpickr-form", placeholder: t(:'order_product.receipt_date') %>
+            <%= f.text_field :receipt_date, 
+                             id: "receipt_date", 
+                             class: "flatpickr flatpickr-form", 
+                             placeholder: "領收書所記載付款日期"
+            %>
         </div>
       </div>
       

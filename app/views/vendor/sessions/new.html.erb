@@ -1,0 +1,39 @@
+<% content_for(:title, '登入') %>
+  <div class="login-box">
+    <div class="login-logo">
+      <a href="/vendor/login"><h1><b>Fingertips</b> Commerce LOGIN</h1></a>
+    </div>
+    <!-- /.login-logo -->
+    <div class="card">
+      <div class="card-body login-card-body">
+
+        <%= simple_form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+          <%= f.label :email, t('defaults.email') %>
+          <div class="input-group mb-3">
+            <%= f.text_field :email, class: 'form-control', placeholder: t('defaults.email') %>
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="fas fa-envelope"></span>
+              </div>
+            </div>
+          </div>
+
+          <%= f.label :password, t('defaults.password') %>
+          <div class="input-group mb-3">
+            <%= f.password_field :password, class: 'form-control', placeholder: t('defaults.password') %>
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="fas fa-key"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-12">
+              <%= f.submit (t 'defaults.login'), class: 'btn btn-block btn-primary' %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>

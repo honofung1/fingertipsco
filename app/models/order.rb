@@ -249,14 +249,16 @@ class Order < ApplicationRecord
     new_total_price = self.total_price
 
     new_balance = order_owner.balance + before_total_price - new_total_price
-    order_owner.update_attributes(balance: new_balance)
+
+    order_owner.update_attributes!(balance: new_balance)
   end
 
   def return_balance_to_order_owner
     return if self.total_price.nil? || self.total_price == 0
 
     new_balance = order_owner.balance + self.total_price
-    order_owner.update_attributes(balance: new_balance)
+
+    order_owner.update_attributes!(balance: new_balance)
   end
 
   def order_owner_code
@@ -402,6 +404,8 @@ class Order < ApplicationRecord
     end
 
     if printed? && order_products.filter(&:receipt_date?).blank?
+      return if order_products.blank?
+
       state_error_call(state, I18n.t(:'errors.order.receipt_date_blank'))
     end
   end

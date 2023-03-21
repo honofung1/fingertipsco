@@ -67,19 +67,28 @@ zh-HK:
         deposit_date: "存入日期"
       order_owner:
         name: "姓名"
+        email: "電郵地址"
+        username: "帳號"
+        password: "密碼"
+        password_confirmation: "確認密碼"
         order_code_prefix: "訂單號碼前綴"
         order_code_prefix: "訂單號碼前綴"
         addresses: "住所"
         telephone: "電話"
         balance: "結餘"
         handling_fee: "手續費金額(以%計算)"
-        minimum_consumption_amount: "注文最低消費金額"
+        minimum_consumption_amount: "訂單最低消費金額"
         minimum_handling_fee: "最低手續費"
-        maximum_consumption_amount: "注文最高消費金額"
+        maximum_consumption_amount: "訂單最高消費金額"
         maximum_handling_fee: "最高手續費"
         enable_minimum_consumption: "啟用最低消費"
         enable_maximum_consumption: "啟用最高消費"
         orders: "訂單" #For depentent error message
+        basic_information: "基本資料"
+        order_owner_account: "登入資料"
+      order_owner_account:
+        email: "電郵地址"
+        password: "密碼"
       order:
         order_id: "訂單號碼"
         order_owner_id: "Key Account"
@@ -95,18 +104,18 @@ zh-HK:
         order_costs: "訂單成本"
         order_owners: "Key Account"
         state: "訂單狀態"
-        total_price: "訂單合計金額"
+        total_price: "訂單總金額"
         pickup_way: "取貨方式"
         currency: "訂單貨幣"
         remark: "備註"
         receive_number: "取貨號碼"
-        hk_tracking_number: "香港配送追跡番号"
-        tracking_number: "国際追跡番号"
+        hk_tracking_number: "香港配送追跡編號"
+        tracking_number: "国際追跡編號"
         ship_date: "輸出日"
-        handling_amount: "手續費金額"
-        additional_amount: "附加費金額"
+        handling_amount: "手續費"
+        additional_amount: "附加費總額"
         additional_fee: "附加費"
-        additional_fee_type: "附加費種類"
+        additional_fee_type: "附加費計算方法"
       order/order_payments:
         payment_method: "支払方法"
         paid_amount: "預金金額"
@@ -128,7 +137,7 @@ zh-HK:
         shipment_cost: "送料"
         discount: "割引"
         total_cost: "合計"
-        receipt_date: "領收書日期"
+        receipt_date: "付款日期"
       order_payment:
         payment_method: "支払方法"
         paid_amount: "預金金額"
@@ -221,11 +230,11 @@ zh-HK:
     enable_minimum_consumption: "啟用最低消費"
     enable_maximum_consumption: "啟用最高消費"
   order:
-    handling_amount: "手續費金額"
-    additional_amount: "附加金額"
+    handling_amount: "手續費"
+    additional_amount: "附加費總額"
     header_name: "訂單"
     title: "訂單"
-    total_price: "訂單合計金額"
+    total_price: "訂單總金額"
     order_owner_name: "Order Channel"
     order_id: "訂單號碼"
     customer_name: "客戶名稱"
@@ -250,7 +259,7 @@ zh-HK:
     cost_header: "成本"
     ship_date: "輸出日"
     shop_from: "供應商"
-    receipt_date: "領收書日期"
+    receipt_date: "付款日期"
     product_price: "售價"
   order_payment:
     new: "新付款紀錄"
@@ -344,7 +353,7 @@ zh-HK:
   enumerize:
       order:
         additional_fee_type:
-          fixed_value: "固定數值"
+          fixed_value: "固定值"
           discount : "百分比"
   errors:
     order:

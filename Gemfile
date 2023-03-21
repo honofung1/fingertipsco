@@ -65,6 +65,7 @@ gem 'rubocop', '~> 1.31', require: false
 gem 'dotenv-rails'
 
 # Login
+gem 'devise'
 gem 'sorcery'
 
 # Frontend related

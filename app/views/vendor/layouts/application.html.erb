@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+  <html>
+    <head>
+      <meta charset="UTF-8">
+      <meta lang='ja'>
+      <meta name="robots" content="noindex, nofollow">
+      <title><%= page_title(yield(:title), false) %></title>
+      <%= csrf_meta_tags %>
+      <%= stylesheet_link_tag 'admin', media: 'all' %> <!--ここでadmin.scssを読み込む-->
+      <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+      <%= favicon_link_tag 'favicon.ico' %>
+    </head>
+
+    <body class="hold-transition sidebar-mini layout-fixed sidebar-collapse">
+      <div class="wrapper">
+
+        <%= render 'vendor/shared/header' %>
+        <%= render 'vendor/shared/sidebar' %>
+    
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+          <!-- TODO: Check issues for shared/flash_message -->
+          <!-- render 'shared/flash_message' -->
+          <div id='flash'>
+            <%= render 'admin/shared/flash_message' %>
+          </div>
+          <%= render partial: "vendor/shared/content_header" %>
+          <%= yield %>
+        </div>
+        <!-- /.content-wrapper -->
+
+        <%= render 'admin/shared/footer' %>
+
+      </div>
+
+      <%= javascript_include_tag 'admin' %> <!--ここでadmin.jsを読み込む-->
+      <%= content_for(:inline_javascript) %>
+
+    </body>
+  </html>

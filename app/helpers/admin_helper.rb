@@ -121,6 +121,13 @@ module AdminHelper
     "#{dollar_sign}#{amount}"
   end
 
+  def prepaid_order_additional_fee_with_sign(type, amount)
+    return t(:'no_record.not_applicable') if amount.nil? || amount == 0
+
+    sign = type == "discount" ? "%" : "¥"
+    "#{sign}#{amount}"
+  end
+
   def prepaid_order_price_without_tax(order)
     return if order.order_products.blank?
 

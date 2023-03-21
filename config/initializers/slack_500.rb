@@ -2,10 +2,10 @@ require 'slack_500'
 
 Slack500.setup do |config|
   # pretext
-  config.pretext = 'Admin Panel occuring an error'
+  config.pretext = 'FT Commerce(Production) occuring an error!!'
 
   # タイトル
-  config.title = 'Rendering Exception.'
+  config.title = 'Exception.'
 
   # メッセージの左に表示されるバーのカラー
   config.color = '#FF0000'

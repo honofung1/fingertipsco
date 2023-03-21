@@ -87,7 +87,22 @@ class Admin::OrdersController < Admin::BaseController
 
   def update
     @order.attributes = order_params
-    @order = OrderCalculationService.new(@order).call
+    # prepaid order only have one product
+    order_product = @order.order_products.first
+
+    # TODO: refactor this temp solution !!!!
+    # this solution is for one situation
+    # when order owner updated their handling fee
+    # and prevent old order to using new handling fee
+    # when old order don't have the price related column changed
+    # it will not call order calculation service
+    order_need_recal =
+      order_product.will_save_change_to_product_quantity? ||
+      order_product.will_save_change_to_product_price? ||
+      @order.will_save_change_to_additional_fee? ||
+      @order.will_save_change_to_additional_fee_type?
+
+    @order = OrderCalculationService.new(@order).call if order_need_recal
 
     unless AdminUpdateOrderValidationService.new(current_user, @order).validate
       @order.errors.add(:total_price, I18n.t(:'message.modify_denied'))
