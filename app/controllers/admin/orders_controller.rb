@@ -87,8 +87,9 @@ class Admin::OrdersController < Admin::BaseController
 
   def update
     @order.attributes = order_params
-    # prepaid order only have one product
-    order_product = @order.order_products.first
+
+    # prepaid order only have one product or prepare a fake product for no product prepaid order
+    order_product = @order.order_products.first || OrderProduct.new
 
     # TODO: refactor this temp solution !!!!
     # this solution is for one situation

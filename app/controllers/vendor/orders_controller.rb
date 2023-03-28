@@ -3,7 +3,7 @@ class Vendor::OrdersController < Vendor::BaseController
   before_action :set_content_header
 
   def index
-    # TODO: sorting
+    # filter out printed order for now
     @q = current_user.orders.where.not(state: "printed").ransack(params[:q])
 
     @q.sorts = ['emergency_call desc', 'state asc', 'order_id desc'] if @q.sorts.empty?
