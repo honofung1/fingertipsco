@@ -344,7 +344,7 @@ zh-HK:
       accounted: "完成會計"
       cancelled: "已取消"
       prepaided: "已付款"
-      received: "已收貨"
+      received: "已到日本倉"
       shipped: "已寄出"
       printed: "已會計"
     role:

@@ -1,6 +1,14 @@
 # frozen_string_literal: true
 
 class Vendor::PasswordsController < Devise::PasswordsController
+  layout 'vendor/layouts/admin_login'
+
+  # before_action :configure_sign_in_params, only: [:create]
+  skip_before_action :set_content_header
+
+  # Skip cancan to avoid raising error
+  skip_load_and_authorize_resource
+
   # GET /resource/password/new
   # def new
   #   super
