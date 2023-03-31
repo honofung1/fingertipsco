@@ -103,7 +103,7 @@ Rails.application.configure do
     port: 587,
     domain: 'test.jp',
     user_name: 'apikey',
-    password: ENV['SENDGRID_API_KEY>'],
+    password: ENV['SENDGRID_API_KEY'],
     authentication: 'login'
   }
 end
