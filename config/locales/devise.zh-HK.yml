@@ -46,7 +46,7 @@ zh-HK:
         instruction: "您可以通過下面的鏈接更改密碼："
         instruction_2: "如果您未曾請求更改密碼，請忽略此電子郵件。"
         instruction_3: "如果您沒有訪問上面的鏈接並更改密碼，您的密碼將維持不變。"
-        subject: "重置密碼信息"
+        subject: "[Fingertips] Reset Your Password"
       unlock_instructions:
         action: "帳戶解鎖"
         greeting: "你好 %{recipient}!"
@@ -67,7 +67,7 @@ zh-HK:
         send_me_reset_password_instructions: "請寄重設密碼的說明信件給我"
         continue: "繼續"
       no_token: "這是密碼重設頁面，僅能透過密碼重設信件進入。如果您是透過重設信件進入的，請確認您的網址是完整的。"
-      send_instructions: "您將在幾分鐘後收到一封電子郵件，內有重新設定密碼的步驟說明。"
+      send_instructions: "您將在幾分鐘後收到一封重新設定密碼的電子郵件。"
       send_paranoid_instructions: "如果我們有您的信箱，您將會收到一封內含可重新設定密碼連結的電子郵件。"
       updated: "您的密碼已被修改，您現在已經登入。"
       updated_not_active: "您的密碼已被修改。"
