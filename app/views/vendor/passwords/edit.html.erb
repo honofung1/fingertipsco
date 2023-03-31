@@ -1,27 +1,37 @@
-<h2>Change your password</h2>
+<% content_for(:title, '更改密碼') %>
+  <div class="login-box">
+    <div class="login-logo">
+      <a href=""><h1>更改<b>密碼</b></h1></a>
+    </div>
+    <!-- /.login-logo -->
+    <div class="card">
+      <div class="card-body login-card-body">
+        <%= simple_form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
+          <%= f.error_notification %>
 
-<%= simple_form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
-  <%= f.error_notification %>
+          <%= f.input :reset_password_token, as: :hidden %>
+          <%= f.full_error :reset_password_token %>
 
-  <%= f.input :reset_password_token, as: :hidden %>
-  <%= f.full_error :reset_password_token %>
+          <div class="form-inputs">
+            <%= f.input :password,
+                        label: t('activerecord.attributes.user.password'),
+                        required: true,
+                        autofocus: true,
+                        hint: ("密碼長度至少為#{@minimum_password_length}個字元" if @minimum_password_length),
+                        input_html: { autocomplete: "new-password" } %>
+            <%= f.input :password_confirmation,
+                        label: t('activerecord.attributes.user.password_confirmation'),
+                        required: true,
+                        input_html: { autocomplete: "new-password" } %>
+          </div>
+          <br>
 
-  <div class="form-inputs">
-    <%= f.input :password,
-                label: "New password",
-                required: true,
-                autofocus: true,
-                hint: ("#{@minimum_password_length} characters minimum" if @minimum_password_length),
-                input_html: { autocomplete: "new-password" } %>
-    <%= f.input :password_confirmation,
-                label: "Confirm your new password",
-                required: true,
-                input_html: { autocomplete: "new-password" } %>
+          <div class="row">
+            <div class="col-12">
+              <%= f.submit (t 'devise.passwords.edit.change_my_password'), class: 'btn btn-block btn-primary' %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
   </div>
-
-  <div class="form-actions">
-    <%= f.button :submit, "Change my password" %>
-  </div>
-<% end %>
-
-<%= render "vendor/shared/links" %>

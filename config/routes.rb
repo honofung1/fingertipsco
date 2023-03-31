@@ -70,7 +70,7 @@ Rails.application.routes.draw do
     path: 'vendor',
     path_names: {
       sign_in: 'login', sign_out: 'logout',
-      password: 'secret', confirmation: 'verification',
+      password: 'reset', confirmation: 'verification',
       registration: 'register', edit: 'edit/profile'
     }
 
