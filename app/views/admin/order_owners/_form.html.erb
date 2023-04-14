@@ -15,6 +15,7 @@
           <%= f.input :minimum_handling_fee %>
           <%= f.input :maximum_consumption_amount %>
           <%= f.input :maximum_handling_fee %>
+          <%= f.input :balance_limit %>
 
           <div class="form-group">
             <%= f.check_box :enable_minimum_consumption %>
@@ -52,7 +53,7 @@
             <div class="form-group container-group">
               <%= f.simple_fields_for :order_owner_account do |account| %>
                 <%= account.input :email %>
-                <%= account.input :password %>
+                <%= account.input :password, input_html: { placeholder: "輸入新的密碼" }  %>
               <% end %>
             </div>
           </div>

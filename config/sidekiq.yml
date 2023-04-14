@@ -1,0 +1,16 @@
+:concurrency: 5
+staging:
+  :concurrency: 10
+production:
+  :concurrency: 20
+:queues:
+  - critical
+  - default
+  - mailers
+  - low
+
+:scheduler:
+  :schedule:
+    call_balance_notification_job:
+      cron: '05 12 * * 1'
+      class: CallBalanceNotificationJob

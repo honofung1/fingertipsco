@@ -23,7 +23,9 @@ gem 'puma', '~> 3.11'
 gem 'sass-rails', '~> 5.0'
 
 # Error notification
+# Any other things that need to be notified
 gem 'slack_500'
+gem 'slack-notifier'
 
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
@@ -113,6 +115,10 @@ gem 'deep_cloneable', '~> 3.2.0'
 # Import file task related gem
 gem 'roo'
 
+# Queue Job gem
+gem 'sidekiq'
+gem 'sidekiq-scheduler'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
@@ -132,6 +138,8 @@ group :development do
   gem 'spring-watcher-listen', '~> 2.0.0'
   # Database adapter install
   # gem 'mysql2'
+
+  gem 'foreman'
 end
 
 group :test do

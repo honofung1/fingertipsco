@@ -76,6 +76,7 @@ zh-HK:
         addresses: "住所"
         telephone: "電話"
         balance: "結餘"
+        balance_limit: "結餘下限金額"
         handling_fee: "手續費金額(以%計算)"
         minimum_consumption_amount: "訂單最低消費金額"
         minimum_handling_fee: "最低手續費"

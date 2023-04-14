@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_03_12_133040) do
+ActiveRecord::Schema.define(version: 2023_04_11_051339) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -70,6 +70,7 @@ ActiveRecord::Schema.define(version: 2023_03_12_133040) do
     t.integer "maximum_handling_fee"
     t.boolean "enable_minimum_consumption"
     t.boolean "enable_maximum_consumption"
+    t.integer "balance_limit"
   end
 
   create_table "order_payments", force: :cascade do |t|
