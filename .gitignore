@@ -29,3 +29,10 @@
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+
+# Ignore the development env file
+.env.development
+
+# Ignore .rdb file eg.dump.rdb
+.rdb
+

@@ -8,6 +8,16 @@ Rails.application.routes.draw do
   # it should redirect to the blank page instead of redirect to login page
   root to: redirect("/admin")
 
+  require 'sidekiq/web'
+  require 'sidekiq-scheduler/web'
+
+  Sidekiq::Web.use(Rack::Auth::Basic) do |username, password|
+    ActiveSupport::SecurityUtils.secure_compare(::Digest::SHA256.hexdigest(username), ::Digest::SHA256.hexdigest(ENV['SIDEKIQ_ADMIN_USER'])) &
+      ActiveSupport::SecurityUtils.secure_compare(::Digest::SHA256.hexdigest(password), ::Digest::SHA256.hexdigest(ENV['SIDEKIQ_ADMIN_PASSWORD']))
+  end if Rails.env.production?
+
+  mount Sidekiq::Web => '/sidekiq'
+
   # TODO: rename admin to admins
   # need testing
   namespace :admin do

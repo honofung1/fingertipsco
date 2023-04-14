@@ -14,7 +14,7 @@ class OrderSalesExport::Report < ReportBase
                     nil
                   end
 
-    end_date = if @criteria_value_hash.dig(:order_ship_datecreated_at, :to)
+    end_date = if @criteria_value_hash.dig(:ship_date, :to)
                  @criteria_value_hash[:ship_date][:to].to_date
                else
                  nil

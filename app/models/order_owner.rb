@@ -62,6 +62,22 @@ class OrderOwner < ApplicationRecord
   # Method
   #############################################################################
 
+  def email_account
+    order_owner_account.present? ? order_owner_account.email : nil
+  end
+
+  def send_balance_notification
+    BalanceMailer.balance_notification(self).deliver_now
+  end
+
+  def need_to_send_balance_notification?
+    if self.balance_limit.present?
+      return self.balance < self.balance_limit
+    end
+
+    self.balance < 0
+  end
+
   # count + 1 when the order is successfully created.
   def add_order_count
     # TODO: can add multiple numbers order but not use case for now

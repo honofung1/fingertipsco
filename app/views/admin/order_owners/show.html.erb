@@ -41,6 +41,9 @@
               <dt><%= OrderOwner.human_attribute_name(:enable_maximum_consumption) %>:</dt>
               <dd><%= format_boolean(@order_owner.enable_maximum_consumption) %></dd>
 
+              <dt><%= OrderOwner.human_attribute_name(:balance_limit) %>:</dt>
+              <dd><%= @order_owner.balance_limit %></dd>
+
               <dt><%= OrderOwner.human_attribute_name(:balance) %>:</dt>
               <dd><%= @order_owner.balance %></dd>
             <% end %>
