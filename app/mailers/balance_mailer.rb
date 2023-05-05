@@ -1,4 +1,5 @@
 class BalanceMailer < ApplicationMailer
+  default from: 'system@fingertipsco.com'
 
   def balance_notification(order_owner)
     @order_owner = order_owner

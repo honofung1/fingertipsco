@@ -86,5 +86,11 @@ Rails.application.routes.draw do
 
   namespace :vendor do
     resources :orders, only: [:index, :show], param: :order_id
+
+    # resources :reports do
+    #   member do
+    #     get 'download'
+    #   end
+    # end
   end
 end
