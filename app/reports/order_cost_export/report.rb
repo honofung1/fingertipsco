@@ -63,8 +63,8 @@ class OrderCostExport::Report < ReportBase
   end
 
   def on_validate
-    if params.dig(:criteria, :created_at).present?
-      validate_date_range(Order.human_attribute_name(:created_at), params[:criteria][:created_at])
+    if params.dig(:criteria, :order_created_at).present?
+      validate_date_range(Order.human_attribute_name(:order_created_at), params[:criteria][:order_created_at])
     end
   end
 

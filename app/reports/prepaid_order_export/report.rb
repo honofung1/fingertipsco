@@ -118,8 +118,12 @@ class PrepaidOrderExport::Report < ReportBase
   end
 
   def on_validate
-    if params.dig(:criteria, :created_at).present?
-      validate_date_range(Order.human_attribute_name(:created_at), params[:criteria][:created_at])
+    if params.dig(:criteria, :order_created_at).present?
+      validate_date_range(Order.human_attribute_name(:order_created_at), params[:criteria][:order_created_at])
+    end
+
+    if params.dig(:criteria, :ship_date).present?
+      validate_date_range(Order.human_attribute_name(:ship_date), params[:criteria][:ship_date])
     end
   end
 
