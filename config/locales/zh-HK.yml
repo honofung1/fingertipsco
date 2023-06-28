@@ -308,6 +308,9 @@ zh-HK:
           tsv: 'TSV檔'
           html: '網頁'
           xlsx: 'Excel檔'
+    accounting_export:
+      title: "會計用月結報告"
+      description: "accounting purpose report and thiis is using all orders, order products and order payment data."
     order_cost_export:
       title: "仕入れ高報告"
       description: "using orders and order porducts data to export costing report."
