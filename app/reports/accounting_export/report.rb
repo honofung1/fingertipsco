@@ -37,6 +37,7 @@ class AccountingExport::Report < ReportBase
                             unnest(op.order_product_name) AS product_name,
                             unnest(op.order_product_price) AS product_price,
                             unnest(op.order_receipt_date) AS receipt_date,
+                            unnest(op.order_product_total_cost) AS total_cost,
                             unnest(
                               CASE orders.order_type
                               WHEN 'normal' THEN
@@ -64,6 +65,7 @@ class AccountingExport::Report < ReportBase
                               array_agg(op.shop_from) AS order_shop_from,
                               array_agg(op.product_name) AS order_product_name,
                               array_agg(op.product_price) AS order_product_price,
+                              array_agg(op.total_cost) AS order_product_total_cost,
                               array_agg(op.receipt_date) AS order_receipt_date
                             FROM
                               order_products op
@@ -98,6 +100,7 @@ class AccountingExport::Report < ReportBase
                               op.shop_from,
                               unnest(op.order_product_name) AS product_name,
                               unnest(op.order_product_price) AS product_price,
+                              unnest(op.order_product_total_cost) AS total_cost,
                               unnest(op.order_receipt_date) AS receipt_date,
                               unnest(
                                 CASE orders.order_type
@@ -126,6 +129,7 @@ class AccountingExport::Report < ReportBase
                               op.shop_from,
                               array_agg(op.product_name) AS order_product_name,
                               array_agg(op.product_price) AS order_product_price,
+                              array_agg(op.total_cost) AS order_product_total_cost,
                               array_agg(op.receipt_date) AS order_receipt_date
                             FROM
                               order_products op
@@ -267,8 +271,9 @@ class AccountingExport::Report < ReportBase
     FIELDS = %i[
       order_id customer_name customer_contact customer_address
       tracking_number hk_tracking_number
-      receipt_date product_name product_price total_price
-      ship_date paid_amount paid_date payment_method
+      product_name product_price total_price
+      ship_date paid_amount paid_date payment_method 
+      total_cost receipt_date
     ].freeze
 
     FIELD_MAPS = {
@@ -282,10 +287,11 @@ class AccountingExport::Report < ReportBase
       ship_date: { type: :date, display: Order.human_attribute_name(:ship_date), col_data_type: :date },
       product_name: { type: :field, display: OrderProduct.human_attribute_name(:product_name) },
       product_price: { type: :field, display: OrderProduct.human_attribute_name(:product_price) },
-      receipt_date: { type: :date, display: OrderProduct.human_attribute_name(:receipt_date), col_data_type: :date },
       paid_amount: { type: :field, display: OrderPayment.human_attribute_name(:paid_amount) },
       paid_date: { type: :date, display: OrderPayment.human_attribute_name(:paid_date), col_data_type: :date },
-      payment_method: { type: :field, display: OrderPayment.human_attribute_name(:payment_method) }
+      payment_method: { type: :field, display: OrderPayment.human_attribute_name(:payment_method) },
+      total_cost: { type: :field, display: OrderProduct.human_attribute_name(:total_cost) },
+      receipt_date: { type: :date, display: OrderProduct.human_attribute_name(:receipt_date), col_data_type: :date }
     }
     ###########################################################################
     # class method
