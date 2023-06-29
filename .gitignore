@@ -36,3 +36,6 @@
 # Ignore .rdb file eg.dump.rdb
 .rdb
 
+# Ignore .vscode config
+/.vscode/*
+
