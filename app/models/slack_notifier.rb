@@ -1,7 +1,7 @@
 class SlackNotifier
   attr_reader :client
 
-  WEBHOOK_URL = ENV['SLACK_HOOL_URL'].freeze
+  WEBHOOK_URL = ENV['SLACK_HOOK_URL'].freeze
   CHANNEL = "#ft-commerce-prod-noti".freeze
   USER_NAME = "Notifier".freeze
 
