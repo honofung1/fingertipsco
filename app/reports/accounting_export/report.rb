@@ -152,7 +152,7 @@ class AccountingExport::Report < ReportBase
     end
 
     if currency.present?
-      orders = order.where('orders.currency = :currency', currency: currency)
+      orders = orders.where('orders.currency = :currency', currency: currency)
     end
 
     if start_date.present? && end_date.present?
