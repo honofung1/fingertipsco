@@ -21,6 +21,18 @@ class AccountingExport::Report < ReportBase
                   nil
                 end
 
+    ship_start_date = if @criteria_value_hash.dig(:ship_date, :from)
+                        @criteria_value_hash[:ship_date][:from].to_date
+                      else
+                        nil
+                      end
+
+    ship_end_date = if @criteria_value_hash.dig(:ship_date, :to)
+                      @criteria_value_hash[:ship_date][:to].to_date
+                    else
+                      nil
+                    end
+
     shop_from = @criteria_value_hash.dig(:shop_from) ? @criteria_value_hash[:shop_from] : nil
 
     currency = @criteria_value_hash.dig(:currency) ? @criteria_value_hash[:currency] : nil
@@ -162,6 +174,13 @@ class AccountingExport::Report < ReportBase
                       to: end_date.end_of_day.utc)
     end
 
+    if ship_start_date.present? && ship_end_date.present?
+      orders =
+        orders.where('orders.ship_date BETWEEN :from AND :to',
+                      from: ship_start_date.beginning_of_day.utc, 
+                      to: ship_end_date.end_of_day.utc)
+    end
+
     case format
     when 'html'
       # TODO: show result in html
@@ -182,6 +201,7 @@ class AccountingExport::Report < ReportBase
   # Define criteria for the report
   def define_criteria(criteria)
     criteria.add_criterion(ReportCriterionDefinition.new(code: :order_created_at, type: :date_range_default_blank, model: Order, view_code: :order_created_at))
+    criteria.add_criterion(ReportCriterionDefinition.new(code: :ship_date, type: :date_range_default_blank, model: Order, view_code: :ship_date))
     criteria.add_criterion(ReportCriterionDefinition.new(code: :currency, type: :enum_default_blank, enum: Order::CURRENCYS, enum_translation: false, model: Order, view_code: :currency))
     criteria.add_criterion(ReportCriterionDefinition.new(code: :shop_from, type: :enum_default_blank, enum: SystemSetting.get('order.preset.shop_from'), enum_translation: false, model: OrderProduct, view_code: :shop_from))
   end
@@ -189,6 +209,10 @@ class AccountingExport::Report < ReportBase
   def on_validate
     if params.dig(:criteria, :order_created_at).present?
       validate_date_range(Order.human_attribute_name(:order_created_at), params[:criteria][:order_created_at])
+    end
+
+    if params.dig(:criteria, :ship_date).present?
+      validate_date_range(Order.human_attribute_name(:ship_date), params[:criteria][:ship_date])
     end
   end
 
