@@ -311,6 +311,8 @@ zh-HK:
     accounting_export:
       title: "會計用月結報告"
       description: "accounting purpose report and thiis is using all orders, order products and order payment data."
+      total_cost_title: "商品成本"
+      paid_date_title: "收款日期"
     order_cost_export:
       title: "仕入れ高報告"
       description: "using orders and order porducts data to export costing report."

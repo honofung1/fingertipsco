@@ -312,9 +312,9 @@ class AccountingExport::Report < ReportBase
       product_name: { type: :field, display: OrderProduct.human_attribute_name(:product_name) },
       product_price: { type: :field, display: OrderProduct.human_attribute_name(:product_price) },
       paid_amount: { type: :field, display: OrderPayment.human_attribute_name(:paid_amount) },
-      paid_date: { type: :date, display: OrderPayment.human_attribute_name(:paid_date), col_data_type: :date },
+      paid_date: { type: :date, display: I18n.t('reports.accounting_export.paid_date_title'), col_data_type: :date },
       payment_method: { type: :field, display: OrderPayment.human_attribute_name(:payment_method) },
-      total_cost: { type: :field, display: OrderProduct.human_attribute_name(:total_cost) },
+      total_cost: { type: :field, display: I18n.t('reports.accounting_export.total_cost_title') },
       receipt_date: { type: :date, display: OrderProduct.human_attribute_name(:receipt_date), col_data_type: :date }
     }
     ###########################################################################
