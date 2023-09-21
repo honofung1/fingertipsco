@@ -180,4 +180,9 @@ module AdminHelper
   def preset_order_shop_from
     SystemSetting.get('order.preset.shop_from')
   end
+
+  # This method checking order product object already has cost or not
+  def order_product_has_cost(opt)
+    opt.total_cost?
+  end
 end

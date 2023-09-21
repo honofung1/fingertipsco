@@ -193,8 +193,22 @@ input[type=number] {
 .admin_order_table {
   width: 100%;
 }
-.admin_order_table th:not(:last-child),
+.admin_order_table th:not(:last-child) {
+  width: 1%;
+  white-space: nowrap;
+}
 .admin_order_table td:not(:last-child) {
   width: 1%;
   word-wrap: break-word;
 }
+
+
+.key_account_table {
+  width: 100%;
+}
+.key_account_table th:not(:last-child),
+.key_account_table td:not(:last-child) {
+  width: 1%;
+  word-wrap: break-word;
+}
+

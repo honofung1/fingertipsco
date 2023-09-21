@@ -68,6 +68,8 @@ class Admin::OrdersController < Admin::BaseController
   def clone
     @order = Order.find(params[:id]).clone_order
     @order.state = "notpaid"
+    @order.receive_number = nil
+    @order.ship_date = nil
     render 'new'
   end
 
@@ -152,7 +154,7 @@ class Admin::OrdersController < Admin::BaseController
             :shop_from,
             :product_name, :product_remark, :product_quantity, :product_price,
             :product_cost, :shipment_cost, :discount, :total_cost,
-            :receipt_date,
+            :receipt_date, :received,
             :_destroy
           ],
         order_payments_attributes:

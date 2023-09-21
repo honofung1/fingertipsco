@@ -139,6 +139,7 @@ zh-HK:
         discount: "割引"
         total_cost: "合計"
         receipt_date: "付款日期"
+        received: "已收貨"
       order_payment:
         payment_method: "支払方法"
         paid_amount: "預金金額"
@@ -241,6 +242,7 @@ zh-HK:
     customer_name: "客戶名稱"
     customer_contact: "客戶電話"
     customer_address: "收件地址"
+    customer_info: "客戶資訊"
     state: "訂單狀態"
     order_balance: "餘額"
     emergency_call: "緊急注文"
