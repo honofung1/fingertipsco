@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_04_11_051339) do
+ActiveRecord::Schema.define(version: 2023_09_19_091329) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -101,6 +101,7 @@ ActiveRecord::Schema.define(version: 2023_04_11_051339) do
     t.datetime "receipt_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "received"
     t.index ["hk_tracking_number"], name: "index_order_products_on_hk_tracking_number"
     t.index ["order_id"], name: "index_order_products_on_order_id"
     t.index ["ship_date"], name: "index_order_products_on_ship_date"

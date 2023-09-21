@@ -1,11 +1,23 @@
-<div class="card nested-fields order_product_fields">
+<div class="card nested-fields order_product_fields <%= f.object.order.order_type == "normal" ? "collapsed-card" : "" %>">
   <div class="card-header">
     <h4 class="card-title">
       <%= f.object.id.present? ? "#{t(:'order_product.exist')}: <b>#{h(f.object.product_name)}</b>".html_safe : t(:'order_product.new') %>
     </h4>
     <div class="card-tools pull-right">
+      <%= f.label :received %>
+      <%= f.check_box :received , {}, true, false %> &emsp;&emsp;&emsp;&emsp;
+      <label class="boolean optional">
+        <%= t(:'order_product.cost_header') %>
+        <!-- 
+          checkbox parameters definition 
+          1. column name (:total_cost)
+          2. html class name {}
+          3. checkbox value (true, false)
+        -->
+        <%= f.check_box :total_cost, { checked: order_product_has_cost(f.object), disabled: true }, true, false %>
+      </label> &emsp;&emsp;
       <button type="button" class="btn btn-tool" data-card-widget="collapse">
-        <i class="fas fa-minus"></i>
+        <i class="<%= f.object.order.order_type == "normal" ? "fas fa-plus" : "fas fa-minus" %>"></i>
       </button>
     </div>
   </div>
@@ -36,7 +48,8 @@
       </div>
 
       <div class="field form-group col-md-8">
-        <%= f.input :product_remark %>
+        <%= f.label :product_remark %>
+        <%= f.text_area :product_remark, class: "form-control", rows: 5 %>
       </div>
     </div>
   </div>

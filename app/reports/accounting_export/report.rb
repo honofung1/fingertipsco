@@ -43,11 +43,13 @@ class AccountingExport::Report < ReportBase
                             orders.customer_name,
                             orders.customer_contact,
                             orders.customer_address,
-                            orders.hk_tracking_number,
+                            orders.receive_number,
                             orders.tracking_number,
+                            orders.currency,
                             unnest(op.order_shop_from) AS shop_from,
                             unnest(op.order_product_name) AS product_name,
                             unnest(op.order_product_price) AS product_price,
+                            unnest(op.order_product_quantity) AS product_quantity,
                             unnest(op.order_receipt_date) AS receipt_date,
                             unnest(op.order_product_total_cost) AS total_cost,
                             unnest(
@@ -77,6 +79,7 @@ class AccountingExport::Report < ReportBase
                               array_agg(op.shop_from) AS order_shop_from,
                               array_agg(op.product_name) AS order_product_name,
                               array_agg(op.product_price) AS order_product_price,
+                              array_agg(op.product_quantity) AS order_product_quantity,
                               array_agg(op.total_cost) AS order_product_total_cost,
                               array_agg(op.receipt_date) AS order_receipt_date
                             FROM
@@ -107,11 +110,13 @@ class AccountingExport::Report < ReportBase
                               orders.customer_name,
                               orders.customer_contact,
                               orders.customer_address,
-                              orders.hk_tracking_number,
+                              orders.receive_number,
                               orders.tracking_number,
+                              orders.currency,
                               op.shop_from,
                               unnest(op.order_product_name) AS product_name,
                               unnest(op.order_product_price) AS product_price,
+                              unnest(op.order_product_quantity) AS product_quantity,
                               unnest(op.order_product_total_cost) AS total_cost,
                               unnest(op.order_receipt_date) AS receipt_date,
                               unnest(
@@ -141,6 +146,7 @@ class AccountingExport::Report < ReportBase
                               op.shop_from,
                               array_agg(op.product_name) AS order_product_name,
                               array_agg(op.product_price) AS order_product_price,
+                              array_agg(op.product_quantity) AS order_product_quantity,
                               array_agg(op.total_cost) AS order_product_total_cost,
                               array_agg(op.receipt_date) AS order_receipt_date
                             FROM
@@ -294,9 +300,9 @@ class AccountingExport::Report < ReportBase
     ###########################################################################
     FIELDS = %i[
       order_id customer_name customer_contact customer_address
-      tracking_number hk_tracking_number
-      product_name product_price total_price
-      ship_date paid_amount paid_date payment_method 
+      tracking_number receive_number
+      shop_from product_name product_price product_quantity total_price
+      ship_date paid_amount paid_date payment_method
       total_cost receipt_date
     ].freeze
 
@@ -306,15 +312,17 @@ class AccountingExport::Report < ReportBase
       customer_contact: { type: :field, display: Order.human_attribute_name(:customer_contact) },
       customer_address: { type: :field, display: Order.human_attribute_name(:customer_address) },
       tracking_number: { type: :field, display: Order.human_attribute_name(:tracking_number) },
-      hk_tracking_number: { type: :field, display: Order.human_attribute_name(:hk_tracking_number) },
-      total_price: { type: :field, display: Order.human_attribute_name(:total_price) },
+      receive_number: { type: :field, display: Order.human_attribute_name(:receive_number) },
+      total_price: { type: :price, display: Order.human_attribute_name(:total_price) },
       ship_date: { type: :date, display: Order.human_attribute_name(:ship_date), col_data_type: :date },
+      shop_from: { type: :field, display: OrderProduct.human_attribute_name(:shop_from) },
       product_name: { type: :field, display: OrderProduct.human_attribute_name(:product_name) },
-      product_price: { type: :field, display: OrderProduct.human_attribute_name(:product_price) },
-      paid_amount: { type: :field, display: OrderPayment.human_attribute_name(:paid_amount) },
+      product_price: { type: :price, display: OrderProduct.human_attribute_name(:product_price) },
+      product_quantity: { type: :field, display: OrderProduct.human_attribute_name(:product_quantity) },
+      paid_amount: { type: :price, display: OrderPayment.human_attribute_name(:paid_amount) },
       paid_date: { type: :date, display: I18n.t('reports.accounting_export.paid_date_title'), col_data_type: :date },
       payment_method: { type: :field, display: OrderPayment.human_attribute_name(:payment_method) },
-      total_cost: { type: :field, display: I18n.t('reports.accounting_export.total_cost_title') },
+      total_cost: { type: :cost, display: I18n.t('reports.accounting_export.total_cost_title') },
       receipt_date: { type: :date, display: OrderProduct.human_attribute_name(:receipt_date), col_data_type: :date }
     }
     ###########################################################################
@@ -346,6 +354,11 @@ class AccountingExport::Report < ReportBase
 
       FIELDS.collect do |field|
         case FIELD_MAPS[field][:type]
+        when :cost
+          result << (order[field].present? ? "¥#{order[field]}" : nil)
+        when :price
+          dollar_sign = order.currency == "HKD" ? "$" : "¥"
+          result << (order[field].present? ? "#{dollar_sign}#{order[field]}" : nil)
         when :field
           result << order[field]
         when :date

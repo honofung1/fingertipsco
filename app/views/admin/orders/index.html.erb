@@ -29,7 +29,7 @@
               </div>
 
               <div class="form-group filter_margin input-sm">
-                <%= f.search_field :customer_contact_cont, placeholder: Order.human_attribute_name(:customer_contact), class: 'form-control form-control-sm' %>
+                <%= f.search_field :customer_contact_or_customer_name_cont, placeholder: I18n.t(:"order.customer_info"), class: 'form-control form-control-sm' %>
               </div>
 
               <div class="form-group filter_margin input-sm">
@@ -65,6 +65,7 @@
                   <th><%= t('order.state') %></th>
                   <th><%= t('order.order_balance') %></th>
                   <th><%= t('order.order_ship_date')%></th>
+                  <th><%= t('order.remark')%></th>
                   <th data-orderable="false"></th>
                 </tr>
               </thead>
@@ -87,6 +88,7 @@
                     <td><%= I18n.t(:"enums.order.#{o.state}") %></td>
                     <td><%= o.order_balance_with_dollar_sign %></td>
                     <td><%= format_date(o.ship_date) %></td>
+                    <td><%= o.remark %></td>
                     <td>
                       <div class = "button-group" > <!-- not using class btn-group to split the button-->
                         <%= link_to_btn admin_order_path(o), 'show' %>
