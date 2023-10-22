@@ -14,7 +14,7 @@ Rails.application.config.sorcery.configure do |config|
   end
 
   # Set timeout
-  config.session_timeout = 3600
+  config.session_timeout = 5400
   config.session_timeout_from_last_action = true
 
   config.user_class = 'Admin'

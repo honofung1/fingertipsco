@@ -30,6 +30,11 @@ class DepositRecord < ApplicationRecord
   # Method
   #############################################################################
 
+  # ranasck method
+  def self.ransackable_attributes(_auth_object = nil)
+    %w[created_at deposit_amount deposit_date id order_owner_id updated_at]
+  end
+
   #############################################################################
   # Private Method
   #############################################################################
