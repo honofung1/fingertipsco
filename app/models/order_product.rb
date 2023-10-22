@@ -35,6 +35,17 @@ class OrderProduct < ApplicationRecord
   # Method
   #############################################################################
 
+  # ransack method
+  def self.ransackable_attributes(_auth_object = nil)
+    %w[created_at discount hk_tracking_number id order_id product_cost
+       product_name product_price product_quantity product_remark receipt_date receive_number
+       received ship_date shipment_cost shop_from total_cost tracking_number updated_at]
+  end
+
+  def self.ransackable_associations(_auth_object = nil)
+    %w[order versions]
+  end
+
   #############################################################################
   # Private Method
   #############################################################################

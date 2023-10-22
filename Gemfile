@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '2.7.6'
+ruby '3.2.2'
 
 # Using ap
 gem 'awesome_print'
@@ -13,8 +13,8 @@ gem 'cancancan'
 gem 'draper'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.2.7', '>= 5.2.7.1'
-gem 'rails-i18n', '~> 5.1'
+gem 'rails', '~> 6.1', '>= 6.1.7.6'
+gem 'rails-i18n', '~> 7.0', '>= 7.0.8'
 
 # Use Puma as the app server
 gem 'puma', '~> 3.11'

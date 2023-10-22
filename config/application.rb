@@ -9,9 +9,27 @@ Bundler.require(*Rails.groups)
 module Fingertipsco
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 5.2
+    config.load_defaults 6.1
 
-    # Set the rails web appplication default langauge to Hong Kong 
+    # rails 6.1 settings
+    config.active_record.has_many_inversing = true
+    config.active_storage.track_variants = true
+    config.active_job.retry_jitter = 0.15
+    config.active_job.skip_after_callbacks_if_terminated = true
+    ActiveSupport.utc_to_local_returns_utc_offset_times = true
+    config.action_dispatch.ssl_default_redirect_status = 308
+    config.active_record.legacy_connection_handling = false
+    config.action_view.form_with_generates_remote_forms = false
+    config.active_storage.queues.analysis = nil
+    config.active_storage.queues.purge = nil
+    config.action_mailbox.queues.incineration = nil
+    config.action_mailbox.queues.routing = nil
+    config.action_mailer.deliver_later_queue_name = nil
+    config.action_view.preload_links_header = true
+    config.action_dispatch.cookies_same_site_protection = :lax
+    config.action_controller.urlsafe_csrf_tokens = true
+
+    # Set the rails web appplication default langauge to Hong Kong
     # Default is en
     # TODO: will having language change for future use
     config.i18n.default_locale = :'zh-HK'

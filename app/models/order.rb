@@ -1,4 +1,4 @@
-class Order < ApplicationRecord  
+class Order < ApplicationRecord
   #############################################################################
   # Attribute
   #############################################################################
@@ -47,7 +47,8 @@ class Order < ApplicationRecord
   ].freeze
 
   enumerize :order_type, in: ORDER_TYPES, predicates: { prefix: true }, scope: true
-  enumerize :additional_fee_type, in: ADDITIONAL_FEE_TYPES, predicates: { prefix: true }, scope: true
+  enumerize :additional_fee_type, in: ADDITIONAL_FEE_TYPES, predicates: { prefix: true },
+                                  scope: true
 
   #  Order tx column explaination
   #  |Column Name|    |Explanation|
@@ -83,7 +84,8 @@ class Order < ApplicationRecord
   #  shipped                    8                        已寄出
   #  printed                    9                        已會計
 
-  enum state: [:notpaid, :paidpartly, :fullpaid, :finished, :accounted, :cancelled, :prepaided, :received, :shipped, :printed]
+  enum state: %i[notpaid paidpartly fullpaid finished accounted cancelled prepaided
+                 received shipped printed]
 
   # set the default order code if the order doesn't have the order owner
   DEFAULT_ORDER_CODE_PREFIX = "DEF".freeze
@@ -184,7 +186,7 @@ class Order < ApplicationRecord
   # Self define a method for order type
   ORDER_TYPES.each do |this_order_type|
     define_method "is_#{this_order_type}?" do
-      self.order_type == this_order_type
+      order_type == this_order_type
     end
   end
 
@@ -209,7 +211,7 @@ class Order < ApplicationRecord
       total_price += p.product_quantity * p.product_price
     end
 
-    self.update_columns(total_price: total_price)
+    update_columns(total_price:)
   end
 
   # HKD and JPY should have different dollar sign
@@ -221,7 +223,7 @@ class Order < ApplicationRecord
   end
 
   def clone_order
-    self.deep_clone include: [:order_products]
+    deep_clone include: [:order_products]
   end
 
   def ensure_order_created_at
@@ -241,24 +243,24 @@ class Order < ApplicationRecord
   # end
 
   def recalculate_order_owner_balance
-    return if self.total_price.nil? || self.total_price == 0
+    return if total_price.nil? || total_price == 0
     return unless saved_change_to_total_price?
 
     # Order new create situation
     before_total_price = total_price_before_last_save || 0
-    new_total_price = self.total_price
+    new_total_price = total_price
 
     new_balance = order_owner.balance + before_total_price - new_total_price
 
-    order_owner.update_attributes!(balance: new_balance)
+    order_owner.update!(balance: new_balance)
   end
 
   def return_balance_to_order_owner
-    return if self.total_price.nil? || self.total_price == 0
+    return if total_price.nil? || total_price == 0
 
-    new_balance = order_owner.balance + self.total_price
+    new_balance = order_owner.balance + total_price
 
-    order_owner.update_attributes!(balance: new_balance)
+    order_owner.update!(balance: new_balance)
   end
 
   def order_owner_code
@@ -270,9 +272,9 @@ class Order < ApplicationRecord
   end
 
   def ensure_order_id
-    if order_id.blank?
-      self.order_id = reset_order_id
-    end
+    return unless order_id.blank?
+
+    self.order_id = reset_order_id
   end
 
   # auto generate order_id
@@ -312,7 +314,7 @@ class Order < ApplicationRecord
       " "
     else
       # order_products_attrs.join('/')
-      order_products_attrs.count == 1 ? "#{order_products_attrs.first}": "#{order_products_attrs.first}和#{order_products_attrs.count - 1}樣資料"
+      order_products_attrs.count == 1 ? "#{order_products_attrs.first}" : "#{order_products_attrs.first}和#{order_products_attrs.count - 1}樣資料"
     end
   end
 
@@ -330,7 +332,7 @@ class Order < ApplicationRecord
   end
 
   def order_balance
-    order_total_paid_amount - self.total_price
+    order_total_paid_amount - total_price
   end
 
   def order_balance_with_dollar_sign
@@ -349,6 +351,18 @@ class Order < ApplicationRecord
     order_owner.add_order_count
   end
 
+  # ransack method
+  def self.ransackable_attributes(_auth_object = nil)
+    %w[additional_amount additional_fee additional_fee_type created_at currency customer_address
+       customer_contact customer_name emergency_call handling_amount hk_tracking_number
+       id order_created_at order_finished_at order_id order_owner_id order_type pickup_way
+       receive_number remark ship_date state total_price tracking_number updated_at]
+  end
+
+  def self.ransackable_associations(_auth_object = nil)
+    %w[order_owner order_payments order_products versions]
+  end
+
   #############################################################################
   # Private Method
   #############################################################################
@@ -364,9 +378,9 @@ class Order < ApplicationRecord
 
   # if the record is persisted(already in db), not able to changed the order_owner_id
   def order_owner_id_cannot_changed
-    if order_owner_id_changed? && self.persisted?
-      errors.add(:order_owner_id, I18n.t(:'errors.order.cannot_modify'))
-    end
+    return unless order_owner_id_changed? && persisted?
+
+    errors.add(:order_owner_id, I18n.t(:'errors.order.cannot_modify'))
   end
 
   def check_state_condition
@@ -379,9 +393,7 @@ class Order < ApplicationRecord
       state_error_call(state, I18n.t(:'errors.order.order_payments_blank'))
     end
 
-    if finished? && ship_date.nil?
-      state_error_call(state, I18n.t(:'errors.order.ship_date_blank'))
-    end
+    state_error_call(state, I18n.t(:'errors.order.ship_date_blank')) if finished? && ship_date.nil?
 
     if finished? && order_balance < 0
       state_error_call(state, I18n.t(:'errors.order.order_balance_not_zero'))
@@ -399,27 +411,26 @@ class Order < ApplicationRecord
     ##############################################################################
     # prepaid order state
     ##############################################################################
-    if shipped? && ship_date.nil?
-      state_error_call(state, I18n.t(:'errors.order.ship_date_blank'))
-    end
+    state_error_call(state, I18n.t(:'errors.order.ship_date_blank')) if shipped? && ship_date.nil?
 
-    if printed? && order_products.filter(&:receipt_date?).blank?
-      return if order_products.blank?
+    return unless printed? && order_products.filter(&:receipt_date?).blank?
+    return if order_products.blank?
 
-      state_error_call(state, I18n.t(:'errors.order.receipt_date_blank'))
-    end
+    state_error_call(state, I18n.t(:'errors.order.receipt_date_blank'))
   end
 
   def state_error_call(status, error_msg)
-    errors.add(:state, I18n.t(:'message.state_update_failed', state: I18n.t(:"enums.order.#{status}"), error: error_msg))
+    errors.add(:state,
+               I18n.t(:'message.state_update_failed', state: I18n.t(:"enums.order.#{status}"),
+                                                      error: error_msg))
   end
 
   # limit prepaid order type product should always 1
   # TODO: move out of the model
   def validate_prepaid_order_proudct
-    if order_products.size > 1
-      errors.add(:order_products, I18n.t(:'errors.order.over_limit'))
-    end
+    return unless order_products.size > 1
+
+    errors.add(:order_products, I18n.t(:'errors.order.over_limit'))
   end
 
   # def prepaid_order_cannot_modify_product
@@ -436,7 +447,10 @@ class Order < ApplicationRecord
   def prevent_prepaid_order_product_delete
     return if order_products.blank?
 
-    errors.add(:order_products, I18n.t(:'errors.order.cannot_delete')) if persisted? && order_products.first.marked_for_destruction?
+    return unless persisted? && order_products.first.marked_for_destruction?
+
+    errors.add(:order_products,
+               I18n.t(:'errors.order.cannot_delete'))
   end
 
   # def prepaid_order_cannot_change_additional_fee

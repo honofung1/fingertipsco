@@ -11,9 +11,13 @@ class OrderOwner < ApplicationRecord
   #############################################################################
   # Scope
   #############################################################################
-  scope :not_key_account, -> { where.not(order_code_prefix: SystemSetting.get('order.show_prepaid_order_in_sidebar.order_owner_codes')) }
+  scope :not_key_account, -> {
+                            where.not(order_code_prefix: SystemSetting.get('order.show_prepaid_order_in_sidebar.order_owner_codes'))
+                          }
 
-  scope :key_account, -> { where(order_code_prefix: SystemSetting.get('order.show_prepaid_order_in_sidebar.order_owner_codes')) }
+  scope :key_account, -> {
+                        where(order_code_prefix: SystemSetting.get('order.show_prepaid_order_in_sidebar.order_owner_codes'))
+                      }
 
   #############################################################################
   # Association
@@ -35,12 +39,14 @@ class OrderOwner < ApplicationRecord
   validates :minimum_consumption_amount, numericality: true, allow_nil: true
   validates :minimum_handling_fee,       numericality: true, allow_nil: true
 
-  validates :minimum_consumption_amount, :minimum_handling_fee, presence: true, if: :enable_minimum_consumption
+  validates :minimum_consumption_amount, :minimum_handling_fee, presence: true,
+                                                                if: :enable_minimum_consumption
 
   validates :maximum_consumption_amount, numericality: true, allow_nil: true
   validates :maximum_handling_fee,       numericality: true, allow_nil: true
 
-  validates :maximum_consumption_amount, :maximum_handling_fee, presence: true, if: :enable_maximum_consumption
+  validates :maximum_consumption_amount, :maximum_handling_fee, presence: true,
+                                                                if: :enable_maximum_consumption
 
   validate :not_allow_to_own_handling_fee
 
@@ -71,11 +77,9 @@ class OrderOwner < ApplicationRecord
   end
 
   def need_to_send_balance_notification?
-    if self.balance_limit.present?
-      return self.balance < self.balance_limit
-    end
+    return balance < balance_limit if balance_limit.present?
 
-    self.balance < 0
+    balance < 0
   end
 
   # count + 1 when the order is successfully created.
@@ -83,11 +87,11 @@ class OrderOwner < ApplicationRecord
     # TODO: can add multiple numbers order but not use case for now
     order_total_count = self.order_total_count + 1
 
-    self.update_columns(order_total_count: order_total_count)
+    update_columns(order_total_count:)
   end
 
   def reset_order_count
-    self.update_columns(order_total_count: 0)
+    update_columns(order_total_count: 0)
   end
 
   def key_account?
@@ -104,6 +108,13 @@ class OrderOwner < ApplicationRecord
     @order_owner_ability ||= OrderOwnerAbility.new(self)
   end
 
+  # ransack method
+  def self.ransackable_attributes(_auth_object = nil)
+    %w[created_at discount hk_tracking_number id order_id product_cost
+       product_name product_price product_quantity product_remark receipt_date receive_number
+       received ship_date shipment_cost shop_from total_cost tracking_number updated_at]
+  end
+
   delegate :can?, :cannot?, to: :order_owner_ability
   #############################################################################
   # Private Method
@@ -112,59 +123,73 @@ class OrderOwner < ApplicationRecord
   private
 
   def not_allow_to_own_handling_fee
-    return if SystemSetting.get('order.show_prepaid_order_in_sidebar.order_owner_codes').include?(order_code_prefix)
-
-    if handling_fee.present?
-      errors.add(:handling_fee, I18n.t(:'errors.order_owner.must_be_blank'))
+    if SystemSetting.get('order.show_prepaid_order_in_sidebar.order_owner_codes').include?(order_code_prefix)
+      return
     end
+
+    return unless handling_fee.present?
+
+    errors.add(:handling_fee, I18n.t(:'errors.order_owner.must_be_blank'))
   end
 
   def not_allow_to_own_minimum_consumption_amount
-    return if SystemSetting.get('order.show_prepaid_order_in_sidebar.order_owner_codes').include?(order_code_prefix)
-
-    if minimum_consumption_amount.present?
-      errors.add(:minimum_consumption_amount, I18n.t(:'errors.order_owner.must_be_blank'))
+    if SystemSetting.get('order.show_prepaid_order_in_sidebar.order_owner_codes').include?(order_code_prefix)
+      return
     end
+
+    return unless minimum_consumption_amount.present?
+
+    errors.add(:minimum_consumption_amount, I18n.t(:'errors.order_owner.must_be_blank'))
   end
 
   def not_allow_to_own_minimum_handling_fee
-    return if SystemSetting.get('order.show_prepaid_order_in_sidebar.order_owner_codes').include?(order_code_prefix)
-
-    if minimum_handling_fee.present?
-      errors.add(:minimum_handling_fee, I18n.t(:'errors.order_owner.must_be_blank'))
+    if SystemSetting.get('order.show_prepaid_order_in_sidebar.order_owner_codes').include?(order_code_prefix)
+      return
     end
+
+    return unless minimum_handling_fee.present?
+
+    errors.add(:minimum_handling_fee, I18n.t(:'errors.order_owner.must_be_blank'))
   end
 
   def not_allow_to_own_enable_minimum_consumption
-    return if SystemSetting.get('order.show_prepaid_order_in_sidebar.order_owner_codes').include?(order_code_prefix)
-
-    if enable_minimum_consumption.present?
-      errors.add(:enable_minimum_consumption, I18n.t(:'errors.order_owner.must_be_blank'))
+    if SystemSetting.get('order.show_prepaid_order_in_sidebar.order_owner_codes').include?(order_code_prefix)
+      return
     end
+
+    return unless enable_minimum_consumption.present?
+
+    errors.add(:enable_minimum_consumption, I18n.t(:'errors.order_owner.must_be_blank'))
   end
 
   def not_allow_to_own_maximum_consumption_amount
-    return if SystemSetting.get('order.show_prepaid_order_in_sidebar.order_owner_codes').include?(order_code_prefix)
-
-    if maximum_consumption_amount.present?
-      errors.add(:maximum_consumption_amount, I18n.t(:'errors.order_owner.must_be_blank'))
+    if SystemSetting.get('order.show_prepaid_order_in_sidebar.order_owner_codes').include?(order_code_prefix)
+      return
     end
+
+    return unless maximum_consumption_amount.present?
+
+    errors.add(:maximum_consumption_amount, I18n.t(:'errors.order_owner.must_be_blank'))
   end
 
   def not_allow_to_own_maximum_handling_fee
-    return if SystemSetting.get('order.show_prepaid_order_in_sidebar.order_owner_codes').include?(order_code_prefix)
-
-    if maximum_handling_fee.present?
-      errors.add(:maximum_handling_fee, I18n.t(:'errors.order_owner.must_be_blank'))
+    if SystemSetting.get('order.show_prepaid_order_in_sidebar.order_owner_codes').include?(order_code_prefix)
+      return
     end
+
+    return unless maximum_handling_fee.present?
+
+    errors.add(:maximum_handling_fee, I18n.t(:'errors.order_owner.must_be_blank'))
   end
 
   def not_allow_to_own_enable_maximum_consumption
-    return if SystemSetting.get('order.show_prepaid_order_in_sidebar.order_owner_codes').include?(order_code_prefix)
-
-    if enable_maximum_consumption.present?
-      errors.add(:enable_maximum_consumption, I18n.t(:'errors.order_owner.must_be_blank'))
+    if SystemSetting.get('order.show_prepaid_order_in_sidebar.order_owner_codes').include?(order_code_prefix)
+      return
     end
+
+    return unless enable_maximum_consumption.present?
+
+    errors.add(:enable_maximum_consumption, I18n.t(:'errors.order_owner.must_be_blank'))
   end
 
   def unable_to_destroy_order_owner
