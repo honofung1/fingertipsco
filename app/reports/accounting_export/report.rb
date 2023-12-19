@@ -4,34 +4,18 @@ class AccountingExport::Report < ReportBase
   #############################################################################
   # when run as CSV - return array of rows for direct writing to CSV
   # when run as HTML - to be consumed by report view via @report_result, or accessors from the class
-  def on_run(params)
+  def on_run(_params)
     header = AccountingExport.header
     result = []
 
     # Order order_created_at
-    start_date =  if @criteria_value_hash.dig(:order_created_at, :from)
-                    @criteria_value_hash[:order_created_at][:from].to_date
-                  else
-                    nil
-                  end
+    start_date = (@criteria_value_hash[:order_created_at][:from].to_date if @criteria_value_hash.dig(:order_created_at, :from))
 
-    end_date =  if @criteria_value_hash.dig(:order_created_at, :to)
-                  @criteria_value_hash[:order_created_at][:to].to_date
-                else
-                  nil
-                end
+    end_date = (@criteria_value_hash[:order_created_at][:to].to_date if @criteria_value_hash.dig(:order_created_at, :to))
 
-    ship_start_date = if @criteria_value_hash.dig(:ship_date, :from)
-                        @criteria_value_hash[:ship_date][:from].to_date
-                      else
-                        nil
-                      end
+    ship_start_date = (@criteria_value_hash[:ship_date][:from].to_date if @criteria_value_hash.dig(:ship_date, :from))
 
-    ship_end_date = if @criteria_value_hash.dig(:ship_date, :to)
-                      @criteria_value_hash[:ship_date][:to].to_date
-                    else
-                      nil
-                    end
+    ship_end_date = (@criteria_value_hash[:ship_date][:to].to_date if @criteria_value_hash.dig(:ship_date, :to))
 
     shop_from = @criteria_value_hash.dig(:shop_from) ? @criteria_value_hash[:shop_from] : nil
 
@@ -166,25 +150,23 @@ class AccountingExport::Report < ReportBase
                               order_payments op
                             GROUP BY
                               op.order_id) opay ON orders.id = opay.order_id")
-                    .where("op.shop_from = :shop_from", shop_from: shop_from)
+                    .where("op.shop_from = :shop_from", shop_from:)
     end
 
-    if currency.present?
-      orders = orders.where('orders.currency = :currency', currency: currency)
-    end
+    orders = orders.where('orders.currency = :currency', currency:) if currency.present?
 
     if start_date.present? && end_date.present?
       orders =
         orders.where('orders.order_created_at BETWEEN :from AND :to',
-                      from: start_date.beginning_of_day.utc, 
-                      to: end_date.end_of_day.utc)
+                     from: start_date.beginning_of_day.utc,
+                     to: end_date.end_of_day.utc)
     end
 
     if ship_start_date.present? && ship_end_date.present?
       orders =
         orders.where('orders.ship_date BETWEEN :from AND :to',
-                      from: ship_start_date.beginning_of_day.utc, 
-                      to: ship_end_date.end_of_day.utc)
+                     from: ship_start_date.beginning_of_day.utc,
+                     to: ship_end_date.end_of_day.utc)
     end
 
     case format
@@ -200,7 +182,7 @@ class AccountingExport::Report < ReportBase
       end
       cols_data_type = AccountingExport.cols_data_type
       cols_style = AccountingExport.cols_style
-      return ReportResult.new(data: result, headers: header, cols_data_type: cols_data_type, cols_style: cols_style, format: format, report: self)
+      ReportResult.new(data: result, headers: header, cols_data_type:, cols_style:, format:, report: self)
     end
   end
 
@@ -209,17 +191,14 @@ class AccountingExport::Report < ReportBase
     criteria.add_criterion(ReportCriterionDefinition.new(code: :order_created_at, type: :date_range_default_blank, model: Order, view_code: :order_created_at))
     criteria.add_criterion(ReportCriterionDefinition.new(code: :ship_date, type: :date_range_default_blank, model: Order, view_code: :ship_date))
     criteria.add_criterion(ReportCriterionDefinition.new(code: :currency, type: :enum_default_blank, enum: Order::CURRENCYS, enum_translation: false, model: Order, view_code: :currency))
-    criteria.add_criterion(ReportCriterionDefinition.new(code: :shop_from, type: :enum_default_blank, enum: SystemSetting.get('order.preset.shop_from'), enum_translation: false, model: OrderProduct, view_code: :shop_from))
+    criteria.add_criterion(ReportCriterionDefinition.new(code: :shop_from, type: :enum_default_blank, enum: SystemSetting.get('order.preset.shop_from'), enum_translation: false, model: OrderProduct,
+                                                         view_code: :shop_from))
   end
 
   def on_validate
-    if params.dig(:criteria, :order_created_at).present?
-      validate_date_range(Order.human_attribute_name(:order_created_at), params[:criteria][:order_created_at])
-    end
+    validate_date_range(Order.human_attribute_name(:order_created_at), params[:criteria][:order_created_at]) if params.dig(:criteria, :order_created_at).present?
 
-    if params.dig(:criteria, :ship_date).present?
-      validate_date_range(Order.human_attribute_name(:ship_date), params[:criteria][:ship_date])
-    end
+    validate_date_range(Order.human_attribute_name(:ship_date), params[:criteria][:ship_date]) if params.dig(:criteria, :ship_date).present?
   end
 
   # https://github.com/caxlsx/caxlsx/tree/master/examples
@@ -227,7 +206,7 @@ class AccountingExport::Report < ReportBase
   # Please refer the example to styling the xlsx
   # TODO: refactor the styles for DRY
   def style(worksheet)
-    styles = {
+    {
       # title
       title: worksheet.styles.add_style(font_name: '游ゴシック',
                                         sz: 12,
@@ -238,18 +217,27 @@ class AccountingExport::Report < ReportBase
                                          sz: 16,
                                          border: Axlsx::STYLE_THIN_BORDER,
                                          alignment: { horizontal: :center, vertical: :center, wrap_text: true }),
-
       # text
       text: worksheet.styles.add_style(font_name: '游ゴシック',
                                        # bg_color: 'D6DCE4',
                                        sz: 12,
                                        border: Axlsx::STYLE_THIN_BORDER,
                                        alignment: { horizontal: :center, vertical: :center, wrap_text: true }),
-
       # hyperlink
-      hyperlink: worksheet.styles.add_style(font_name: 'Arial', u: true, fg_color: '000000FF')
+      hyperlink: worksheet.styles.add_style(font_name: 'Arial', u: true, fg_color: '000000FF'),
+      # japan currency
+      jp_currency: worksheet.styles.add_style(font_name: '游ゴシック',
+                                              sz: 12,
+                                              border: Axlsx::STYLE_THIN_BORDER,
+                                              alignment: { horizontal: :center, vertical: :center, wrap_text: true },
+                                              format_code: "¥##,##0"),
+      # hong kong currency
+      hk_currency: worksheet.styles.add_style(font_name: '游ゴシック',
+                                              sz: 12,
+                                              border: Axlsx::STYLE_THIN_BORDER,
+                                              alignment: { horizontal: :center, vertical: :center, wrap_text: true },
+                                              format_code: "$##,##0")
     }
-    styles
   end
 
   # ABCDEFGHIJKLMNOPQRSTUVWXYZ
@@ -313,18 +301,18 @@ class AccountingExport::Report < ReportBase
       customer_address: { type: :field, display: Order.human_attribute_name(:customer_address) },
       tracking_number: { type: :field, display: Order.human_attribute_name(:tracking_number) },
       receive_number: { type: :field, display: Order.human_attribute_name(:receive_number) },
-      total_price: { type: :price, display: Order.human_attribute_name(:total_price) },
+      total_price: { type: :price, display: Order.human_attribute_name(:total_price), col_data_type: :integer },
       ship_date: { type: :date, display: Order.human_attribute_name(:ship_date), col_data_type: :date },
       shop_from: { type: :field, display: OrderProduct.human_attribute_name(:shop_from) },
       product_name: { type: :field, display: OrderProduct.human_attribute_name(:product_name) },
-      product_price: { type: :price, display: OrderProduct.human_attribute_name(:product_price) },
+      product_price: { type: :price, display: OrderProduct.human_attribute_name(:product_price), col_data_type: :integer },
       product_quantity: { type: :field, display: OrderProduct.human_attribute_name(:product_quantity) },
-      paid_amount: { type: :price, display: OrderPayment.human_attribute_name(:paid_amount) },
+      paid_amount: { type: :price, display: OrderPayment.human_attribute_name(:paid_amount), col_data_type: :integer },
       paid_date: { type: :date, display: I18n.t('reports.accounting_export.paid_date_title'), col_data_type: :date },
       payment_method: { type: :field, display: OrderPayment.human_attribute_name(:payment_method) },
-      total_cost: { type: :cost, display: I18n.t('reports.accounting_export.total_cost_title') },
+      total_cost: { type: :field, display: I18n.t('reports.accounting_export.total_cost_title'), style: :jp_currency, col_data_type: :integer },
       receipt_date: { type: :date, display: OrderProduct.human_attribute_name(:receipt_date), col_data_type: :date }
-    }
+    }.freeze
     ###########################################################################
     # class method
     ###########################################################################
@@ -351,14 +339,15 @@ class AccountingExport::Report < ReportBase
 
     def self.export(order)
       result = []
-
       FIELDS.collect do |field|
         case FIELD_MAPS[field][:type]
-        when :cost
-          result << (order[field].present? ? "¥#{order[field]}" : nil)
         when :price
-          dollar_sign = order.currency == "HKD" ? "$" : "¥"
-          result << (order[field].present? ? "#{dollar_sign}#{order[field]}" : nil)
+          FIELD_MAPS[field][:style] = if order.currency == "HKD"
+                                        :hk_currency
+                                      else
+                                        :jp_currency
+                                      end
+          result << order[field]
         when :field
           result << order[field]
         when :date

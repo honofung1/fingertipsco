@@ -140,6 +140,8 @@ group :development do
   # gem 'mysql2'
 
   gem 'foreman'
+
+  gem "ruby-lsp", require: false
 end
 
 group :test do
