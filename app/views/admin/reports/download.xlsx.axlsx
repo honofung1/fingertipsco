@@ -9,7 +9,7 @@ default_column_width = 20
 # https://github.com/caxlsx/caxlsx/blob/master/lib/axlsx/workbook/worksheet/page_setup.rb
 # A4 paper size = 9
 # scale set to 50 to fit the one page print
-wb.add_worksheet(page_setup: { paper_size: 9, scale: 50 } ) do |sheet|
+wb.add_worksheet(page_setup: { paper_size: 9, scale: 50 }) do |sheet|
   style = @result.report_style(sheet)
 
   # It is optional for the report
@@ -62,9 +62,7 @@ wb.add_worksheet(page_setup: { paper_size: 9, scale: 50 } ) do |sheet|
   end
 
   @result.headers.count.times do |index| # prevent auto hide in open xlsx file in Excel
-    if sheet.column_info[index].present?
-      sheet.column_info[index].width = default_column_width if sheet.column_info[index].width.nil?
-    end
+    sheet.column_info[index].width = default_column_width if sheet.column_info[index].present? && sheet.column_info[index].width.nil?
   end
 end
 
