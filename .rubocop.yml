@@ -57,6 +57,9 @@ Style/StringLiterals:
 Metrics/ClassLength:
   Enabled: false
 
+Metrics/ModuleLength:
+  Max: 200
+
 Metrics/BlockLength:
   Max: 100
 

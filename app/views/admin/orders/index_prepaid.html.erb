@@ -71,7 +71,7 @@
                 <% @orders.each do |o| %>
                   <tr>
                     <td>
-                      <% if o.emergency_call? %>
+                      <% if o.ready_to_ship? %>
                         <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>
                       <% end %>
                       <%= o.order_owner.order_code_prefix %>

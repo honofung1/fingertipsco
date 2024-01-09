@@ -96,7 +96,7 @@ zh-HK:
         customer_name: "客戶名稱"
         customer_contact: "客戶電話"
         customer_address: "收件地址"
-        emergency_call: "標記為緊急"
+        ready_to_ship: "標記為可以寄出"
         order_created_at: "訂單日期"
         order_finished_at: "訂單完成日期"
         order_details: "訂單資料"
@@ -161,6 +161,7 @@ zh-HK:
     create: '建立'
     destroy: "刪除"
     delete: "刪除"
+    delete_all: '刪除全部'
     remove: "刪除"
     real_delete: "刪除"
     update: '更新'
@@ -245,7 +246,7 @@ zh-HK:
     customer_info: "客戶資訊"
     state: "訂單狀態"
     order_balance: "餘額"
-    emergency_call: "緊急注文"
+    ready_to_ship: "可以寄出訂單"
     order_created_at: "訂單日期"
     order_finished_at: "注文完成日期"
     order_receive_number: "取貨號碼"

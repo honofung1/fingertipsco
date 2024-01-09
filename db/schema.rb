@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_10_22_062859) do
+ActiveRecord::Schema.define(version: 2024_01_09_080008) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -117,7 +117,7 @@ ActiveRecord::Schema.define(version: 2023_10_22_062859) do
     t.integer "total_price"
     t.datetime "order_created_at"
     t.datetime "order_finished_at"
-    t.boolean "emergency_call", default: false
+    t.boolean "ready_to_ship", default: false
     t.string "pickup_way"
     t.text "remark"
     t.datetime "created_at", null: false

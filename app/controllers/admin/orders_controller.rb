@@ -12,9 +12,9 @@ class Admin::OrdersController < Admin::BaseController
     @q = Order.ransack(params[:q])
 
     sorting_logic = if @order_owner.present?
-                      ['emergency_call desc', 'state asc', 'order_id desc']
+                      ['ready_to_ship desc', 'state asc', 'order_id desc']
                     else
-                      ['emergency_call desc', 'state asc', 'updated_at desc', 'order_created_at desc']
+                      ['ready_to_ship desc', 'state asc', 'updated_at desc', 'order_created_at desc']
                     end
 
     @q.sorts = sorting_logic if @q.sorts.empty?
@@ -27,9 +27,9 @@ class Admin::OrdersController < Admin::BaseController
               end
 
     # Render special index for PREPAID type order
-    if params[:type].present? && params[:type] == Order::ORDER_TYPE_PREPAID
-      render 'index_prepaid'
-    end
+    return unless params[:type].present? && params[:type] == Order::ORDER_TYPE_PREPAID
+
+    render 'index_prepaid'
   end
 
   def new
@@ -145,24 +145,24 @@ class Admin::OrdersController < Admin::BaseController
       [
         :order_owner_id, :order_id,
         :customer_name, :customer_contact, :customer_address, :currency,
-        :emergency_call, :pickup_way, :state, :remark,
+        :ready_to_ship, :pickup_way, :state, :remark,
         :receive_number, :hk_tracking_number, :tracking_number, :ship_date, :order_type,
         :additional_fee, :additional_fee_type,
-        order_products_attributes:
-          [
-            :id,
-            :shop_from,
-            :product_name, :product_remark, :product_quantity, :product_price,
-            :product_cost, :shipment_cost, :discount, :total_cost,
-            :receipt_date, :received,
-            :_destroy
+        { order_products_attributes:
+          %i[
+            id
+            shop_from
+            product_name product_remark product_quantity product_price
+            product_cost shipment_cost discount total_cost
+            receipt_date received
+            _destroy
           ],
-        order_payments_attributes:
-          [
-            :id,
-            :payment_method, :paid_amount, :paid_date,
-            :_destroy
-          ]
+          order_payments_attributes:
+          %i[
+            id
+            payment_method paid_amount paid_date
+            _destroy
+          ] }
       ]
 
     params.require(:order).permit(*permitted)
@@ -170,31 +170,36 @@ class Admin::OrdersController < Admin::BaseController
 
   def set_content_header
     content_header = case params[:action]
-    when "index", "new", "create", "clone"
-      # title = Order.model_name.human(count: 2)
-      # 2022/09/05 Kylie request for the specific title
-      title = t(:'order.header_name')
-      order_owner_name = @order_owner.name || "" if @order_owner.present?
-      {
-        header: params[:action] == "index" ? I18n.t('sidebar.order') : "#{t(:'button.new')} #{order_owner_name} #{t(:'order.header_name')}",
-        subheader: can?(:create, Order) && params[:action] == "index" ? { title: t(:'button.add_new'), url: @order_owner.present? ? new_admin_order_owner_order_path(@order_owner.id, type: "prepaid") : new_admin_order_path } : {},
-        labels: [],
-        breadcrumbs: [
-          { title: title, url: @order_owner.present? ? admin_order_owner_orders_path(@order_owner.id, type: "prepaid") : admin_orders_path, index_enable_href: true } 
-        ]
-      }
-    when "show", "edit", "update"
-      title = t(:'order.header_name')
-      {
-        header: params[:action] == "show" ? title : "#{t(:'button.edit')} #{order_owner_name} #{t(:'order.header_name')}",
-        subheader: {},
-        labels: [],
-        breadcrumbs: [
-          { title: Order.model_name.human(count: 2), url: @order_owner.present? ? admin_order_owner_orders_path(@order_owner.id, type: "prepaid") : admin_orders_path },
-          { title: @order.order_id, url: @order_owner.present? ? admin_order_owner_order_path(@order_owner.id) : admin_order_path(@order) }
-        ]
-      }
-    end
+                     when "index", "new", "create", "clone"
+                       # title = Order.model_name.human(count: 2)
+                       # 2022/09/05 Kylie request for the specific title
+                       title = t(:'order.header_name')
+                       order_owner_name = @order_owner.name || "" if @order_owner.present?
+                       {
+                         header: params[:action] == "index" ? I18n.t('sidebar.order') : "#{t(:'button.new')} #{order_owner_name} #{t(:'order.header_name')}",
+                         subheader: if can?(:create,
+                                            Order) && params[:action] == "index"
+                                      { title: t(:'button.add_new'), url: @order_owner.present? ? new_admin_order_owner_order_path(@order_owner.id, type: "prepaid") : new_admin_order_path }
+                                    else
+                                      {}
+                                    end,
+                         labels: [],
+                         breadcrumbs: [
+                           { title:, url: @order_owner.present? ? admin_order_owner_orders_path(@order_owner.id, type: "prepaid") : admin_orders_path, index_enable_href: true }
+                         ]
+                       }
+                     when "show", "edit", "update"
+                       title = t(:'order.header_name')
+                       {
+                         header: params[:action] == "show" ? title : "#{t(:'button.edit')} #{order_owner_name} #{t(:'order.header_name')}",
+                         subheader: {},
+                         labels: [],
+                         breadcrumbs: [
+                           { title: Order.model_name.human(count: 2), url: @order_owner.present? ? admin_order_owner_orders_path(@order_owner.id, type: "prepaid") : admin_orders_path },
+                           { title: @order.order_id, url: @order_owner.present? ? admin_order_owner_order_path(@order_owner.id) : admin_order_path(@order) }
+                         ]
+                       }
+                     end
 
     # override default content_header
     @layout_view_variables[:content_header] = content_header
