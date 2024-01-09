@@ -161,7 +161,7 @@ zh-HK:
     create: '建立'
     destroy: "刪除"
     delete: "刪除"
-    delete_all: '刪除全部'
+    delete_all: '刪除全部%{name}'
     remove: "刪除"
     real_delete: "刪除"
     update: '更新'

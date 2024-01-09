@@ -3,9 +3,9 @@
     <%= @order.total_price if @order.persisted? %>
   </div>
   <% if @order.persisted? %>
-    <span>訂單總額$</span>
+    <span>訂單餘額$</span>
     <div class="od-ttl-pc"> 
-      <%= @order.total_price %>
+      <%= @order.order_balance %>
     </div>
     &emsp;&emsp;
   <% end %>
@@ -134,7 +134,7 @@
             <% end %>
             <div id="order_products_container" class='links'>
               <%= link_to_add_association t(:'button.new'), f, :order_products, class: 'btn btn-primary' %>
-              <%= link_to t(:'button.delete_all'), 'javascript:;', class: 'remove-all-fields btn btn-danger' %>
+              <%= link_to I18n.t(:'button.delete_all', name: '商品'), 'javascript:;', class: 'remove-all-fields btn btn-danger float-right' %>
             </div>
           </div>
         </div>
@@ -181,7 +181,7 @@
 
       <div class="card-body">
         <div class="form-group">
-          <div class="form-group container-group">
+          <div class="form-group container-group" id="order_payment_groups">
             <%= f.simple_fields_for :order_payments do |order_payment_form| %>
               <%= render 'order_payment_fields', f: order_payment_form %>
             <% end %>
@@ -208,7 +208,13 @@
 
       $('#order_product_groups').on('cocoon:after-insert', function(e, added_item) {
           added_item.find('.product_price, .product_quantity').on('input', function() {
-            cal_total_price();
+            cal_total_balance();
+          });
+      });
+
+      $('#order_payment_groups').on('cocoon:after-insert', function(e, added_item) {
+          added_item.find('.paid_amount').on('input', function() {
+            cal_total_balance();
           });
       });
 
@@ -218,7 +224,20 @@
       });
 
       $('.order_product_fields').find('.product_price, .product_quantity').on('input', function() {
-        cal_total_price();
+        cal_total_balance();
+      });
+
+      $('.order_payment_groups').find('.paid_amount').on('input', function() {
+        cal_total_balance();
+      });
+
+      $('#order_product_groups').on('cocoon:before-insert', function(e, added_item) {
+        added_item.removeClass("collapsed-card");
+        added_item.find('i').removeClass("fas fa-plus").addClass("fas fa-minus");
+      });
+
+      $('#order_product_groups, #order_payment_groups').on('cocoon:after-remove', function() {
+        cal_total_balance();
       });
     });
 
@@ -231,8 +250,18 @@
       parent.find('.total_cost').val(total_cost);
     }
 
-    function cal_total_price(){
+    function get_paid_amount(){
+      var total_paid_amount = 0;
+      $('.order_payment_fields:not([style*="display: none"])').each(function() {
+        total_paid_amount += parseInt($(this).find(".paid_amount").val()) || 0;
+      });
+
+      return total_paid_amount;
+    }
+
+    function cal_total_balance(){
       var orders_total_price = 0;
+      var order_balance = get_paid_amount();
 
       // Loop all visible order product block
       $('.order_product_fields:not([style*="display: none"])').each(function(){
@@ -241,9 +270,10 @@
         orders_total_price += product_price * product_quantity;
       });
 
-      $('.od-ttl-pc').text(orders_total_price);
-    }
+      order_balance -= orders_total_price;
 
+      $('.od-ttl-pc').text(order_balance);
+    }
 
     $('#copy-name-btn, #copy-cont-btn, #copy-addr-btn').on("click", function () {
       let copyTarget = $(this).data("source");
@@ -257,12 +287,14 @@
     })
 
     $('.remove-all-fields').on('click', function() {
-      $('.order_product_fields').each(function() {
-        $(this).find("input[id$='_destroy']").val('1');
-      });
-      
-      $('.order_product_fields').css('display', 'none');
-      cal_total_price();
+      if(confirm('確定要刪除全部商品嗎？')){
+        $('.order_product_fields').each(function() {
+          $(this).find("input[id$='_destroy']").val('1');
+        });
+        
+        $('.order_product_fields').css('display', 'none');
+        cal_total_balance();
+      }
     });
 
     $('#clear-all-pdr-btn').on("click", function () {
