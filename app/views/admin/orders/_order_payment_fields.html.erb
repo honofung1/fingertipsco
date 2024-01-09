@@ -1,4 +1,4 @@
-<div class="card nested-fields">
+<div class="card nested-fields order_payment_fields">
   <div class="card-header">
     <h4 class="card-title">
       <%= f.object.id.present? ? "#{t(:'order_payment.exist')}: <b>#{h(f.object.payment_method)}</b>".html_safe : t(:'order_payment.new') %>
@@ -17,7 +17,7 @@
       </div>
 
       <div class="field form-group col-md-6">
-        <%= f.input :paid_amount %>
+        <%= f.input :paid_amount, input_html: { class: "paid_amount" } %>
       </div>
 
       <div class="field form-group col-md-6">

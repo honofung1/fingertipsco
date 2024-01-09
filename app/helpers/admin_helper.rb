@@ -182,6 +182,9 @@ module AdminHelper
   end
 
   def normal_order_product?(order_product)
+    # special process for clone order action
+    return true if params[:action] == "clone"
+
     order_product.order.order_type == "normal" && !order_product.new_record?
   end
 end
