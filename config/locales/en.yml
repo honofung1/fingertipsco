@@ -47,7 +47,7 @@ en:
         customer_name: "Customer Name"
         customer_contact: "Customer Contact"
         customer_address: "Customer Address"
-        emergency_call: "Mark As Emergency"
+        ready_to_ship: "Mark As Ready to ship"
         order_created_at: "Order Created Date"
         order_finsish_at: "Order Finished Date"
         order_details: "Order Detail Information"
@@ -128,7 +128,7 @@ en:
     customer_address: "Customer Address"
     state: "Order State"
     order_balance: "Order Balance"
-    emergency_call: "Emergency Order"
+    ready_to_ship: "Ready to ship Order"
     order_created_at: "Order Created At"
   order_product:
     new: "New Product"

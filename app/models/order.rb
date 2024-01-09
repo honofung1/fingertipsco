@@ -354,7 +354,7 @@ class Order < ApplicationRecord
   # ransack method
   def self.ransackable_attributes(_auth_object = nil)
     %w[additional_amount additional_fee additional_fee_type created_at currency customer_address
-       customer_contact customer_name emergency_call handling_amount hk_tracking_number
+       customer_contact customer_name ready_to_ship handling_amount hk_tracking_number
        id order_created_at order_finished_at order_id order_owner_id order_type pickup_way
        receive_number remark ship_date state total_price tracking_number updated_at]
   end
@@ -389,24 +389,18 @@ class Order < ApplicationRecord
     ##############################################################################
     # normal order state
     ##############################################################################
-    if fullpaid? && order_payments.blank?
-      state_error_call(state, I18n.t(:'errors.order.order_payments_blank'))
-    end
+    state_error_call(state, I18n.t(:'errors.order.order_payments_blank')) if fullpaid? && order_payments.blank?
 
     state_error_call(state, I18n.t(:'errors.order.ship_date_blank')) if finished? && ship_date.nil?
 
-    if finished? && order_balance < 0
-      state_error_call(state, I18n.t(:'errors.order.order_balance_not_zero'))
-    end
+    state_error_call(state, I18n.t(:'errors.order.order_balance_not_zero')) if finished? && order_balance < 0
 
     # if accounted? && order_products.where("receipt_date IS NULL").count > 0
     # cannot use 'where' here due to not save to db yet so that cannot find
     # out which receipt_date is null
 
     # if accounted? && order_products.filter(&:receipt_date?).blank?
-    if accounted? && order_products.filter(&:receipt_date?).count != order_products.count
-      state_error_call(state, I18n.t(:'errors.order.receipt_date_blank'))
-    end
+    state_error_call(state, I18n.t(:'errors.order.receipt_date_blank')) if accounted? && order_products.filter(&:receipt_date?).count != order_products.count
 
     ##############################################################################
     # prepaid order state

@@ -6,7 +6,7 @@ class Vendor::OrdersController < Vendor::BaseController
     # filter out printed order for now
     @q = current_user.orders.where.not(state: "printed").ransack(params[:q])
 
-    @q.sorts = ['emergency_call desc', 'state asc', 'order_id desc'] if @q.sorts.empty?
+    @q.sorts = ['ready_to_ship desc', 'state asc', 'order_id desc'] if @q.sorts.empty?
     @orders = @q.result(distinct: true).includes(:order_owner, :order_payments, :order_products).page(params[:page])
   end
 
@@ -30,7 +30,7 @@ class Vendor::OrdersController < Vendor::BaseController
           subheader: {},
           labels: [],
           breadcrumbs: [
-            { title: title, url: vendor_orders_path, index_enable_href: true }
+            { title:, url: vendor_orders_path, index_enable_href: true }
           ]
         }
       when "show"

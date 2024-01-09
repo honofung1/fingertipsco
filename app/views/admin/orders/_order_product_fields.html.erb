@@ -1,4 +1,4 @@
-<div class="card nested-fields order_product_fields <%= f.object.order.order_type == "normal" ? "collapsed-card" : "" %>">
+<div class="card nested-fields order_product_fields <%= normal_order_product?(f.object) ? "collapsed-card" : "" %>">
   <div class="card-header">
     <h4 class="card-title">
       <%= f.object.id.present? ? "#{t(:'order_product.exist')}: <b>#{h(f.object.product_name)}</b>".html_safe : t(:'order_product.new') %>
@@ -16,8 +16,8 @@
         -->
         <%= f.check_box :total_cost, { checked: order_product_has_cost(f.object), disabled: true }, true, false %>
       </label> &emsp;&emsp;
-      <button type="button" class="btn btn-tool" data-card-widget="collapse">
-        <i class="<%= f.object.order.order_type == "normal" ? "fas fa-plus" : "fas fa-minus" %>"></i>
+      <button type="button" class="btn btn-tool" data-card-widget="collapse" data-animation-speed="100">
+        <i class="<%= normal_order_product?(f.object) ? "fas fa-plus" : "fas fa-minus" %>"></i>
       </button>
     </div>
   </div>
@@ -40,11 +40,11 @@
       </div>
 
       <div class="field form-group col-md-2">
-        <%= f.input :product_quantity, input_html: {value: f.object.product_quantity || '1'} %>
+        <%= f.input :product_quantity, input_html: { value: f.object.product_quantity || '1' , class: "product_quantity" } %>
       </div>
 
       <div class="field form-group col-md-2">
-        <%= f.input :product_price %>
+        <%= f.input :product_price, input_html: { class: "product_price" } %>
       </div>
 
       <div class="field form-group col-md-8">

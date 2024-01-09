@@ -25,7 +25,7 @@
               </div>
 
               <div class="form-group filter_margin input-sm">
-                <%= f.search_field :order_products_product_name_or_order_products_shop_from_cont, placeholder: I18n.t('order.order_products'), class: 'form-control form-control-sm' %>
+                <%= f.search_field :remark_or_order_products_product_name_or_order_products_shop_from_cont, placeholder: I18n.t('order.order_products'), class: 'form-control form-control-sm' %>
               </div>
 
               <div class="form-group filter_margin input-sm">
@@ -74,8 +74,8 @@
                 <% @orders.each do |o| %>
                   <tr>
                     <td>
-                      <% if o.emergency_call? %>
-                        <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>
+                      <% if o.ready_to_ship? %>
+                        <i class="fas fa-check-circle text-success" aria-hidden="true"></i>
                       <% end %>
                       <%= o.order_owner.order_code_prefix %>
                     </td>
