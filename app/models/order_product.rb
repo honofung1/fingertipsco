@@ -2,6 +2,9 @@ class OrderProduct < ApplicationRecord
   #############################################################################
   # Constant
   #############################################################################
+  extend Enumerize
+
+  enumerize :tax_type, in: { normal: 10, deduce: 8 }, predicates: { prefix: true }, scope: true
 
   # REFERENCE TO OrderProduct MIGRATION
   # enum state: [:notpaid, :paidpartly, :fullpaid, :finished, :cancelled]

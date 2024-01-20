@@ -47,8 +47,7 @@ class Order < ApplicationRecord
   ].freeze
 
   enumerize :order_type, in: ORDER_TYPES, predicates: { prefix: true }, scope: true
-  enumerize :additional_fee_type, in: ADDITIONAL_FEE_TYPES, predicates: { prefix: true },
-                                  scope: true
+  enumerize :additional_fee_type, in: ADDITIONAL_FEE_TYPES, predicates: { prefix: true }, scope: true
 
   #  Order tx column explaination
   #  |Column Name|    |Explanation|

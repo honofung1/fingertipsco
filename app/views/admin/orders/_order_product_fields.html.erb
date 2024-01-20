@@ -100,7 +100,13 @@
         <%= f.input :total_cost, input_html: { class: 'total_cost', readonly: true } %>
       </div>
 
-      <div class="field form-group col-md-6">
+      <div class="field form-group col-md-4">
+        <%= f.label :tax_type, OrderProduct.human_attribute_name(:tax_type) %>
+        <%= f.select :tax_type, OrderProduct.tax_type.options, { include_blank: true, selected: f.object.new_record? ? "normal" : f.object.tax_type }, 
+                      class: 'form-control select2 select2-hidden-accessible' %>
+      </div>
+
+      <div class="field form-group col-md-4">
         <%= f.label :receipt_date %>
         <div class="input-group date" data-target-input="nearest">
             <%= f.text_field :receipt_date, 

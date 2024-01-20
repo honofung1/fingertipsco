@@ -137,6 +137,7 @@
             <th><%= OrderProduct.human_attribute_name(:shipment_cost) %></th>
             <th><%= OrderProduct.human_attribute_name(:discount) %></th>
             <th><%= OrderProduct.human_attribute_name(:total_cost) %></th>
+            <th><%= OrderProduct.human_attribute_name(:tax_type) %></th>
             <th><%= OrderProduct.human_attribute_name(:receipt_date) %></th>
           </tr>
         <% @order.order_products.each do |order_product| %>
@@ -150,6 +151,7 @@
             <td><%= order_product.shipment_cost %></td>
             <td><%= order_product.discount %></td>
             <td><%= order_product.total_cost %></td>
+            <td><%= order_product.tax_type_text %></td>
             <td><%= format_date(order_product.receipt_date) %></td>
           </tr>
         <% end %>

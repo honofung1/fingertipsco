@@ -140,6 +140,7 @@ zh-HK:
         total_cost: "合計"
         receipt_date: "付款日期"
         received: "已收貨"
+        tax_type: "消費稅率"
       order_payment:
         payment_method: "支払方法"
         paid_amount: "預金金額"
@@ -364,6 +365,10 @@ zh-HK:
         additional_fee_type:
           fixed_value: "固定值"
           discount : "百分比"
+      order_product:
+        tax_type:
+          normal: "10%"
+          deduce: "8%"
   errors:
     order:
       ship_date_blank: "輸出日是空白"

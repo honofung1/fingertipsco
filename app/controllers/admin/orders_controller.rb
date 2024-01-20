@@ -154,7 +154,7 @@ class Admin::OrdersController < Admin::BaseController
             shop_from
             product_name product_remark product_quantity product_price
             product_cost shipment_cost discount total_cost
-            receipt_date received
+            receipt_date received tax_type
             _destroy
           ],
           order_payments_attributes:
