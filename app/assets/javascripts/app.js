@@ -26,14 +26,14 @@ $('select').select2({
 
 document.addEventListener('DOMContentLoaded', function() {
   flatpickr('.flatpickr');
-})
+});
 
 $(document).on('cocoon:after-insert', (function(event) {
-  flatpickr('.flatpickr');
   $('select').select2({
     theme: 'bootstrap4',
     allowClear: true,
   });
+  flatpickr('.flatpickr');
 }));
 
 // get locale from <html lang=xx>, use in datepicker and daterangepicker
